@@ -1,0 +1,5 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/patient-auth/login/route": "app/api/patient-auth/login/route.js",
+  "/api/patient-auth/profile/route": "app/api/patient-auth/profile/route.js"
+}
