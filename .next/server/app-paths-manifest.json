@@ -1,5 +1,19 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/auth/logout/route": "app/api/auth/logout/route.js",
+  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/api/auth/signup/route": "app/api/auth/signup/route.js",
+  "/api/dashboard/stats/route": "app/api/dashboard/stats/route.js",
   "/api/patient-auth/login/route": "app/api/patient-auth/login/route.js",
-  "/api/patient-auth/profile/route": "app/api/patient-auth/profile/route.js"
+  "/api/patient-auth/logout/route": "app/api/patient-auth/logout/route.js",
+  "/api/patient-auth/me/route": "app/api/patient-auth/me/route.js",
+  "/api/patient-auth/profile/route": "app/api/patient-auth/profile/route.js",
+  "/api/patients/route": "app/api/patients/route.js",
+  "/api/test-email/route": "app/api/test-email/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/signup/page": "app/signup/page.js"
 }

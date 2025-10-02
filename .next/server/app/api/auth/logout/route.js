@@ -1,6 +1,7 @@
 var R=require("../../../../chunks/[turbopack]_runtime.js")("server/app/api/auth/logout/route.js")
-R.c("server/chunks/node_modules_c3916cfa._.js")
-R.c("server/chunks/[root-of-the-server]__3a54b5d3._.js")
-R.m("[project]/.next-internal/server/app/api/auth/logout/route/actions.js [app-rsc] (server actions loader, ecmascript)")
-R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/src/app/api/auth/logout/route.js [app-route] (ecmascript)\" } [app-route] (ecmascript)")
-module.exports=R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/src/app/api/auth/logout/route.js [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports
+R.c("server/chunks/[root-of-the-server]__91f98080._.js")
+R.c("server/chunks/node_modules_next_317e10ab._.js")
+R.c("server/chunks/src_lib_db_5e465daa.js")
+R.m(79543)
+R.m(8203)
+module.exports=R.m(8203).exports

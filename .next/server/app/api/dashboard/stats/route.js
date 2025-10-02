@@ -1,6 +1,8 @@
 var R=require("../../../../chunks/[turbopack]_runtime.js")("server/app/api/dashboard/stats/route.js")
-R.c("server/chunks/node_modules_5bcc979b._.js")
-R.c("server/chunks/[root-of-the-server]__8d2aac11._.js")
-R.m("[project]/.next-internal/server/app/api/dashboard/stats/route/actions.js [app-rsc] (server actions loader, ecmascript)")
-R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/src/app/api/dashboard/stats/route.js [app-route] (ecmascript)\" } [app-route] (ecmascript)")
-module.exports=R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/src/app/api/dashboard/stats/route.js [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports
+R.c("server/chunks/[root-of-the-server]__d5d20468._.js")
+R.c("server/chunks/node_modules_bcryptjs_index_42ebb250.js")
+R.c("server/chunks/node_modules_next_317e10ab._.js")
+R.c("server/chunks/src_lib_db_5e465daa.js")
+R.m(78707)
+R.m(90337)
+module.exports=R.m(90337).exports

@@ -1,6 +1,8 @@
 var R=require("../../../../chunks/[turbopack]_runtime.js")("server/app/api/patient-auth/profile/route.js")
-R.c("server/chunks/node_modules_647afc62._.js")
-R.c("server/chunks/[root-of-the-server]__ad67496e._.js")
-R.m("[project]/.next-internal/server/app/api/patient-auth/profile/route/actions.js [app-rsc] (server actions loader, ecmascript)")
-R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/src/app/api/patient-auth/profile/route.js [app-route] (ecmascript)\" } [app-route] (ecmascript)")
-module.exports=R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/src/app/api/patient-auth/profile/route.js [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports
+R.c("server/chunks/[root-of-the-server]__dff1d590._.js")
+R.c("server/chunks/[root-of-the-server]__68e70748._.js")
+R.c("server/chunks/src_lib_db_5e465daa.js")
+R.c("server/chunks/node_modules_next_317e10ab._.js")
+R.m(11514)
+R.m(44498)
+module.exports=R.m(44498).exports
