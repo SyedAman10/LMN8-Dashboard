@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import jwt from 'jsonwebtoken';
+import { sendPasswordResetEmail } from '@/lib/email';
 
 // POST - Request password reset
 export async function POST(request) {
@@ -70,15 +71,19 @@ export async function POST(request) {
 
     console.log('🎫 Reset token generated:', resetToken.substring(0, 30) + '...');
 
-    // In a production app, you would:
-    // 1. Store the reset token in the database with expiry
-    // 2. Send an email with the reset link
-    // For now, we'll just return the token for mobile app to handle
+    // Send password reset email
+    console.log('📧 Sending password reset email...');
+    const emailResult = await sendPasswordResetEmail(
+      patientUser.email,
+      resetToken,
+      patientUser.username
+    );
 
-    // TODO: Send email with reset link
-    // await sendPasswordResetEmail(patientUser.email, resetToken);
-
-    console.log('✅ Password reset token sent successfully');
+    if (emailResult.success) {
+      console.log('✅ Password reset email sent successfully');
+    } else {
+      console.warn('⚠️ Failed to send email, but continuing:', emailResult.error);
+    }
 
     return NextResponse.json({
       success: true,

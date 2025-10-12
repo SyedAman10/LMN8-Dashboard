@@ -16,6 +16,248 @@ const createTransporter = () => {
   });
 };
 
+// Password reset email template
+export const createPasswordResetEmailTemplate = (email, resetToken, username) => {
+  // In production, this would be a deep link to the mobile app
+  // For now, we'll include the token
+  const resetLink = `lumen8://reset-password?token=${resetToken}`;
+  
+  return {
+    from: `"LMN8" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: `Password Reset Request - LMN8`,
+    html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Password Reset - LMN8</title>
+        <style>
+          body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8fafc;
+          }
+          .container {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #5bc0be;
+            margin-bottom: 10px;
+          }
+          .title {
+            color: #ffffff;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+          }
+          .content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+          }
+          .greeting {
+            color: #ffffff;
+            font-size: 18px;
+            margin-bottom: 20px;
+          }
+          .warning-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+          }
+          .warning-text {
+            color: #fca5a5;
+            font-size: 14px;
+          }
+          .token-box {
+            background: rgba(6, 182, 212, 0.1);
+            border: 2px solid #06b6d4;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+          }
+          .token-label {
+            color: #06b6d4;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+          }
+          .token-value {
+            color: #ffffff;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+          }
+          .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #06b6d4, #10b981);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            text-align: center;
+            margin: 20px 0;
+          }
+          .footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+          }
+          .highlight {
+            color: #06b6d4;
+            font-weight: 600;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">LMN8</div>
+            <h1 class="title">Password Reset Request</h1>
+          </div>
+          
+          <div class="content">
+            <p class="greeting">Hello <span class="highlight">${username}</span>,</p>
+            
+            <p style="color: #e2e8f0; margin-bottom: 20px;">
+              We received a request to reset your password for your LMN8 account. 
+              If you didn't make this request, you can safely ignore this email.
+            </p>
+            
+            <div class="warning-box">
+              <div class="warning-text">
+                <strong>⏰ Important:</strong> This reset link will expire in <strong>1 hour</strong> for security reasons.
+              </div>
+            </div>
+
+            <p style="color: #e2e8f0; margin: 20px 0;">
+              <strong>To reset your password:</strong>
+            </p>
+            
+            <ol style="color: #e2e8f0; margin-left: 20px;">
+              <li>Open the LMN8 mobile app</li>
+              <li>Tap on "Forgot Password"</li>
+              <li>Enter your reset token when prompted</li>
+              <li>Create your new password</li>
+            </ol>
+
+            <div class="token-box">
+              <div class="token-label">🔐 Your Reset Token</div>
+              <div class="token-value">${resetToken}</div>
+            </div>
+
+            <p style="color: #e2e8f0; font-size: 14px; margin-top: 20px;">
+              <strong>Security Tips:</strong>
+            </p>
+            <ul style="color: #94a3b8; font-size: 14px;">
+              <li>Never share your reset token with anyone</li>
+              <li>Choose a strong, unique password</li>
+              <li>If you didn't request this, contact support immediately</li>
+            </ul>
+          </div>
+          
+          <div class="footer">
+            <p>© 2024 LMN8. All rights reserved.</p>
+            <p style="color: #64748b; font-size: 12px; margin-top: 10px;">
+              This is an automated message. Please do not reply to this email.
+            </p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+    text: `
+      Password Reset Request - LMN8
+      
+      Hello ${username},
+      
+      We received a request to reset your password for your LMN8 account. 
+      If you didn't make this request, you can safely ignore this email.
+      
+      ⏰ IMPORTANT: This reset link will expire in 1 hour for security reasons.
+      
+      To reset your password:
+      1. Open the LMN8 mobile app
+      2. Tap on "Forgot Password"
+      3. Enter your reset token when prompted
+      4. Create your new password
+      
+      Your Reset Token:
+      ${resetToken}
+      
+      Security Tips:
+      - Never share your reset token with anyone
+      - Choose a strong, unique password
+      - If you didn't request this, contact support immediately
+      
+      © 2024 LMN8. All rights reserved.
+      This is an automated message. Please do not reply to this email.
+    `
+  };
+};
+
+// Send password reset email
+export const sendPasswordResetEmail = async (email, resetToken, username) => {
+  try {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) {
+      console.warn('Email configuration missing. Skipping password reset email.');
+      return { success: false, error: 'Email configuration missing' };
+    }
+
+    console.log('📧 Sending password reset email to:', email);
+    const transporter = createTransporter();
+    const emailTemplate = createPasswordResetEmailTemplate(email, resetToken, username);
+    
+    const result = await transporter.sendMail(emailTemplate);
+    console.log('✅ Password reset email sent successfully:', result.messageId);
+    
+    return { 
+      success: true, 
+      messageId: result.messageId,
+      message: 'Password reset email sent successfully'
+    };
+  } catch (error) {
+    console.error('❌ Error sending password reset email:', error);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      response: error.response
+    });
+    return { 
+      success: false, 
+      error: error.message,
+      message: 'Failed to send password reset email'
+    };
+  }
+};
+
 // Welcome email template
 export const createWelcomeEmailTemplate = (patient) => {
   const { name, email, therapist, totalSessions } = patient;
