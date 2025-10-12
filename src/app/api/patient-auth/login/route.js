@@ -38,14 +38,16 @@ export async function POST(request) {
       { expiresIn: '7d' }
     );
 
-    // Set secure HTTP-only cookie
+    // Return token in response body for mobile app and set cookie for web
     const response = NextResponse.json({
       success: true,
       message: 'Login successful',
+      token: token, // Include token in response for mobile apps
       patient: authResult.patient,
       user: authResult.user
     });
 
+    // Also set as HTTP-only cookie for web browsers
     response.cookies.set('patient_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

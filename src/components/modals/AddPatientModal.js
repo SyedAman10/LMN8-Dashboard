@@ -14,16 +14,7 @@ export default function AddPatientModal({ isOpen, onClose, onSave }) {
     emergencyPhone: '',
     therapist: 'Dr. Jane Doe',
     totalSessions: 12,
-    notes: '',
-    // New patient profile fields
-    idol: '',
-    personality: '',
-    goals: '',
-    challenges: '',
-    communicationStyle: '',
-    interests: '',
-    values: '',
-    supportNeeds: ''
+    notes: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -34,8 +25,7 @@ export default function AddPatientModal({ isOpen, onClose, onSave }) {
     { id: 1, title: 'Basic Information', icon: '👤' },
     { id: 2, title: 'Medical History', icon: '🏥' },
     { id: 3, title: 'Emergency Contact', icon: '📞' },
-    { id: 4, title: 'Treatment Plan', icon: '📋' },
-    { id: 5, title: 'Patient Profile', icon: '🎯' }
+    { id: 4, title: 'Treatment Plan', icon: '📋' }
   ];
 
   useEffect(() => {
@@ -90,8 +80,6 @@ export default function AddPatientModal({ isOpen, onClose, onSave }) {
     if (step === 4) {
       if (formData.totalSessions < 1) newErrors.totalSessions = 'Total sessions must be at least 1';
     }
-    
-    // Step 5 (Patient Profile) - all fields are optional, no validation needed
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -150,16 +138,7 @@ export default function AddPatientModal({ isOpen, onClose, onSave }) {
           emergencyPhone: '',
           therapist: 'Dr. Jane Doe',
           totalSessions: 12,
-          notes: '',
-          // Reset new patient profile fields
-          idol: '',
-          personality: '',
-          goals: '',
-          challenges: '',
-          communicationStyle: '',
-          interests: '',
-          values: '',
-          supportNeeds: ''
+          notes: ''
         });
       } else {
         // Show error message
@@ -186,16 +165,7 @@ export default function AddPatientModal({ isOpen, onClose, onSave }) {
       emergencyPhone: '',
       therapist: 'Dr. Jane Doe',
       totalSessions: 12,
-      notes: '',
-      // Reset new patient profile fields
-      idol: '',
-      personality: '',
-      goals: '',
-      challenges: '',
-      communicationStyle: '',
-      interests: '',
-      values: '',
-      supportNeeds: ''
+      notes: ''
     });
     setErrors({});
     onClose();
@@ -466,146 +436,6 @@ export default function AddPatientModal({ isOpen, onClose, onSave }) {
                     rows={3}
                     className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400 resize-none"
                     placeholder="Enter any additional notes about the patient or treatment plan..."
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 5: Patient Profile */}
-          {currentStep === 5 && (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Patient Profile Questions</h3>
-              <p className="text-slate-400 text-sm mb-6">
-                These questions help create a personalized AI companion experience for the patient.
-              </p>
-              
-              <div className="space-y-6">
-                {/* Idol Question */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Who is your idol?
-                  </label>
-                  <p className="text-slate-400 text-xs mb-2">Tell us about someone you admire and look up to</p>
-                  <input
-                    type="text"
-                    name="idol"
-                    value={formData.idol}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400"
-                    placeholder="e.g., Oprah Winfrey, Elon Musk, your grandmother..."
-                  />
-                </div>
-
-                {/* Personality Question */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    How would you describe yourself?
-                  </label>
-                  <p className="text-slate-400 text-xs mb-2">What are your key personality traits?</p>
-                  <input
-                    type="text"
-                    name="personality"
-                    value={formData.personality}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400"
-                    placeholder="e.g., creative, analytical, empathetic, determined..."
-                  />
-                </div>
-
-                {/* Goals Question */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    What are your main goals?
-                  </label>
-                  <p className="text-slate-400 text-xs mb-2">What do you want to achieve in life?</p>
-                  <textarea
-                    name="goals"
-                    value={formData.goals}
-                    onChange={handleInputChange}
-                    rows={2}
-                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400 resize-none"
-                    placeholder="e.g., career success, better relationships, personal growth..."
-                  />
-                </div>
-
-                {/* Challenges Question */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    What challenges do you face?
-                  </label>
-                  <p className="text-slate-400 text-xs mb-2">What obstacles are you currently dealing with?</p>
-                  <textarea
-                    name="challenges"
-                    value={formData.challenges}
-                    onChange={handleInputChange}
-                    rows={2}
-                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400 resize-none"
-                    placeholder="e.g., anxiety, time management, self-doubt..."
-                  />
-                </div>
-
-                {/* Communication Style Question */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    How do you prefer to communicate?
-                  </label>
-                  <p className="text-slate-400 text-xs mb-2">What communication style works best for you?</p>
-                  <input
-                    type="text"
-                    name="communicationStyle"
-                    value={formData.communicationStyle}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400"
-                    placeholder="e.g., direct and honest, gentle and supportive, motivational..."
-                  />
-                </div>
-
-                {/* Interests Question */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    What are your interests?
-                  </label>
-                  <p className="text-slate-400 text-xs mb-2">What topics and activities excite you?</p>
-                  <input
-                    type="text"
-                    name="interests"
-                    value={formData.interests}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400"
-                    placeholder="e.g., art, technology, nature, music, sports..."
-                  />
-                </div>
-
-                {/* Values Question */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    What values are important to you?
-                  </label>
-                  <p className="text-slate-400 text-xs mb-2">What principles guide your decisions?</p>
-                  <input
-                    type="text"
-                    name="values"
-                    value={formData.values}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400"
-                    placeholder="e.g., honesty, creativity, family, justice, growth..."
-                  />
-                </div>
-
-                {/* Support Needs Question */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    What kind of support do you need?
-                  </label>
-                  <p className="text-slate-400 text-xs mb-2">How can your AI companion best help you?</p>
-                  <textarea
-                    name="supportNeeds"
-                    value={formData.supportNeeds}
-                    onChange={handleInputChange}
-                    rows={2}
-                    className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400 resize-none"
-                    placeholder="e.g., motivation, accountability, emotional support, guidance..."
                   />
                 </div>
               </div>
