@@ -142,16 +142,26 @@ async function handleProfileUpdate(request, methodName) {
   const body = await request.json();
   console.log('📝 Update data received:', Object.keys(body));
   
-  const {
-    idol,
-    personality,
-    goals,
-    challenges,
-    communicationStyle,
-    interests,
-    values,
-    supportNeeds
-  } = body;
+  // Map fast-track onboarding fields to database fields
+  const idol = body.idol || body.inspirationFigure;
+  const personality = body.personality || body.inspirationQuality;
+  const goals = body.goals || body.primaryHope;
+  const challenges = body.challenges || body.spiritualReflection;
+  const communicationStyle = body.communicationStyle || body.actorAuthorTone;
+  const interests = body.interests || body.spiritualPractices;
+  const values = body.values || body.chapterTitle;
+  const supportNeeds = body.supportNeeds || body.actorAuthorStyle;
+
+  console.log('📋 Mapped values:', {
+    idol: idol ? '✓' : '✗',
+    personality: personality ? '✓' : '✗',
+    goals: goals ? '✓' : '✗',
+    challenges: challenges ? '✓' : '✗',
+    communicationStyle: communicationStyle ? '✓' : '✗',
+    interests: interests ? '✓' : '✗',
+    values: values ? '✓' : '✗',
+    supportNeeds: supportNeeds ? '✓' : '✗'
+  });
 
   // Build dynamic update query based on provided fields
   const updateFields = [];
