@@ -2,24 +2,6 @@ import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { sendContactAdminEmail, sendContactConfirmationEmail } from '@/lib/formEmails';
 
-// Send emails in background without blocking response
-async function sendEmailsInBackground(data) {
-  try {
-    Promise.allSettled([
-      sendContactAdminEmail(data),
-      sendContactConfirmationEmail(data)
-    ]).then(results => {
-      const [adminResult, userResult] = results;
-      console.log('Contact email results:', {
-        admin: adminResult.status === 'fulfilled' ? 'sent' : 'failed',
-        user: userResult.status === 'fulfilled' ? 'sent' : 'failed'
-      });
-    });
-  } catch (error) {
-    console.error('Background email error (non-critical):', error);
-  }
-}
-
 export async function POST(request) {
   try {
     const data = await request.json();
@@ -40,14 +22,20 @@ export async function POST(request) {
       [data.name, data.email, data.subject, data.message]
     );
 
-    // Send emails asynchronously without blocking
-    sendEmailsInBackground(data);
+    // Send admin notification email
+    const adminEmailResult = await sendContactAdminEmail(data);
+    
+    // Send user confirmation email
+    const userEmailResult = await sendContactConfirmationEmail(data);
 
     return NextResponse.json({
       success: true,
       message: 'Contact form submitted successfully',
       id: result.rows[0].id,
-      emailsQueued: true
+      emailsSent: {
+        admin: adminEmailResult.success,
+        user: userEmailResult.success
+      }
     });
 
   } catch (error) {
