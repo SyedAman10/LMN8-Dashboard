@@ -49,6 +49,12 @@ export default function LandingPage() {
         body: JSON.stringify(demoFormData),
       });
 
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response. Please check server logs.');
+      }
+
       const result = await response.json();
 
       if (response.ok) {
@@ -61,7 +67,7 @@ export default function LandingPage() {
       } else {
         setNotification({
           type: 'error',
-          message: 'There was an error submitting your request. Please try again or email us directly.'
+          message: result.error || 'There was an error submitting your request. Please try again or email us directly.'
         });
         console.error('Demo request error:', result);
       }

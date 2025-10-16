@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "init-db": "node src/scripts/init-db.js",
+    "reset-db": "node src/scripts/reset-db.js",
+    "create-form-tables": "node src/scripts/create-form-tables.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
