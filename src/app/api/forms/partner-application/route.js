@@ -2,6 +2,24 @@ import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { sendPartnerApplicationAdminEmail, sendPartnerApplicationConfirmationEmail } from '@/lib/formEmails';
 
+// Send emails in background without blocking response
+async function sendEmailsInBackground(data) {
+  try {
+    Promise.allSettled([
+      sendPartnerApplicationAdminEmail(data),
+      sendPartnerApplicationConfirmationEmail(data)
+    ]).then(results => {
+      const [adminResult, userResult] = results;
+      console.log('Partner application email results:', {
+        admin: adminResult.status === 'fulfilled' ? 'sent' : 'failed',
+        user: userResult.status === 'fulfilled' ? 'sent' : 'failed'
+      });
+    });
+  } catch (error) {
+    console.error('Background email error (non-critical):', error);
+  }
+}
+
 export async function POST(request) {
   try {
     const data = await request.json();
@@ -45,20 +63,14 @@ export async function POST(request) {
       ]
     );
 
-    // Send admin notification email (high priority)
-    const adminEmailResult = await sendPartnerApplicationAdminEmail(data);
-    
-    // Send user confirmation email
-    const userEmailResult = await sendPartnerApplicationConfirmationEmail(data);
+    // Send emails asynchronously without blocking
+    sendEmailsInBackground(data);
 
     return NextResponse.json({
       success: true,
       message: 'Partner application submitted successfully',
       id: result.rows[0].id,
-      emailsSent: {
-        admin: adminEmailResult.success,
-        user: userEmailResult.success
-      }
+      emailsQueued: true
     });
 
   } catch (error) {

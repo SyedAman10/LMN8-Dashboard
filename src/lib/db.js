@@ -13,9 +13,12 @@ if (!connectionString) {
   console.error('Example: DATABASE_URL=postgresql://username:password@ep-xxx-xxx.us-east-1.aws.neon.tech/neondb?sslmode=require');
 }
 
-// Create a connection pool
+// Create a connection pool with timeout settings
 const pool = new Pool({
   connectionString: connectionString,
+  max: 20, // Maximum number of clients in the pool
+  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+  connectionTimeoutMillis: 5000, // Return an error after 5 seconds if connection cannot be established
 });
 
 // Test the database connection

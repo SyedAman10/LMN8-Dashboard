@@ -2,6 +2,25 @@ import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { sendDemoRequestAdminEmail, sendDemoRequestConfirmationEmail } from '@/lib/formEmails';
 
+// Send emails in background without blocking response
+async function sendEmailsInBackground(data) {
+  try {
+    // Fire and forget - don't await
+    Promise.allSettled([
+      sendDemoRequestAdminEmail(data),
+      sendDemoRequestConfirmationEmail(data)
+    ]).then(results => {
+      const [adminResult, userResult] = results;
+      console.log('Email sending results:', {
+        admin: adminResult.status === 'fulfilled' ? 'sent' : 'failed',
+        user: userResult.status === 'fulfilled' ? 'sent' : 'failed'
+      });
+    });
+  } catch (error) {
+    console.error('Background email error (non-critical):', error);
+  }
+}
+
 export async function POST(request) {
   try {
     // Parse request body
@@ -45,30 +64,16 @@ export async function POST(request) {
       );
     }
 
-    // Send admin notification email (non-blocking)
-    let adminEmailResult = { success: false };
-    try {
-      adminEmailResult = await sendDemoRequestAdminEmail(data);
-    } catch (emailError) {
-      console.error('Error sending admin email (non-critical):', emailError);
-    }
-    
-    // Send user confirmation email (non-blocking)
-    let userEmailResult = { success: false };
-    try {
-      userEmailResult = await sendDemoRequestConfirmationEmail(data);
-    } catch (emailError) {
-      console.error('Error sending confirmation email (non-critical):', emailError);
-    }
+    // Send emails asynchronously without blocking the response
+    // This prevents timeout issues in production
+    sendEmailsInBackground(data);
 
+    // Respond immediately after database save
     return NextResponse.json({
       success: true,
       message: 'Demo request submitted successfully',
       id: result.rows[0].id,
-      emailsSent: {
-        admin: adminEmailResult.success,
-        user: userEmailResult.success
-      }
+      emailsQueued: true
     });
 
   } catch (error) {
