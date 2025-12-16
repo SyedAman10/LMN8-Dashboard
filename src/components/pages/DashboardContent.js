@@ -112,10 +112,24 @@ export default function DashboardContent({ onAddPatient, refreshTrigger }) {
   }));
 
   return (
-    <div>
+    <div className="space-y-8">
+      {/* Welcome Section */}
+      <div className="bg-gradient-to-r from-cyan-600/20 via-teal-600/20 to-cyan-600/20 rounded-2xl p-6 border border-cyan-500/30">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold text-white mb-2">Welcome Back! 👋</h2>
+            <p className="text-slate-300">Here's your clinical overview for today</p>
+          </div>
+          <div className="text-right">
+            <p className="text-slate-400 text-sm">Today</p>
+            <p className="text-2xl font-bold text-cyan-400">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+          </div>
+        </div>
+      </div>
+
       {/* Clinical Metrics Section */}
       <div className="mb-8">
-        <h3 className="text-xl font-playfair font-semibold text-white mb-6 text-center">Clinical Overview</h3>
+        <h3 className="text-xl font-semibold text-white mb-6">Clinical Overview</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {clinicalMetrics.map((metric, index) => (
             <div
@@ -150,7 +164,7 @@ export default function DashboardContent({ onAddPatient, refreshTrigger }) {
 
       {/* Clinical Tools Section */}
       <div className="mb-8">
-        <h3 className="text-xl font-playfair font-semibold text-white mb-6 text-center">Clinical Tools</h3>
+        <h3 className="text-xl font-semibold text-white mb-6">Clinical Tools</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
           {clinicalTools.map((tool, index) => (
             <div
@@ -175,7 +189,10 @@ export default function DashboardContent({ onAddPatient, refreshTrigger }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Recent Sessions */}
         <div className="bg-slate-700/30 rounded-2xl p-6 border border-slate-600/30">
-          <h4 className="text-lg font-semibold text-white mb-4">Recent Patients</h4>
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-lg font-semibold text-white">Recent Patients</h4>
+            <button className="text-cyan-400 hover:text-cyan-300 text-sm">View All</button>
+          </div>
           <div className="space-y-3">
             {loading ? (
               <div className="text-center py-4">
@@ -226,7 +243,10 @@ export default function DashboardContent({ onAddPatient, refreshTrigger }) {
 
         {/* Quick Actions */}
         <div className="bg-slate-700/30 rounded-2xl p-6 border border-slate-600/30">
-          <h4 className="text-lg font-semibold text-white mb-4">Quick Actions</h4>
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-lg font-semibold text-white">Quick Actions</h4>
+            <span className="text-2xl">⚡</span>
+          </div>
           <div className="space-y-3">
             <button 
               onClick={onAddPatient}

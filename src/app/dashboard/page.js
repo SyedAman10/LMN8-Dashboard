@@ -15,6 +15,7 @@ import SessionsContent from '@/components/pages/SessionsContent';
 import IntegrationContent from '@/components/pages/IntegrationContent';
 import ResourcesContent from '@/components/pages/ResourcesContent';
 import ReportsContent from '@/components/pages/ReportsContent';
+import LocationsContent from '@/components/pages/LocationsContent';
 import AddPatientModal from '@/components/modals/AddPatientModal';
 import ImportPatientModal from '@/components/modals/ImportPatientModal';
 import CreateTreatmentPlanModal from '@/components/modals/CreateTreatmentPlanModal';
@@ -103,6 +104,12 @@ export default function Dashboard() {
       title: 'Reports',
       icon: '📊',
       description: 'Analytics & Insights'
+    },
+    {
+      id: 'locations',
+      title: 'Locations',
+      icon: '🏢',
+      description: 'Multi-Location Management'
     }
   ];
 
@@ -176,6 +183,8 @@ export default function Dashboard() {
         return <ResourcesContent />;
       case 'reports':
         return <ReportsContent />;
+      case 'locations':
+        return <LocationsContent />;
       case 'settings':
         return <SettingsContent />;
       case 'patients':

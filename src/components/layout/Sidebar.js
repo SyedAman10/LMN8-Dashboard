@@ -47,6 +47,12 @@ const sidebarItems = [
     description: 'Analytics & Insights'
   },
   {
+    id: 'locations',
+    title: 'Locations',
+    icon: '🏢',
+    description: 'Multi-Location Management'
+  },
+  {
     id: 'settings',
     title: 'Settings',
     icon: '⚙️',
