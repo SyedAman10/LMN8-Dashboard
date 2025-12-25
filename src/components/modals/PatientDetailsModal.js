@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { api } from '@/lib/apiClient';
+
+// API Base URL - Update this if your backend runs on a different port/domain
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export default function PatientDetailsModal({ patient, isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('overview');
@@ -51,9 +55,7 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
   const fetchNotes = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/backend/patients/${patient.id}/notes`, {
-        credentials: 'include'
-      });
+      const response = await api.get(`/api/backend/patients/${patient.id}/notes`);
 
       if (response.ok) {
         const data = await response.json();
@@ -68,9 +70,7 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
 
   const fetchDocuments = async () => {
     try {
-      const response = await fetch(`/api/backend/patients/${patient.id}/documents`, {
-        credentials: 'include'
-      });
+      const response = await api.get(`/api/backend/patients/${patient.id}/documents`);
 
       if (response.ok) {
         const data = await response.json();
@@ -89,23 +89,19 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
 
     try {
       setLoading(true);
-      const url = editingNote 
+      const endpoint = editingNote 
         ? `/api/backend/patients/${patient.id}/notes/${editingNote.id}`
         : `/api/backend/patients/${patient.id}/notes`;
       
-      const method = editingNote ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          ...noteForm,
-          tags: noteForm.tags.length > 0 ? noteForm.tags : []
-        })
-      });
+      const response = editingNote
+        ? await api.put(endpoint, {
+            ...noteForm,
+            tags: noteForm.tags.length > 0 ? noteForm.tags : []
+          })
+        : await api.post(endpoint, {
+            ...noteForm,
+            tags: noteForm.tags.length > 0 ? noteForm.tags : []
+          });
 
       if (response.ok) {
         showNotification('success', editingNote ? 'Note updated successfully' : 'Note added successfully');
@@ -150,11 +146,7 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
       formData.append('description', uploadForm.description);
       formData.append('tags', uploadForm.tags);
 
-      const response = await fetch(`/api/backend/patients/${patient.id}/documents`, {
-        method: 'POST',
-        credentials: 'include',
-        body: formData
-      });
+      const response = await api.post(`/api/backend/patients/${patient.id}/documents`, formData);
 
       if (response.ok) {
         showNotification('success', 'Document uploaded successfully');
@@ -175,9 +167,7 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
 
   const handleDownloadDocument = async (documentId) => {
     try {
-      const response = await fetch(`/api/backend/patients/${patient.id}/documents/${documentId}/download`, {
-        credentials: 'include'
-      });
+      const response = await api.get(`/api/backend/patients/${patient.id}/documents/${documentId}/download`);
 
       if (response.ok) {
         const blob = await response.blob();
@@ -202,10 +192,7 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
     if (!confirm('Are you sure you want to delete this note?')) return;
 
     try {
-      const response = await fetch(`/api/backend/patients/${patient.id}/notes/${noteId}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+      const response = await api.delete(`/api/backend/patients/${patient.id}/notes/${noteId}`);
 
       if (response.ok) {
         showNotification('success', 'Note deleted successfully');
@@ -223,10 +210,7 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
     if (!confirm('Are you sure you want to delete this document?')) return;
 
     try {
-      const response = await fetch(`/api/backend/patients/${patient.id}/documents/${documentId}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+      const response = await api.delete(`/api/backend/patients/${patient.id}/documents/${documentId}`);
 
       if (response.ok) {
         showNotification('success', 'Document deleted successfully');

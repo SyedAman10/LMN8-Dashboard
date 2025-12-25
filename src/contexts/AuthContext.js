@@ -24,12 +24,31 @@ export function AuthProvider({ children }) {
       if (response.ok) {
         const data = await response.json();
         setUser(data.user);
+        
+        // If user is authenticated but no token in localStorage, get one
+        if (data.user && !localStorage.getItem('authToken')) {
+          try {
+            const tokenResponse = await fetch('/api/auth/token', {
+              credentials: 'include'
+            });
+            if (tokenResponse.ok) {
+              const tokenData = await tokenResponse.json();
+              if (tokenData.token) {
+                localStorage.setItem('authToken', tokenData.token);
+              }
+            }
+          } catch (tokenError) {
+            console.error('Error getting token:', tokenError);
+          }
+        }
       } else {
         setUser(null);
+        localStorage.removeItem('authToken');
       }
     } catch (error) {
       console.error('Auth check failed:', error);
       setUser(null);
+      localStorage.removeItem('authToken');
     } finally {
       setLoading(false);
     }
@@ -50,6 +69,10 @@ export function AuthProvider({ children }) {
 
       if (response.ok) {
         setUser(data.user);
+        // Store JWT token in localStorage for backend API calls
+        if (data.token) {
+          localStorage.setItem('authToken', data.token);
+        }
         return { success: true, user: data.user };
       } else {
         return { success: false, error: data.error };
@@ -89,6 +112,9 @@ export function AuthProvider({ children }) {
         method: 'POST',
         credentials: 'include',
       });
+      
+      // Remove JWT token from localStorage
+      localStorage.removeItem('authToken');
       
       // Show success message (optional)
       console.log('Successfully signed out');

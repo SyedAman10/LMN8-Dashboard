@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { validateUser, createUserSession } from '@/lib/auth';
 import { initDatabase } from '@/lib/db';
+import jwt from 'jsonwebtoken';
 
 export async function POST(request) {
   try {
@@ -41,10 +42,23 @@ export async function POST(request) {
     // Create user session
     const sessionToken = await createUserSession(user.id);
 
+    // Create JWT token for backend API calls
+    const jwtToken = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+        type: 'user'
+      },
+      process.env.JWT_SECRET || 'your-secret-key', // Fallback for development
+      { expiresIn: rememberMe ? '7d' : '1d' }
+    );
+
     // Set session cookie
     const response = NextResponse.json(
       {
         message: 'Login successful',
+        token: jwtToken, // Include JWT token for backend API calls
         user: {
           id: user.id,
           firstName: user.first_name,
