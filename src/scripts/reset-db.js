@@ -7,6 +7,8 @@ async function resetDatabase() {
   console.log('🔄 Resetting database...');
   
   try {
+    // Enable UUID generation for primary keys
+    await query('CREATE EXTENSION IF NOT EXISTS pgcrypto');
     // Test connection first
     console.log('📡 Testing database connection...');
     const connected = await testConnection();
@@ -45,7 +47,7 @@ async function resetDatabase() {
     // Create users table first
     await query(`
       CREATE TABLE users (
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
         first_name VARCHAR(100) NOT NULL,
@@ -63,7 +65,7 @@ async function resetDatabase() {
     await query(`
       CREATE TABLE user_sessions (
         id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         session_token VARCHAR(255) UNIQUE NOT NULL,
         expires_at TIMESTAMP NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -75,7 +77,7 @@ async function resetDatabase() {
     await query(`
       CREATE TABLE patients (
         id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255),
         phone VARCHAR(20),

@@ -21,6 +21,8 @@ const pool = new Pool({
 // Test the database connection
 export async function testConnection() {
   try {
+    // Enable UUID generation for primary keys
+    await query('CREATE EXTENSION IF NOT EXISTS pgcrypto');
     const client = await pool.connect();
     const result = await client.query('SELECT NOW()');
     client.release();
@@ -72,7 +74,7 @@ export async function initDatabase() {
     console.log('   Creating users table...');
     await query(`
       CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
         first_name VARCHAR(100) NOT NULL,
@@ -91,7 +93,7 @@ export async function initDatabase() {
     await query(`
       CREATE TABLE IF NOT EXISTS user_sessions (
         id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         session_token VARCHAR(255) UNIQUE NOT NULL,
         expires_at TIMESTAMP NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -104,7 +106,7 @@ export async function initDatabase() {
     await query(`
       CREATE TABLE IF NOT EXISTS patients (
         id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255),
         phone VARCHAR(20),
