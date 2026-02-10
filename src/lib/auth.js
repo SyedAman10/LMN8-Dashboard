@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { query } from './db.js';
 
 // Hash password
@@ -63,12 +64,13 @@ export async function createUser(userData) {
   const { fullName, username, email, password, role } = userData;
   
   const passwordHash = await hashPassword(password);
+  const userId = crypto.randomUUID();
   
   const result = await query(
-    `INSERT INTO users (full_name, username, email, hashed_password, role, is_active) 
-     VALUES ($1, $2, $3, $4, $5, true) 
+    `INSERT INTO users (id, full_name, username, email, hashed_password, role, is_active) 
+     VALUES ($1, $2, $3, $4, $5, $6, true) 
      RETURNING id, full_name, username, email, role, created_at`,
-    [fullName, username, email, passwordHash, role]
+    [userId, fullName, username, email, passwordHash, role]
   );
 
   return result.rows[0];
