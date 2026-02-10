@@ -19,10 +19,13 @@ export async function POST(request) {
     await initDatabase();
 
     const body = await request.json();
-    const { firstName, lastName, email, password, role, licenseNumber } = body;
+    const { firstName, lastName, fullName, username, email, password, role } = body;
+
+    const resolvedFullName = (fullName || `${firstName || ''} ${lastName || ''}`).trim();
+    const resolvedUsername = (username || (email ? email.split('@')[0] : '')).trim();
 
     // Validate required fields
-    if (!firstName || !lastName || !email || !password || !role) {
+    if (!resolvedFullName || !resolvedUsername || !email || !password || !role) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -55,31 +58,27 @@ export async function POST(request) {
       );
     }
 
-    // Validate role-specific requirements
-    if (role === 'clinician' && !licenseNumber) {
-      return NextResponse.json(
-        { error: 'License number is required for clinicians' },
-        { status: 400 }
-      );
-    }
-
     // Create user
     const newUser = await createUser({
-      firstName,
-      lastName,
+      fullName: resolvedFullName,
+      username: resolvedUsername,
       email,
       password,
-      role,
-      licenseNumber
+      role
     });
+
+    const [resolvedFirstName, ...restNames] = resolvedFullName.split(/\s+/);
+    const resolvedLastName = restNames.join(' ');
 
     return NextResponse.json(
       {
         message: 'User created successfully',
         user: {
           id: newUser.id,
-          firstName: newUser.first_name,
-          lastName: newUser.last_name,
+          firstName: resolvedFirstName || '',
+          lastName: resolvedLastName || '',
+          fullName: newUser.full_name,
+          username: newUser.username,
           email: newUser.email,
           role: newUser.role,
           createdAt: newUser.created_at

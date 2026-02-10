@@ -42,6 +42,10 @@ export async function POST(request) {
     // Create user session
     const sessionToken = await createUserSession(user.id);
 
+    const fullName = user.full_name || '';
+    const [firstName, ...restNames] = fullName.trim().split(/\s+/);
+    const lastName = restNames.join(' ');
+
     // Create JWT token for backend API calls
     const jwtToken = jwt.sign(
       {
@@ -61,11 +65,12 @@ export async function POST(request) {
         token: jwtToken, // Include JWT token for backend API calls
         user: {
           id: user.id,
-          firstName: user.first_name,
-          lastName: user.last_name,
+          firstName: firstName || '',
+          lastName: lastName || '',
+          fullName: fullName,
+          username: user.username,
           email: user.email,
-          role: user.role,
-          licenseNumber: user.license_number
+          role: user.role
         }
       },
       { status: 200 }

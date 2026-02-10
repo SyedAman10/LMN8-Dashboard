@@ -132,7 +132,7 @@ export async function POST(request) {
         medicalHistory,
         emergencyContact || null,
         emergencyPhone || null,
-        therapist || user.first_name + ' ' + user.last_name,
+        therapist || user.full_name || '',
         totalSessions || 12,
         notes || null
       ]

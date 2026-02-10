@@ -20,14 +20,19 @@ export async function GET(request) {
       );
     }
 
+    const fullName = user.full_name || '';
+    const [firstName, ...restNames] = fullName.trim().split(/\s+/);
+    const lastName = restNames.join(' ');
+
     return NextResponse.json({
       user: {
         id: user.id,
-        firstName: user.first_name,
-        lastName: user.last_name,
+        firstName: firstName || '',
+        lastName: lastName || '',
+        fullName: fullName,
+        username: user.username,
         email: user.email,
         role: user.role,
-        licenseNumber: user.license_number,
         createdAt: user.created_at
       }
     });

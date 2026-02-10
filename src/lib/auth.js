@@ -60,15 +60,15 @@ export async function getUserByEmail(email) {
 
 // Create new user
 export async function createUser(userData) {
-  const { firstName, lastName, email, password, role, licenseNumber } = userData;
+  const { fullName, username, email, password, role } = userData;
   
   const passwordHash = await hashPassword(password);
   
   const result = await query(
-    `INSERT INTO users (first_name, last_name, email, password_hash, role, license_number) 
-     VALUES ($1, $2, $3, $4, $5, $6) 
-     RETURNING id, first_name, last_name, email, role, created_at`,
-    [firstName, lastName, email, passwordHash, role, licenseNumber || null]
+    `INSERT INTO users (full_name, username, email, hashed_password, role, is_active) 
+     VALUES ($1, $2, $3, $4, $5, true) 
+     RETURNING id, full_name, username, email, role, created_at`,
+    [fullName, username, email, passwordHash, role]
   );
 
   return result.rows[0];
@@ -81,12 +81,12 @@ export async function validateUser(email, password) {
     return null;
   }
 
-  const isValidPassword = await verifyPassword(password, user.password_hash);
+  const isValidPassword = await verifyPassword(password, user.hashed_password);
   if (!isValidPassword) {
     return null;
   }
 
   // Return user without password hash
-  const { password_hash, ...userWithoutPassword } = user;
+  const { hashed_password, ...userWithoutPassword } = user;
   return userWithoutPassword;
 }
