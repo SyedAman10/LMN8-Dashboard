@@ -58,13 +58,18 @@ export async function POST(request) {
       );
     }
 
+    // Normalize role to match DB enum (e.g., ADMIN/USER). Default to USER.
+    const normalizedRole = String(role || '').trim().toUpperCase();
+    const allowedRoles = new Set(['ADMIN', 'USER']);
+    const roleForDb = allowedRoles.has(normalizedRole) ? normalizedRole : 'USER';
+
     // Create user
     const newUser = await createUser({
       fullName: resolvedFullName,
       username: resolvedUsername,
       email,
       password,
-      role
+      role: roleForDb
     });
 
     const [resolvedFirstName, ...restNames] = resolvedFullName.split(/\s+/);
