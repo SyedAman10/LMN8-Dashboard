@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ReportsContent() {
@@ -10,6 +10,85 @@ export default function ReportsContent() {
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [feedbackTagFilter, setFeedbackTagFilter] = useState('all');
+  const [feedbackSearch, setFeedbackSearch] = useState('');
+
+  const patientFeedbackEntries = [
+    {
+      id: 'fb-101',
+      patientName: 'A. Johnson',
+      tag: 'ai_conversation_summary',
+      mood: 'positive',
+      score: 4.8,
+      submittedAt: '2026-04-08T14:20:00Z',
+      summary: 'Patient felt calmer after guided breathing and cognitive reframing prompts.',
+      excerpt: 'The AI recap helped me understand my trigger pattern before sleep.',
+      linkedSession: 'Session #43'
+    },
+    {
+      id: 'fb-102',
+      patientName: 'L. Carter',
+      tag: 'journal_entry',
+      mood: 'neutral',
+      score: 3.9,
+      submittedAt: '2026-04-07T10:15:00Z',
+      summary: 'Entry reflected moderate stress and mixed consistency with coping routines.',
+      excerpt: 'I am trying to journal at night but I miss a few days each week.',
+      linkedSession: 'Session #18'
+    },
+    {
+      id: 'fb-103',
+      patientName: 'M. Alvarez',
+      tag: 'ai_conversation_summary',
+      mood: 'positive',
+      score: 4.5,
+      submittedAt: '2026-04-06T19:05:00Z',
+      summary: 'Patient reported improvement in emotional regulation after reflection prompts.',
+      excerpt: 'Seeing the summary made me notice progress I had ignored.',
+      linkedSession: 'Session #29'
+    },
+    {
+      id: 'fb-104',
+      patientName: 'S. Ahmed',
+      tag: 'journal_entry',
+      mood: 'negative',
+      score: 2.7,
+      submittedAt: '2026-04-05T08:40:00Z',
+      summary: 'Entry highlighted sleep disruption and elevated anxiety before workdays.',
+      excerpt: 'My mornings feel rushed and I start the day tense.',
+      linkedSession: 'Session #11'
+    }
+  ];
+
+  const filteredFeedbackEntries = useMemo(() => {
+    return patientFeedbackEntries.filter((entry) => {
+      const matchesTag = feedbackTagFilter === 'all' || entry.tag === feedbackTagFilter;
+      const searchValue = feedbackSearch.trim().toLowerCase();
+      const matchesSearch =
+        !searchValue ||
+        entry.patientName.toLowerCase().includes(searchValue) ||
+        entry.summary.toLowerCase().includes(searchValue) ||
+        entry.excerpt.toLowerCase().includes(searchValue);
+
+      return matchesTag && matchesSearch;
+    });
+  }, [feedbackTagFilter, feedbackSearch, patientFeedbackEntries]);
+
+  const feedbackStats = useMemo(() => {
+    const total = filteredFeedbackEntries.length;
+    const aiSummaries = filteredFeedbackEntries.filter((entry) => entry.tag === 'ai_conversation_summary').length;
+    const journalEntries = filteredFeedbackEntries.filter((entry) => entry.tag === 'journal_entry').length;
+    const averageScore = total
+      ? (filteredFeedbackEntries.reduce((sum, entry) => sum + entry.score, 0) / total).toFixed(1)
+      : '0.0';
+
+    return {
+      total,
+      aiSummaries,
+      journalEntries,
+      averageScore
+    };
+  }, [filteredFeedbackEntries]);
 
   // Report configuration state
   const [reportConfig, setReportConfig] = useState({
@@ -280,6 +359,104 @@ export default function ReportsContent() {
           <span className="text-xl">+</span>
           Create Report
         </button>
+      </div>
+
+      {/* Patient Feedback Report Panel */}
+      <div className="bg-slate-900 rounded-2xl border border-cyan-500/30 p-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-white">Patient Feedback Report Panel</h2>
+            <p className="text-slate-300 text-sm mt-1">
+              View feedback tagged as <span className="text-cyan-300 font-semibold">AI Conversation Summary</span> and <span className="text-teal-300 font-semibold">Journal Entry</span>.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <select
+              value={feedbackTagFilter}
+              onChange={(e) => setFeedbackTagFilter(e.target.value)}
+              className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white min-w-52"
+            >
+              <option value="all">All Feedback Tags</option>
+              <option value="ai_conversation_summary">AI Conversation Summary</option>
+              <option value="journal_entry">Journal Entry</option>
+            </select>
+            <input
+              type="text"
+              value={feedbackSearch}
+              onChange={(e) => setFeedbackSearch(e.target.value)}
+              placeholder="Search patient or feedback..."
+              className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-400 min-w-56"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+          <div className="rounded-xl bg-slate-800/80 border border-slate-700 p-4">
+            <p className="text-slate-400 text-xs uppercase tracking-wide">Total Feedback</p>
+            <p className="text-white text-2xl font-bold mt-2">{feedbackStats.total}</p>
+          </div>
+          <div className="rounded-xl bg-slate-800/80 border border-slate-700 p-4">
+            <p className="text-slate-400 text-xs uppercase tracking-wide">AI Summaries</p>
+            <p className="text-cyan-300 text-2xl font-bold mt-2">{feedbackStats.aiSummaries}</p>
+          </div>
+          <div className="rounded-xl bg-slate-800/80 border border-slate-700 p-4">
+            <p className="text-slate-400 text-xs uppercase tracking-wide">Journal Entries</p>
+            <p className="text-teal-300 text-2xl font-bold mt-2">{feedbackStats.journalEntries}</p>
+          </div>
+          <div className="rounded-xl bg-slate-800/80 border border-slate-700 p-4">
+            <p className="text-slate-400 text-xs uppercase tracking-wide">Average Score</p>
+            <p className="text-white text-2xl font-bold mt-2">{feedbackStats.averageScore}/5</p>
+          </div>
+        </div>
+
+        {filteredFeedbackEntries.length === 0 ? (
+          <div className="text-center py-10 rounded-xl border border-dashed border-slate-600 bg-slate-800/40">
+            <p className="text-slate-300 font-medium">No feedback found for this filter.</p>
+            <p className="text-slate-500 text-sm mt-1">Try a different tag or search term.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            {filteredFeedbackEntries.map((entry) => (
+              <div key={entry.id} className="rounded-xl border border-slate-700 bg-slate-800/70 p-4">
+                <div className="flex justify-between items-start gap-3">
+                  <div>
+                    <p className="text-white font-semibold">{entry.patientName}</p>
+                    <p className="text-slate-400 text-xs mt-1">
+                      {new Date(entry.submittedAt).toLocaleString()} • {entry.linkedSession}
+                    </p>
+                  </div>
+                  <span
+                    className={`px-2 py-1 rounded-md text-xs font-semibold ${
+                      entry.tag === 'ai_conversation_summary'
+                        ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                        : 'bg-teal-500/20 text-teal-300 border border-teal-500/30'
+                    }`}
+                  >
+                    {entry.tag === 'ai_conversation_summary' ? 'AI Conversation Summary' : 'Journal Entry'}
+                  </span>
+                </div>
+
+                <p className="text-slate-200 mt-4 text-sm leading-6">{entry.summary}</p>
+                <p className="text-slate-400 text-sm mt-2 italic">"{entry.excerpt}"</p>
+
+                <div className="flex justify-between items-center mt-4 pt-3 border-t border-slate-700">
+                  <span
+                    className={`text-xs font-semibold px-2 py-1 rounded ${
+                      entry.mood === 'positive'
+                        ? 'bg-green-500/20 text-green-300'
+                        : entry.mood === 'negative'
+                        ? 'bg-red-500/20 text-red-300'
+                        : 'bg-amber-500/20 text-amber-300'
+                    }`}
+                  >
+                    Mood: {entry.mood}
+                  </span>
+                  <span className="text-white text-sm font-semibold">Score: {entry.score}/5</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Main Content */}
