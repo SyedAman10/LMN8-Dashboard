@@ -6,7 +6,7 @@ import { query, testConnection } from '../lib/db.js';
 async function resetDatabase() {
   console.log('🔄 Resetting database...');
   
-  try {
+  try { 
     // Enable UUID generation for primary keys
     await query('CREATE EXTENSION IF NOT EXISTS pgcrypto');
     // Test connection first
