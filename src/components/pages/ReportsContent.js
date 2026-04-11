@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { api } from '@/lib/apiClient';
 
 export default function ReportsContent() {
   const [savedReports, setSavedReports] = useState([]);
@@ -12,53 +13,52 @@ export default function ReportsContent() {
   const [notification, setNotification] = useState(null);
   const [feedbackTagFilter, setFeedbackTagFilter] = useState('all');
   const [feedbackSearch, setFeedbackSearch] = useState('');
+  const [patientFeedbackEntries, setPatientFeedbackEntries] = useState([]);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
 
-  const patientFeedbackEntries = [
-    {
-      id: 'fb-101',
-      patientName: 'A. Johnson',
-      tag: 'ai_conversation_summary',
-      mood: 'positive',
-      score: 4.8,
-      submittedAt: '2026-04-08T14:20:00Z',
-      summary: 'Patient felt calmer after guided breathing and cognitive reframing prompts.',
-      excerpt: 'The AI recap helped me understand my trigger pattern before sleep.',
-      linkedSession: 'Session #43'
-    },
-    {
-      id: 'fb-102',
-      patientName: 'L. Carter',
-      tag: 'journal_entry',
-      mood: 'neutral',
-      score: 3.9,
-      submittedAt: '2026-04-07T10:15:00Z',
-      summary: 'Entry reflected moderate stress and mixed consistency with coping routines.',
-      excerpt: 'I am trying to journal at night but I miss a few days each week.',
-      linkedSession: 'Session #18'
-    },
-    {
-      id: 'fb-103',
-      patientName: 'M. Alvarez',
-      tag: 'ai_conversation_summary',
-      mood: 'positive',
-      score: 4.5,
-      submittedAt: '2026-04-06T19:05:00Z',
-      summary: 'Patient reported improvement in emotional regulation after reflection prompts.',
-      excerpt: 'Seeing the summary made me notice progress I had ignored.',
-      linkedSession: 'Session #29'
-    },
-    {
-      id: 'fb-104',
-      patientName: 'S. Ahmed',
-      tag: 'journal_entry',
-      mood: 'negative',
-      score: 2.7,
-      submittedAt: '2026-04-05T08:40:00Z',
-      summary: 'Entry highlighted sleep disruption and elevated anxiety before workdays.',
-      excerpt: 'My mornings feel rushed and I start the day tense.',
-      linkedSession: 'Session #11'
+  const normalizeMood = (value) => {
+    const normalized = String(value || '').toLowerCase();
+    if (normalized === 'positive' || normalized === 'negative' || normalized === 'neutral') {
+      return normalized;
     }
-  ];
+    return 'neutral';
+  };
+
+  const normalizeTag = (value) => {
+    const normalized = String(value || '').toLowerCase();
+    if (normalized === 'ai_conversation' || normalized === 'ai_conversation_summary') {
+      return 'ai_conversation_summary';
+    }
+    if (normalized === 'journal' || normalized === 'journal_entry') {
+      return 'journal_entry';
+    }
+    return 'journal_entry';
+  };
+
+  const normalizeFeedbackEntry = (entry, index) => {
+    const resolvedTag = normalizeTag(entry?.tag || entry?.summaryType);
+    const rawScore = Number(entry?.score ?? entry?.rating ?? entry?.feedbackScore ?? 0);
+
+    return {
+      id: String(entry?.id || entry?._id || `feedback-${index}`),
+      patientName: entry?.patientName || entry?.patient?.name || 'Unknown Patient',
+      tag: resolvedTag,
+      mood: normalizeMood(entry?.mood || entry?.sentiment),
+      score: Number.isFinite(rawScore) ? rawScore : 0,
+      submittedAt: entry?.submittedAt || entry?.createdAt || new Date().toISOString(),
+      summary:
+        entry?.summaryText ||
+        entry?.summary ||
+        entry?.content ||
+        'No summary text provided.',
+      excerpt:
+        entry?.excerpt ||
+        entry?.patientFeedback ||
+        entry?.sourceText ||
+        '',
+      linkedSession: entry?.linkedSession || entry?.sourceId || 'N/A'
+    };
+  };
 
   const filteredFeedbackEntries = useMemo(() => {
     return patientFeedbackEntries.filter((entry) => {
@@ -78,8 +78,12 @@ export default function ReportsContent() {
     const total = filteredFeedbackEntries.length;
     const aiSummaries = filteredFeedbackEntries.filter((entry) => entry.tag === 'ai_conversation_summary').length;
     const journalEntries = filteredFeedbackEntries.filter((entry) => entry.tag === 'journal_entry').length;
+    const scoredEntries = filteredFeedbackEntries.filter((entry) => Number.isFinite(entry.score) && entry.score > 0);
     const averageScore = total
-      ? (filteredFeedbackEntries.reduce((sum, entry) => sum + entry.score, 0) / total).toFixed(1)
+      ? (
+          scoredEntries.reduce((sum, entry) => sum + entry.score, 0) /
+          (scoredEntries.length || 1)
+        ).toFixed(1)
       : '0.0';
 
     return {
@@ -114,7 +118,38 @@ export default function ReportsContent() {
 
   useEffect(() => {
     fetchSavedReports();
+    fetchPatientFeedbackSummaries();
   }, []);
+
+  const fetchPatientFeedbackSummaries = async () => {
+    try {
+      setFeedbackLoading(true);
+      const response = await api.post('/api/backend/clinician-sharing/summaries', {
+        summaryType: 'ai_conversation'
+      });
+
+      if (!response.ok) {
+        showNotification('error', 'Failed to load patient feedback summaries');
+        return;
+      }
+
+      const data = await response.json();
+      const rawEntries = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.summaries)
+          ? data.summaries
+          : Array.isArray(data?.data)
+            ? data.data
+            : [];
+
+      setPatientFeedbackEntries(rawEntries.map(normalizeFeedbackEntry));
+    } catch (error) {
+      console.error('Error fetching patient feedback summaries:', error);
+      showNotification('error', 'Error loading patient feedback summaries');
+    } finally {
+      setFeedbackLoading(false);
+    }
+  };
 
   // Fetch all saved reports
   const fetchSavedReports = async () => {
@@ -409,7 +444,11 @@ export default function ReportsContent() {
           </div>
         </div>
 
-        {filteredFeedbackEntries.length === 0 ? (
+        {feedbackLoading ? (
+          <div className="text-center py-10 rounded-xl border border-dashed border-slate-600 bg-slate-800/40">
+            <p className="text-slate-300 font-medium">Loading feedback summaries...</p>
+          </div>
+        ) : filteredFeedbackEntries.length === 0 ? (
           <div className="text-center py-10 rounded-xl border border-dashed border-slate-600 bg-slate-800/40">
             <p className="text-slate-300 font-medium">No feedback found for this filter.</p>
             <p className="text-slate-500 text-sm mt-1">Try a different tag or search term.</p>
