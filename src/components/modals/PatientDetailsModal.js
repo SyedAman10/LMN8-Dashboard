@@ -666,7 +666,6 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
                         <tr className="border-b border-slate-600/40">
                           <th className="text-left px-4 py-3 text-slate-300 font-semibold">Date</th>
                           <th className="text-left px-4 py-3 text-slate-300 font-semibold">Type</th>
-                          <th className="text-left px-4 py-3 text-slate-300 font-semibold">Source</th>
                           <th className="text-left px-4 py-3 text-slate-300 font-semibold">Summary</th>
                         </tr>
                       </thead>
@@ -689,7 +688,6 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
                                   {summary.summaryType === 'ai_conversation' ? 'AI Conversation Summary' : 'Journal Entry'}
                                 </span>
                               </td>
-                              <td className="px-4 py-3 text-slate-300 whitespace-nowrap">{summary.sourceId}</td>
                               <td className="px-4 py-3 text-slate-100 leading-6 min-w-[420px]">
                                 {summary.summaryText || 'No summary text available.'}
                               </td>
