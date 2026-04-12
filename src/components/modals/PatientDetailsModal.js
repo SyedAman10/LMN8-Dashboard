@@ -659,33 +659,45 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
                   <p className="text-sm mt-2">Try a different summary type filter.</p>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {sharedSummaries.map((summary) => (
-                    <div key={summary.id} className="bg-slate-700/30 rounded-xl p-4 border border-slate-600/30">
-                      <div className="flex flex-wrap justify-between items-start gap-3">
-                        <div>
-                          <p className="text-white font-semibold">
-                            {summary.summaryType === 'ai_conversation' ? 'AI Conversation Summary' : 'Journal Entry Summary'}
-                          </p>
-                          <p className="text-slate-400 text-xs mt-1">
-                            {new Date(summary.createdAt).toLocaleString()} • Source: {summary.sourceId}
-                          </p>
-                        </div>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            summary.summaryType === 'ai_conversation'
-                              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                              : 'bg-teal-500/20 text-teal-300 border border-teal-500/30'
-                          }`}
-                        >
-                          {summary.summaryType}
-                        </span>
-                      </div>
-                      <p className="text-slate-100 mt-3 leading-6 text-sm">
-                        {summary.summaryText || 'No summary text available.'}
-                      </p>
-                    </div>
-                  ))}
+                <div className="rounded-xl border border-slate-600/30 bg-slate-700/20 overflow-hidden">
+                  <div className="max-h-[48vh] overflow-auto">
+                    <table className="w-full text-sm">
+                      <thead className="sticky top-0 bg-slate-800/95 backdrop-blur-sm z-10">
+                        <tr className="border-b border-slate-600/40">
+                          <th className="text-left px-4 py-3 text-slate-300 font-semibold">Date</th>
+                          <th className="text-left px-4 py-3 text-slate-300 font-semibold">Type</th>
+                          <th className="text-left px-4 py-3 text-slate-300 font-semibold">Source</th>
+                          <th className="text-left px-4 py-3 text-slate-300 font-semibold">Summary</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[...sharedSummaries]
+                          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                          .map((summary) => (
+                            <tr key={summary.id} className="border-b border-slate-700/50 align-top">
+                              <td className="px-4 py-3 text-slate-200 whitespace-nowrap">
+                                {new Date(summary.createdAt).toLocaleString()}
+                              </td>
+                              <td className="px-4 py-3">
+                                <span
+                                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    summary.summaryType === 'ai_conversation'
+                                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                                      : 'bg-teal-500/20 text-teal-300 border border-teal-500/30'
+                                  }`}
+                                >
+                                  {summary.summaryType === 'ai_conversation' ? 'AI Conversation Summary' : 'Journal Entry'}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-slate-300 whitespace-nowrap">{summary.sourceId}</td>
+                              <td className="px-4 py-3 text-slate-100 leading-6 min-w-[420px]">
+                                {summary.summaryText || 'No summary text available.'}
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
 
