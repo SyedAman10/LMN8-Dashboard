@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '@/lib/apiClient';
 
-// API Base URL - Update this if your backend runs on a different port/domain
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const CLINICIAN_BASE_URL = 'https://lumenatehealth.com';
+const SUMMARY_PAGE_SIZE = 20;
 
 export default function PatientDetailsModal({ patient, isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('overview');
@@ -16,6 +16,12 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
   const [notification, setNotification] = useState(null);
+  const [sharedSummaries, setSharedSummaries] = useState([]);
+  const [summariesLoading, setSummariesLoading] = useState(false);
+  const [summariesError, setSummariesError] = useState('');
+  const [summaryTypeFilter, setSummaryTypeFilter] = useState('ai_conversation');
+  const [summariesOffset, setSummariesOffset] = useState(0);
+  const [hasMoreSummaries, setHasMoreSummaries] = useState(false);
 
   // Note form state
   const [noteForm, setNoteForm] = useState({
@@ -37,8 +43,19 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
     if (isOpen && patient) {
       fetchNotes();
       fetchDocuments();
+      setSharedSummaries([]);
+      setSummariesError('');
+      setSummariesOffset(0);
+      setHasMoreSummaries(false);
+      setSummaryTypeFilter('ai_conversation');
     }
   }, [isOpen, patient]);
+
+  useEffect(() => {
+    if (isOpen && patient && activeTab === 'sessions') {
+      fetchSharedSummaries({ reset: true });
+    }
+  }, [isOpen, patient?.id, activeTab, summaryTypeFilter]);
 
   useEffect(() => {
     if (isOpen) {
@@ -78,6 +95,82 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
       }
     } catch (error) {
       console.error('Error fetching documents:', error);
+    }
+  };
+
+  const normalizeSharedSummary = (entry, index) => {
+    const rawType = String(entry?.summaryType || entry?.tag || '').toLowerCase();
+    const normalizedType =
+      rawType === 'ai_conversation' || rawType === 'ai_conversation_summary'
+        ? 'ai_conversation'
+        : rawType === 'journal' || rawType === 'journal_entry'
+          ? 'journal_entry'
+          : 'ai_conversation';
+
+    return {
+      id: String(entry?.id || entry?._id || `shared-summary-${index}`),
+      summaryType: normalizedType,
+      summaryText: entry?.summaryText || entry?.summary || entry?.content || '',
+      sourceId: entry?.sourceId || entry?.sessionId || entry?.linkedSession || 'N/A',
+      createdAt: entry?.createdAt || entry?.submittedAt || new Date().toISOString()
+    };
+  };
+
+  const fetchSharedSummaries = async ({ reset = false } = {}) => {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+      if (!token) {
+        setSummariesError('Missing auth token. Please sign in again.');
+        return;
+      }
+
+      setSummariesLoading(true);
+      setSummariesError('');
+
+      const nextOffset = reset ? 0 : summariesOffset;
+      const query = new URLSearchParams({
+        summaryType: summaryTypeFilter,
+        limit: String(SUMMARY_PAGE_SIZE),
+        offset: String(nextOffset)
+      });
+
+      const response = await fetch(
+        `${CLINICIAN_BASE_URL}/api/backend/clinician/patients/${encodeURIComponent(patient.id)}/shared-summaries?${query.toString()}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        if (response.status === 403) {
+          setSummariesError('Clinician is not linked to this patient yet. Link patient access first.');
+          return;
+        }
+        setSummariesError(`Failed to load summaries (${response.status}).`);
+        return;
+      }
+
+      const data = await response.json();
+      const rawSummaries = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.summaries)
+          ? data.summaries
+          : Array.isArray(data?.data)
+            ? data.data
+            : [];
+
+      const normalized = rawSummaries.map(normalizeSharedSummary);
+      setSharedSummaries((prev) => (reset ? normalized : [...prev, ...normalized]));
+      setSummariesOffset(nextOffset + normalized.length);
+      setHasMoreSummaries(normalized.length === SUMMARY_PAGE_SIZE);
+    } catch (error) {
+      console.error('Error fetching shared summaries:', error);
+      setSummariesError('Error loading shared summaries.');
+    } finally {
+      setSummariesLoading(false);
     }
   };
 
@@ -393,7 +486,10 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
               <div className="bg-slate-700/30 rounded-xl p-4 border border-slate-600/30">
                 <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <button className="bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-400 py-2 px-4 rounded-lg transition-colors">
+                  <button
+                    onClick={() => setActiveTab('sessions')}
+                    className="bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-400 py-2 px-4 rounded-lg transition-colors"
+                  >
                     Start Session
                   </button>
                   <button 
@@ -419,6 +515,91 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
                   </button>
                 </div>
               </div>
+            </div>
+          )}
+
+          {activeTab === 'sessions' && (
+            <div className="space-y-4">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <h3 className="text-lg font-semibold text-white">Shared Patient Summaries</h3>
+                <div className="flex gap-2">
+                  <select
+                    value={summaryTypeFilter}
+                    onChange={(e) => setSummaryTypeFilter(e.target.value)}
+                    className="bg-slate-700/50 border border-slate-600/50 rounded-lg px-3 py-2 text-sm text-white"
+                  >
+                    <option value="ai_conversation">AI Conversation</option>
+                    <option value="journal_entry">Journal Entry</option>
+                  </select>
+                  <button
+                    onClick={() => fetchSharedSummaries({ reset: true })}
+                    disabled={summariesLoading}
+                    className="bg-slate-700/50 hover:bg-slate-700/70 text-white text-sm py-2 px-4 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    Refresh
+                  </button>
+                </div>
+              </div>
+
+              {summariesError && (
+                <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-300 text-sm">
+                  {summariesError}
+                </div>
+              )}
+
+              {summariesLoading && sharedSummaries.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500 mx-auto"></div>
+                  <p className="text-slate-400 mt-2">Loading summaries...</p>
+                </div>
+              ) : sharedSummaries.length === 0 ? (
+                <div className="text-center py-8 text-slate-400">
+                  <p className="text-4xl mb-4">🧾</p>
+                  <p>No shared summaries found</p>
+                  <p className="text-sm mt-2">Try a different summary type filter.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {sharedSummaries.map((summary) => (
+                    <div key={summary.id} className="bg-slate-700/30 rounded-xl p-4 border border-slate-600/30">
+                      <div className="flex flex-wrap justify-between items-start gap-3">
+                        <div>
+                          <p className="text-white font-semibold">
+                            {summary.summaryType === 'ai_conversation' ? 'AI Conversation Summary' : 'Journal Entry Summary'}
+                          </p>
+                          <p className="text-slate-400 text-xs mt-1">
+                            {new Date(summary.createdAt).toLocaleString()} • Source: {summary.sourceId}
+                          </p>
+                        </div>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            summary.summaryType === 'ai_conversation'
+                              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                              : 'bg-teal-500/20 text-teal-300 border border-teal-500/30'
+                          }`}
+                        >
+                          {summary.summaryType}
+                        </span>
+                      </div>
+                      <p className="text-slate-100 mt-3 leading-6 text-sm">
+                        {summary.summaryText || 'No summary text available.'}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {hasMoreSummaries && (
+                <div className="flex justify-center pt-2">
+                  <button
+                    onClick={() => fetchSharedSummaries({ reset: false })}
+                    disabled={summariesLoading}
+                    className="bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 text-sm py-2 px-4 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {summariesLoading ? 'Loading...' : 'Load More'}
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
