@@ -126,15 +126,11 @@ export default function ReportsContent() {
       setFeedbackLoading(true);
       const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
 
-      const response = await fetch(`${CLINICIAN_SHARING_BASE_URL}/api/backend/clinician-sharing/summaries`, {
-        method: 'POST',
+      const response = await fetch(`${CLINICIAN_SHARING_BASE_URL}/api/backend/clinician-sharing/summaries?summaryType=ai_conversation`, {
+        method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify({
-          summaryType: 'ai_conversation'
-        })
+        }
       });
 
       if (!response.ok) {
