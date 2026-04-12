@@ -688,8 +688,13 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
                                   {summary.summaryType === 'ai_conversation' ? 'AI Conversation Summary' : 'Journal Entry'}
                                 </span>
                               </td>
-                              <td className="px-4 py-3 text-slate-100 leading-6 min-w-[420px]">
-                                {summary.summaryText || 'No summary text available.'}
+                              <td className="px-4 py-3 text-slate-100 max-w-[520px]">
+                                <div
+                                  className="truncate whitespace-nowrap overflow-hidden"
+                                  title={summary.summaryText || 'No summary text available.'}
+                                >
+                                  {summary.summaryText || 'No summary text available.'}
+                                </div>
                               </td>
                             </tr>
                           ))}

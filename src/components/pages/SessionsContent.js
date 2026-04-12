@@ -14,6 +14,8 @@ export default function SessionsContent() {
   const [summariesLoading, setSummariesLoading] = useState(false);
   const [summariesError, setSummariesError] = useState('');
   const [summaryTypeFilter, setSummaryTypeFilter] = useState('all');
+  const [isLegacyUnlinked, setIsLegacyUnlinked] = useState(false);
+  const [linkingLegacyPatient, setLinkingLegacyPatient] = useState(false);
 
   useEffect(() => {
     fetchPatients();
@@ -97,6 +99,7 @@ export default function SessionsContent() {
 
       setSummariesLoading(true);
       setSummariesError('');
+      setIsLegacyUnlinked(false);
 
       const [aiResponse, journalResponse] = await Promise.all([
         fetchByType(patientId, token, 'ai_conversation'),
@@ -106,6 +109,7 @@ export default function SessionsContent() {
       if (aiResponse.status === 403 || journalResponse.status === 403) {
         setSummaries([]);
         setSummariesError('Patient is not linked to this clinician yet. Link the patient first.');
+        await checkIfLegacyPatientUnlinked(patientId, token);
         return;
       }
 
@@ -145,6 +149,86 @@ export default function SessionsContent() {
       setSummariesError('Error loading patient summaries.');
     } finally {
       setSummariesLoading(false);
+    }
+  };
+
+  const checkIfLegacyPatientUnlinked = async (patientId, token) => {
+    try {
+      const query = new URLSearchParams({
+        search: String(patientId),
+        limit: '50',
+        offset: '0'
+      });
+
+      const response = await fetch(
+        `${CLINICIAN_BASE_URL}/api/backend/clinician/patients/unlinked?${query.toString()}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) return;
+      const data = await response.json();
+      const candidates = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.patients)
+          ? data.patients
+          : Array.isArray(data?.data)
+            ? data.data
+            : [];
+
+      const currentPatientId = String(patientId);
+      const foundUnlinked = candidates.some((entry) => String(entry?.patientId || entry?.id) === currentPatientId);
+      setIsLegacyUnlinked(foundUnlinked);
+    } catch (error) {
+      console.error('Error checking unlinked legacy patients:', error);
+    }
+  };
+
+  const handleLinkLegacyPatient = async () => {
+    try {
+      if (!selectedPatient?.id) return;
+
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+      if (!token) {
+        setSummariesError('Missing auth token. Please sign in again.');
+        return;
+      }
+
+      setLinkingLegacyPatient(true);
+      const response = await fetch(
+        `${CLINICIAN_BASE_URL}/api/backend/clinician/patients/${encodeURIComponent(selectedPatient.id)}/link`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({})
+        }
+      );
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        const errorMessage =
+          payload?.error?.message ||
+          payload?.message ||
+          `Failed to link patient (${response.status}).`;
+        setSummariesError(errorMessage);
+        return;
+      }
+
+      setIsLegacyUnlinked(false);
+      setSummariesError('');
+      await fetchPatientSummaries(selectedPatient.id);
+    } catch (error) {
+      console.error('Error linking legacy patient:', error);
+      setSummariesError('Error linking patient.');
+    } finally {
+      setLinkingLegacyPatient(false);
     }
   };
 
@@ -241,7 +325,18 @@ export default function SessionsContent() {
 
               {summariesError && (
                 <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-300 text-sm">
-                  {summariesError}
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <span>{summariesError}</span>
+                    {isLegacyUnlinked && (
+                      <button
+                        onClick={handleLinkLegacyPatient}
+                        disabled={linkingLegacyPatient}
+                        className="bg-cyan-600/30 hover:bg-cyan-600/40 text-cyan-100 border border-cyan-500/40 text-sm py-2 px-3 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {linkingLegacyPatient ? 'Linking...' : 'Link Legacy Patient'}
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
 
@@ -277,8 +372,13 @@ export default function SessionsContent() {
                                 {entry.summaryType === 'ai_conversation' ? 'AI Conversation Summary' : 'Journal Entry'}
                               </span>
                             </td>
-                            <td className="px-4 py-3 text-slate-100 leading-6 min-w-[420px]">
-                              {entry.summaryText || 'No summary text available.'}
+                            <td className="px-4 py-3 text-slate-100 max-w-[520px]">
+                              <div
+                                className="truncate whitespace-nowrap overflow-hidden"
+                                title={entry.summaryText || 'No summary text available.'}
+                              >
+                                {entry.summaryText || 'No summary text available.'}
+                              </div>
                             </td>
                           </tr>
                         ))}
