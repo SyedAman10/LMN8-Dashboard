@@ -120,7 +120,7 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
     };
   };
 
-  const fetchSharedSummaries = async ({ reset = false } = {}) => {
+  const fetchSharedSummaries = async ({ reset = false, allowAutoLink = true } = {}) => {
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
       if (!token) {
@@ -151,8 +151,17 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
 
       if (!response.ok) {
         if (response.status === 403) {
+          const foundUnlinked = await checkIfLegacyPatientUnlinked(token);
+          if (allowAutoLink && foundUnlinked) {
+            setSummariesError('Patient is not linked yet. Linking automatically...');
+            const autoLinked = await linkPatientToClinician(token, { silent: true });
+            if (autoLinked) {
+              await fetchSharedSummaries({ reset: true, allowAutoLink: false });
+              return;
+            }
+          }
+
           setSummariesError('Clinician is not linked to this patient yet. Link patient access first.');
-          await checkIfLegacyPatientUnlinked();
           return;
         }
         setSummariesError(`Failed to load summaries (${response.status}).`);
@@ -181,9 +190,9 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
     }
   };
 
-  const checkIfLegacyPatientUnlinked = async () => {
+  const checkIfLegacyPatientUnlinked = async (tokenOverride = null) => {
     try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+      const token = tokenOverride || (typeof window !== 'undefined' ? localStorage.getItem('authToken') : null);
       if (!token) return;
 
       const query = new URLSearchParams({
@@ -215,17 +224,22 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
       const currentPatientId = String(patient.id);
       const foundUnlinked = candidates.some((entry) => String(entry?.patientId || entry?.id) === currentPatientId);
       setIsLegacyUnlinked(foundUnlinked);
+      return foundUnlinked;
     } catch (error) {
       console.error('Error checking unlinked legacy patients:', error);
+      return false;
     }
   };
 
-  const handleLinkLegacyPatient = async () => {
+  const linkPatientToClinician = async (tokenOverride = null, options = {}) => {
+    const { silent = false } = options;
     try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+      const token = tokenOverride || (typeof window !== 'undefined' ? localStorage.getItem('authToken') : null);
       if (!token) {
-        showNotification('error', 'Missing auth token. Please sign in again.');
-        return;
+        if (!silent) {
+          showNotification('error', 'Missing auth token. Please sign in again.');
+        }
+        return false;
       }
 
       setLinkingLegacyPatient(true);
@@ -247,20 +261,33 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
           payload?.error?.message ||
           payload?.message ||
           `Failed to link patient (${response.status}).`;
-        showNotification('error', errorMessage);
-        return;
+        if (!silent) {
+          showNotification('error', errorMessage);
+        }
+        return false;
       }
 
       setIsLegacyUnlinked(false);
-      setSummariesError('');
-      showNotification('success', 'Patient linked successfully. Loading shared summaries...');
-      await fetchSharedSummaries({ reset: true });
+      if (!silent) {
+        setSummariesError('');
+        showNotification('success', 'Patient linked successfully. Loading shared summaries...');
+      }
+      return true;
     } catch (error) {
       console.error('Error linking legacy patient:', error);
-      showNotification('error', 'Error linking patient.');
+      if (!silent) {
+        showNotification('error', 'Error linking patient.');
+      }
+      return false;
     } finally {
       setLinkingLegacyPatient(false);
     }
+  };
+
+  const handleLinkLegacyPatient = async () => {
+    const linked = await linkPatientToClinician();
+    if (!linked) return;
+    await fetchSharedSummaries({ reset: true });
   };
 
   const handleAddNote = async () => {

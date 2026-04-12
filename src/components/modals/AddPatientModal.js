@@ -129,7 +129,25 @@ export default function AddPatientModal({ isOpen, onClose, onSave }) {
         const createdPatientId = data?.patient?.id;
 
         if (createdPatientId) {
-          const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+          let token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+
+          // Fallback: fetch a fresh JWT token from session cookie if localStorage is empty
+          if (!token) {
+            try {
+              const tokenResponse = await fetch('/api/auth/token', {
+                credentials: 'include'
+              });
+              if (tokenResponse.ok) {
+                const tokenData = await tokenResponse.json();
+                if (tokenData?.token) {
+                  token = tokenData.token;
+                  localStorage.setItem('authToken', tokenData.token);
+                }
+              }
+            } catch (tokenError) {
+              console.error('Error fetching auth token for clinician link:', tokenError);
+            }
+          }
 
           if (token) {
             try {

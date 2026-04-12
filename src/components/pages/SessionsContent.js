@@ -88,7 +88,8 @@ export default function SessionsContent() {
     return response;
   };
 
-  const fetchPatientSummaries = async (patientId) => {
+  const fetchPatientSummaries = async (patientId, options = {}) => {
+    const { allowAutoLink = true } = options;
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
       if (!token) {
@@ -107,9 +108,18 @@ export default function SessionsContent() {
       ]);
 
       if (aiResponse.status === 403 || journalResponse.status === 403) {
+        const foundUnlinked = await checkIfLegacyPatientUnlinked(patientId, token);
+        if (allowAutoLink && foundUnlinked) {
+          setSummariesError('Patient is not linked yet. Linking automatically...');
+          const autoLinked = await linkPatientToClinician(patientId, token, { silent: true });
+          if (autoLinked) {
+            await fetchPatientSummaries(patientId, { allowAutoLink: false });
+            return;
+          }
+        }
+
         setSummaries([]);
         setSummariesError('Patient is not linked to this clinician yet. Link the patient first.');
-        await checkIfLegacyPatientUnlinked(patientId, token);
         return;
       }
 
@@ -183,24 +193,19 @@ export default function SessionsContent() {
       const currentPatientId = String(patientId);
       const foundUnlinked = candidates.some((entry) => String(entry?.patientId || entry?.id) === currentPatientId);
       setIsLegacyUnlinked(foundUnlinked);
+      return foundUnlinked;
     } catch (error) {
       console.error('Error checking unlinked legacy patients:', error);
+      return false;
     }
   };
 
-  const handleLinkLegacyPatient = async () => {
+  const linkPatientToClinician = async (patientId, token, options = {}) => {
+    const { silent = false } = options;
     try {
-      if (!selectedPatient?.id) return;
-
-      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
-      if (!token) {
-        setSummariesError('Missing auth token. Please sign in again.');
-        return;
-      }
-
       setLinkingLegacyPatient(true);
       const response = await fetch(
-        `${CLINICIAN_BASE_URL}/api/backend/clinician/patients/${encodeURIComponent(selectedPatient.id)}/link`,
+        `${CLINICIAN_BASE_URL}/api/backend/clinician/patients/${encodeURIComponent(patientId)}/link`,
         {
           method: 'POST',
           headers: {
@@ -217,18 +222,48 @@ export default function SessionsContent() {
           payload?.error?.message ||
           payload?.message ||
           `Failed to link patient (${response.status}).`;
-        setSummariesError(errorMessage);
-        return;
+        if (!silent) {
+          setSummariesError(errorMessage);
+        }
+        return false;
       }
 
       setIsLegacyUnlinked(false);
+      if (!silent) {
+        setSummariesError('');
+      }
+      return true;
+    } catch (error) {
+      console.error('Error linking legacy patient:', error);
+      if (!silent) {
+        setSummariesError('Error linking patient.');
+      }
+      return false;
+    } finally {
+      setLinkingLegacyPatient(false);
+    }
+  };
+
+  const handleLinkLegacyPatient = async () => {
+    try {
+      if (!selectedPatient?.id) return;
+
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+      if (!token) {
+        setSummariesError('Missing auth token. Please sign in again.');
+        return;
+      }
+
+      const linked = await linkPatientToClinician(selectedPatient.id, token);
+      if (!linked) {
+        return;
+      }
+
       setSummariesError('');
       await fetchPatientSummaries(selectedPatient.id);
     } catch (error) {
       console.error('Error linking legacy patient:', error);
       setSummariesError('Error linking patient.');
-    } finally {
-      setLinkingLegacyPatient(false);
     }
   };
 
