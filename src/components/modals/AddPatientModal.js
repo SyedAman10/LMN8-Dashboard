@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 
+const CLINICIAN_BASE_URL = 'https://lumenatehealth.com';
+
 export default function AddPatientModal({ isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState({
     name: '',
@@ -123,8 +125,66 @@ export default function AddPatientModal({ isOpen, onClose, onSave }) {
       const data = await response.json();
 
       if (response.ok) {
+        let clinicianLinkResult = { success: false, skipped: true, error: null };
+        const createdPatientId = data?.patient?.id;
+
+        if (createdPatientId) {
+          const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+
+          if (token) {
+            try {
+              const linkResponse = await fetch(
+                `${CLINICIAN_BASE_URL}/api/backend/clinician/patients/${encodeURIComponent(createdPatientId)}/link`,
+                {
+                  method: 'POST',
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({})
+                }
+              );
+
+              let linkPayload = null;
+              try {
+                linkPayload = await linkResponse.json();
+              } catch {
+                linkPayload = null;
+              }
+
+              clinicianLinkResult = {
+                success: linkResponse.ok,
+                skipped: false,
+                error:
+                  linkPayload?.error?.message ||
+                  linkPayload?.message ||
+                  (!linkResponse.ok ? `Link API failed (${linkResponse.status})` : null)
+              };
+            } catch (linkError) {
+              clinicianLinkResult = {
+                success: false,
+                skipped: false,
+                error: linkError?.message || 'Failed to call clinician link API'
+              };
+            }
+          } else {
+            clinicianLinkResult = {
+              success: false,
+              skipped: false,
+              error: 'Missing auth token for clinician link API'
+            };
+          }
+        }
+
+        const enhancedResponseData = {
+          ...data,
+          clinicianLinkSuccess: clinicianLinkResult.success,
+          clinicianLinkSkipped: clinicianLinkResult.skipped,
+          clinicianLinkError: clinicianLinkResult.error
+        };
+
         // Success - call the onSave callback with the created patient and full response data
-        onSave(data.patient, data);
+        onSave(data.patient, enhancedResponseData);
         onClose();
         setCurrentStep(1);
         setFormData({

@@ -136,6 +136,12 @@ export default function Dashboard() {
     } else {
       message += " Note: No email provided - no user account or emails sent.";
     }
+
+    if (responseData?.clinicianLinkSuccess) {
+      message += ' Patient linked to clinician successfully.';
+    } else if (!responseData?.clinicianLinkSkipped) {
+      message += ` Patient created, but clinician link failed${responseData?.clinicianLinkError ? `: ${responseData.clinicianLinkError}.` : '.'}`;
+    }
     
     setShowSuccessAlert({
       isOpen: true,
