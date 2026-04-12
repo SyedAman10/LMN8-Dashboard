@@ -22,6 +22,8 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
   const [summaryTypeFilter, setSummaryTypeFilter] = useState('ai_conversation');
   const [summariesOffset, setSummariesOffset] = useState(0);
   const [hasMoreSummaries, setHasMoreSummaries] = useState(false);
+  const [isLegacyUnlinked, setIsLegacyUnlinked] = useState(false);
+  const [linkingLegacyPatient, setLinkingLegacyPatient] = useState(false);
 
   // Note form state
   const [noteForm, setNoteForm] = useState({
@@ -48,6 +50,8 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
       setSummariesOffset(0);
       setHasMoreSummaries(false);
       setSummaryTypeFilter('ai_conversation');
+      setIsLegacyUnlinked(false);
+      setLinkingLegacyPatient(false);
     }
   }, [isOpen, patient]);
 
@@ -126,6 +130,7 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
 
       setSummariesLoading(true);
       setSummariesError('');
+      setIsLegacyUnlinked(false);
 
       const nextOffset = reset ? 0 : summariesOffset;
       const query = new URLSearchParams({
@@ -147,6 +152,7 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
       if (!response.ok) {
         if (response.status === 403) {
           setSummariesError('Clinician is not linked to this patient yet. Link patient access first.');
+          await checkIfLegacyPatientUnlinked();
           return;
         }
         setSummariesError(`Failed to load summaries (${response.status}).`);
@@ -166,11 +172,94 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
       setSharedSummaries((prev) => (reset ? normalized : [...prev, ...normalized]));
       setSummariesOffset(nextOffset + normalized.length);
       setHasMoreSummaries(normalized.length === SUMMARY_PAGE_SIZE);
+      setIsLegacyUnlinked(false);
     } catch (error) {
       console.error('Error fetching shared summaries:', error);
       setSummariesError('Error loading shared summaries.');
     } finally {
       setSummariesLoading(false);
+    }
+  };
+
+  const checkIfLegacyPatientUnlinked = async () => {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+      if (!token) return;
+
+      const query = new URLSearchParams({
+        search: String(patient.id),
+        limit: '50',
+        offset: '0'
+      });
+
+      const response = await fetch(
+        `${CLINICIAN_BASE_URL}/api/backend/clinician/patients/unlinked?${query.toString()}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) return;
+      const data = await response.json();
+      const candidates = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.patients)
+          ? data.patients
+          : Array.isArray(data?.data)
+            ? data.data
+            : [];
+
+      const currentPatientId = String(patient.id);
+      const foundUnlinked = candidates.some((entry) => String(entry?.patientId || entry?.id) === currentPatientId);
+      setIsLegacyUnlinked(foundUnlinked);
+    } catch (error) {
+      console.error('Error checking unlinked legacy patients:', error);
+    }
+  };
+
+  const handleLinkLegacyPatient = async () => {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+      if (!token) {
+        showNotification('error', 'Missing auth token. Please sign in again.');
+        return;
+      }
+
+      setLinkingLegacyPatient(true);
+      const response = await fetch(
+        `${CLINICIAN_BASE_URL}/api/backend/clinician/patients/${encodeURIComponent(patient.id)}/link`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({})
+        }
+      );
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        const errorMessage =
+          payload?.error?.message ||
+          payload?.message ||
+          `Failed to link patient (${response.status}).`;
+        showNotification('error', errorMessage);
+        return;
+      }
+
+      setIsLegacyUnlinked(false);
+      setSummariesError('');
+      showNotification('success', 'Patient linked successfully. Loading shared summaries...');
+      await fetchSharedSummaries({ reset: true });
+    } catch (error) {
+      console.error('Error linking legacy patient:', error);
+      showNotification('error', 'Error linking patient.');
+    } finally {
+      setLinkingLegacyPatient(false);
     }
   };
 
@@ -543,7 +632,18 @@ export default function PatientDetailsModal({ patient, isOpen, onClose }) {
 
               {summariesError && (
                 <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-300 text-sm">
-                  {summariesError}
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <span>{summariesError}</span>
+                    {isLegacyUnlinked && (
+                      <button
+                        onClick={handleLinkLegacyPatient}
+                        disabled={linkingLegacyPatient}
+                        className="bg-cyan-600/30 hover:bg-cyan-600/40 text-cyan-100 border border-cyan-500/40 text-sm py-2 px-3 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {linkingLegacyPatient ? 'Linking...' : 'Link Legacy Patient'}
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
 
