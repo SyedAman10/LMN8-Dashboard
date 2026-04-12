@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { api } from '@/lib/apiClient';
+const CLINICIAN_SHARING_BASE_URL = 'https://lumenatehealth.com';
 
 export default function ReportsContent() {
   const [savedReports, setSavedReports] = useState([]);
@@ -124,8 +124,17 @@ export default function ReportsContent() {
   const fetchPatientFeedbackSummaries = async () => {
     try {
       setFeedbackLoading(true);
-      const response = await api.post('/api/backend/clinician-sharing/summaries', {
-        summaryType: 'ai_conversation'
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+
+      const response = await fetch(`${CLINICIAN_SHARING_BASE_URL}/api/backend/clinician-sharing/summaries`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          summaryType: 'ai_conversation'
+        })
       });
 
       if (!response.ok) {
