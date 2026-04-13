@@ -386,7 +386,7 @@ export default function SessionsContent() {
                       <thead className="sticky top-0 bg-slate-800/95 backdrop-blur-sm z-10">
                         <tr className="border-b border-slate-600/40">
                           <th className="text-left px-4 py-3 text-slate-300 font-semibold">Date</th>
-                          <th className="text-left px-4 py-3 text-slate-300 font-semibold">Type</th>
+                          <th className="text-left px-4 py-3 text-slate-300 font-semibold whitespace-nowrap">Type</th>
                           <th className="text-left px-4 py-3 text-slate-300 font-semibold">Summary</th>
                         </tr>
                       </thead>
@@ -396,9 +396,9 @@ export default function SessionsContent() {
                             <td className="px-4 py-3 text-slate-200 whitespace-nowrap">
                               {new Date(entry.createdAt).toLocaleString()}
                             </td>
-                            <td className="px-4 py-3">
+                            <td className="px-4 py-3 whitespace-nowrap">
                               <span
-                                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                className={`inline-flex whitespace-nowrap px-2 py-1 rounded-full text-xs font-medium ${
                                   entry.summaryType === 'ai_conversation'
                                     ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
                                     : 'bg-teal-500/20 text-teal-300 border border-teal-500/30'
@@ -409,7 +409,7 @@ export default function SessionsContent() {
                             </td>
                             <td className="px-4 py-3 text-slate-100 max-w-[520px]">
                               <div
-                                className="truncate whitespace-nowrap overflow-hidden"
+                                className="whitespace-pre-wrap break-words"
                                 title={entry.summaryText || 'No summary text available.'}
                               >
                                 {entry.summaryText || 'No summary text available.'}
