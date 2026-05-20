@@ -418,3 +418,6 @@ FodyWeavers.xsd
 *.msm
 *.msp
 .next
+
+# Uploaded files
+public/uploads/
