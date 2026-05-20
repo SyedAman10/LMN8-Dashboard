@@ -127,8 +127,14 @@ export async function POST(request) {
           if (transcription) transcribedText = transcription;
         }
 
-        if (mediaType === 'voice' && !content) {
-          content = transcribedText || 'Voice memo entry';
+        if (mediaType === 'voice' && transcribedText) {
+          if (!content || content === 'Voice memo entry') {
+            content = transcribedText;
+          } else if (!content.includes(transcribedText.slice(0, 50))) {
+            content = content + '\n\n[Voice transcription]: ' + transcribedText;
+          }
+        } else if (mediaType === 'voice' && !content) {
+          content = 'Voice memo entry';
         }
       }
 
