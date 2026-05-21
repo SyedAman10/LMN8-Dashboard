@@ -82,21 +82,21 @@ export async function POST(request) {
   } catch (error) {
     console.error('❌ Patient login error:', error);
     console.error('Error stack:', error.stack);
-    // Diagnostic checks
+    const diag = { dbUrlSet: false, jwtSecretSet: false, patientUsersTable: null, dbConnected: false, errorMsg: error.message };
     try {
-      console.log('🔍 DIAGNOSTIC: Checking environment and DB...');
-      console.log('  DATABASE_URL set:', !!process.env.DATABASE_URL);
-      console.log('  JWT_SECRET set:', !!process.env.JWT_SECRET);
-      console.log('  NODE_ENV:', process.env.NODE_ENV);
+      diag.dbUrlSet = !!process.env.DATABASE_URL;
+      diag.jwtSecretSet = !!process.env.JWT_SECRET;
+      diag.nodeEnv = process.env.NODE_ENV;
       const tableCheck = await query("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'patient_users') AS exists");
-      console.log('  patient_users table exists:', tableCheck.rows[0]?.exists);
+      diag.patientUsersTable = tableCheck.rows[0]?.exists;
       const dbTest = await query("SELECT NOW() AS t");
-      console.log('  DB connection OK:', dbTest.rows[0]?.t);
+      diag.dbConnected = true;
+      diag.dbTime = dbTest.rows[0]?.t;
     } catch (diagErr) {
-      console.error('  DIAGNOSTIC ERROR:', diagErr.message);
+      diag.diagError = diagErr.message;
     }
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', diagnostics: diag },
       { status: 500 }
     );
   }
