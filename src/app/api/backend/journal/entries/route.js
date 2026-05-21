@@ -21,6 +21,10 @@ const HARM_KEYWORDS = [
   "want kill", "kill a", "kill someone", "want to kill",
   "hurt you", "hurt him", "hurt her",
   "want to hurt", "going to hurt",
+  // Indirect crisis (careful — only clear suicide/self-harm intent)
+  "never wake up", "don't want to be here anymore",
+  "better off without me", "nobody would miss", "want to end it",
+  "end the pain", "no way out", "end my life",
 ];
 
 function containsHarmfulContent(text) {
