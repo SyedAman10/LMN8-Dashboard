@@ -7,7 +7,8 @@ export async function POST(request) {
   try {
     console.log('🔐 Patient Login API called');
     const body = await request.json();
-    const { username, password } = body;
+    const username = (body.username || '').trim();
+    const password = body.password;
     console.log('📝 Login attempt for username:', username);
 
     // Validate input

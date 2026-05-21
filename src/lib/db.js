@@ -2,7 +2,7 @@ import { Pool } from '@neondatabase/serverless';
 import dotenv from 'dotenv';
 
 // Load environment variables
-dotenv.config({ path: '.env.local' });
+dotenv.config({ path: '.env.local', override: true, expand: true });
 
 // Get database connection string
 const connectionString = process.env.DATABASE_URL || process.env.NEON_DATABASE_URL;

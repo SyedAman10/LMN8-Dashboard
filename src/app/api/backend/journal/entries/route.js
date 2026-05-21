@@ -5,8 +5,31 @@ import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
 import { transcribeAudioLocally } from '@/lib/transcribe';
+import { sendCrisisAlert } from '@/lib/crisisEmail';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key_here';
+
+const HARM_KEYWORDS = [
+  // Self-harm
+  "suicide", "kill myself", "harm myself", "end my life",
+  "want to die", "i want to die", "commit suicide", "self-harm",
+  "better off dead", "end it all", "no reason to live",
+  "cut myself", "hurt myself", "take my own life",
+  // Harm to others
+  "kill you", "kill him", "kill her", "kill them",
+  "i want to kill", "going to kill", "wanna kill",
+  "want kill", "kill a", "kill someone", "want to kill",
+  "hurt you", "hurt him", "hurt her",
+  "want to hurt", "going to hurt",
+];
+
+function containsHarmfulContent(text) {
+  if (!text) return false;
+  const lower = text.toLowerCase();
+  return HARM_KEYWORDS.some(kw => lower.includes(kw));
+}
+
+
 
 function getTokenFromRequest(request) {
   const authHeader = request.headers.get('authorization');
@@ -172,10 +195,58 @@ export async function POST(request) {
     const entry = result.rows[0];
     console.log(`Journal entry created: ID=${entry.id}, type=${mediaType}, transcribed=${!!transcribedText}`);
 
+    // Crisis check: scan journal content + transcribed text for harmful keywords
+    const combinedContent = [title, content, transcribedText].filter(Boolean).join(' ');
+    let crisisResult = 'not_checked';
+    if (containsHarmfulContent(combinedContent)) {
+      crisisResult = 'detected';
+      console.log('[CRISIS] Harmful content detected in journal entry, sending alert to clinician');
+      try {
+        // Look up the clinician who created this patient, plus patient info
+        const clinicianResult = await query(
+          `SELECT u.email, u.full_name, p.name AS patient_name, p.email AS patient_email FROM users u
+           JOIN patients p ON p.user_id = u.id
+           WHERE p.id = $1
+           LIMIT 1`,
+          [decoded?.patientId]
+        );
+        if (clinicianResult.rows.length > 0) {
+          const row = clinicianResult.rows[0];
+          crisisResult = 'sending';
+          await sendCrisisAlert(row.email, row.full_name || 'Clinician', combinedContent, 'journal', row.patient_name, row.patient_email);
+          crisisResult = 'sent_to_' + row.email;
+        } else {
+          crisisResult = 'no_clinician_primary';
+          // Fallback: look up by patient_users relation
+          const fallbackResult = await query(
+            `SELECT u.email, u.full_name, p.name AS patient_name, p.email AS patient_email FROM users u
+             JOIN patients p ON p.user_id = u.id
+             JOIN patient_users pu ON pu.patient_id = p.id
+             WHERE pu.id = $1
+             LIMIT 1`,
+            [String(userId)]
+          );
+          if (fallbackResult.rows.length > 0) {
+            const row = fallbackResult.rows[0];
+            crisisResult = 'sending_fallback';
+            await sendCrisisAlert(row.email, row.full_name || 'Clinician', combinedContent, 'journal', row.patient_name, row.patient_email);
+            crisisResult = 'sent_fallback_to_' + row.email;
+          } else {
+            crisisResult = 'no_clinician_any';
+            console.warn('[CRISIS] No clinician found for patient, cannot send alert');
+          }
+        }
+      } catch (crisisErr) {
+        crisisResult = 'error_' + crisisErr.message;
+        console.error('[CRISIS] Error sending journal alert email:', crisisErr.message);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       data: entry,
       message: 'Journal entry created successfully',
+      crisis: crisisResult,
     }, { status: 201 });
   } catch (err) {
     console.error('POST journal entry error:', err);

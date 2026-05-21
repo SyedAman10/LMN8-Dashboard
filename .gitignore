@@ -9,6 +9,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.env.local
 *.env
 .next/
 
