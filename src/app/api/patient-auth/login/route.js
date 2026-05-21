@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { authenticatePatient } from '@/lib/patientAuth';
+import { query } from '@/lib/db';
 import jwt from 'jsonwebtoken';
 
 // Patient login endpoint
@@ -81,6 +82,19 @@ export async function POST(request) {
   } catch (error) {
     console.error('❌ Patient login error:', error);
     console.error('Error stack:', error.stack);
+    // Diagnostic checks
+    try {
+      console.log('🔍 DIAGNOSTIC: Checking environment and DB...');
+      console.log('  DATABASE_URL set:', !!process.env.DATABASE_URL);
+      console.log('  JWT_SECRET set:', !!process.env.JWT_SECRET);
+      console.log('  NODE_ENV:', process.env.NODE_ENV);
+      const tableCheck = await query("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'patient_users') AS exists");
+      console.log('  patient_users table exists:', tableCheck.rows[0]?.exists);
+      const dbTest = await query("SELECT NOW() AS t");
+      console.log('  DB connection OK:', dbTest.rows[0]?.t);
+    } catch (diagErr) {
+      console.error('  DIAGNOSTIC ERROR:', diagErr.message);
+    }
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
