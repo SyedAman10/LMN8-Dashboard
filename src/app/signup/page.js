@@ -13,7 +13,7 @@ export default function SignupPage() {
     email: '',
     password: '',
     confirmPassword: '',
-    role: '',
+    role: 'clinician',
     licenseNumber: '',
     agreeToTerms: false
   });
@@ -74,7 +74,6 @@ export default function SignupPage() {
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
-    if (!formData.role) newErrors.role = 'Please select your role';
     if (formData.role === 'clinician' && !formData.licenseNumber.trim()) {
       newErrors.licenseNumber = 'License number is required for clinicians';
     }
@@ -247,21 +246,15 @@ export default function SignupPage() {
                     <div className="group">
                       <label className="block text-sm font-medium text-white/80 mb-2 group-hover:text-white transition-colors">Role</label>
                       <div className="relative">
-                        <select
+                        <input
+                          type="text"
                           name="role"
-                          value={formData.role}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-3 bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl text-white focus:outline-none focus:border-cyan-400/50 focus:bg-white/10 transition-all duration-300 hover:bg-white/10 ${errors.role ? 'border-red-400/50' : ''}`}
-                        >
-                          <option value="" className="bg-indigo-900 text-white">Select your role</option>
-                          <option value="clinician" className="bg-indigo-900 text-white">Licensed Clinician</option>
-                          <option value="researcher" className="bg-indigo-900 text-white">Researcher</option>
-                          <option value="student" className="bg-indigo-900 text-white">Student</option>
-                          <option value="other" className="bg-indigo-900 text-white">Other</option>
-                        </select>
-                        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-cyan-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                          value="Clinician"
+                          disabled
+                          aria-disabled="true"
+                          className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white/70 cursor-not-allowed opacity-70"
+                        />
                       </div>
-                      {errors.role && <p className="text-red-400 text-sm mt-1">{errors.role}</p>}
                     </div>
 
                     {/* License Number (conditional) */}
