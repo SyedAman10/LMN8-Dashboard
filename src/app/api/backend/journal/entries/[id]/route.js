@@ -4,7 +4,7 @@ import { query } from '@/lib/db';
 import { unlink } from 'fs/promises';
 import path from 'path';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key_here';
+const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key_here_change_this_in_production';
 
 function getTokenFromRequest(request) {
   const authHeader = request.headers.get('authorization');
