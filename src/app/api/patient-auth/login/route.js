@@ -44,7 +44,7 @@ export async function POST(request) {
         username: authResult.user.username,
         type: 'patient'
       },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'your_super_secret_jwt_key_here_change_this_in_production',
       { expiresIn: '7d' }
     );
 
