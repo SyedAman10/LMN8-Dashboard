@@ -9,6 +9,7 @@ async function migrateUserSessionsToUuid() {
     }
 
     
+
     console.log('🔍 Inspecting current schema...');
     const usersIdTypeResult = await query(
       "SELECT data_type FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'id'"
