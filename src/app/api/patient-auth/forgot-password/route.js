@@ -65,7 +65,7 @@ export async function POST(request) {
         username: patientUser.username,
         type: 'password_reset'
       },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'your_super_secret_jwt_key_here_change_this_in_production',
       { expiresIn: '1h' }
     );
 

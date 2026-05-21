@@ -33,7 +33,7 @@ export async function POST(request) {
     // Verify reset token
     let decoded;
     try {
-      decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
+      decoded = jwt.verify(resetToken, process.env.JWT_SECRET || 'your_super_secret_jwt_key_here_change_this_in_production');
       console.log('✅ Reset token verified for user ID:', decoded.userId);
     } catch (error) {
       console.log('❌ Invalid or expired reset token:', error.message);
@@ -88,7 +88,7 @@ export async function POST(request) {
         username: decoded.username,
         type: 'patient'
       },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'your_super_secret_jwt_key_here_change_this_in_production',
       { expiresIn: '7d' }
     );
 

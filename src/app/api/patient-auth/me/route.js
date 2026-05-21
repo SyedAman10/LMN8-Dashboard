@@ -17,7 +17,7 @@ export async function GET(request) {
     // Verify JWT token
     let decoded;
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_super_secret_jwt_key_here_change_this_in_production');
     } catch (error) {
       return NextResponse.json(
         { error: 'Invalid or expired token' },
