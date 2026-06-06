@@ -15,6 +15,7 @@ export default function LandingPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState(null);
   const [showDemoForm, setShowDemoForm] = useState(false);
+  const [demoSubmitted, setDemoSubmitted] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
   const [submittingDemo, setSubmittingDemo] = useState(false);
   const [submittingContact, setSubmittingContact] = useState(false);
@@ -35,6 +36,15 @@ export default function LandingPage() {
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+  useEffect(() => {
+    if (!demoSubmitted) return;
+    const script = document.createElement('script');
+    script.src = 'https://assets.calendly.com/assets/external/widget.js';
+    script.async = true;
+    document.head.appendChild(script);
+    return () => { document.head.removeChild(script); };
+  }, [demoSubmitted]);
 
   const handleDemoSubmit = async (e) => {
     e.preventDefault();
@@ -58,11 +68,7 @@ export default function LandingPage() {
       const result = await response.json();
 
       if (response.ok) {
-        setNotification({
-          type: 'success',
-          message: 'Thank you for your interest! We\'ll be in touch within 24 hours to schedule your demo.'
-        });
-        setShowDemoForm(false);
+        setDemoSubmitted(true);
         setDemoFormData({ name: '', email: '', clinicName: '', phone: '' });
       } else {
         setNotification({
@@ -924,16 +930,28 @@ export default function LandingPage() {
       {/* Demo Form Modal */}
       {showDemoForm && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <GlassCard className="max-w-md w-full p-8 relative">
+          <GlassCard className={`${demoSubmitted ? 'max-w-2xl' : 'max-w-md'} w-full p-8 relative`}>
             <button
-              onClick={() => setShowDemoForm(false)}
+              onClick={() => { setShowDemoForm(false); setDemoSubmitted(false); }}
               className="absolute top-4 right-4 text-text-60 hover:text-text-100 text-2xl"
             >
               ×
             </button>
-            
+
+            {demoSubmitted ? (
+              <>
+                <h2 className="text-2xl font-serif font-bold text-text-100 mb-2">Pick a Time</h2>
+                <p className="text-text-60 text-sm mb-4">We received your info — now choose a slot that works for you.</p>
+                <div
+                  className="calendly-inline-widget"
+                  data-url="https://calendly.com/jk-aidemai"
+                  style={{ minWidth: '300px', height: '600px' }}
+                />
+              </>
+            ) : (
+            <>
             <h2 className="text-3xl font-serif font-bold text-text-100 mb-6">Schedule Your Demo</h2>
-            
+
             <form onSubmit={handleDemoSubmit} className="space-y-4">
               <div>
                 <label className="block text-text-85 mb-2">Name</label>
@@ -997,6 +1015,8 @@ export default function LandingPage() {
                 )}
               </button>
             </form>
+            </>
+            )}
           </GlassCard>
         </div>
       )}

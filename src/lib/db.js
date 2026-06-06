@@ -1,8 +1,15 @@
-import { Pool } from '@neondatabase/serverless';
+import { Pool, neonConfig } from '@neondatabase/serverless';
+
+// In Node.js environments (scripts), provide a WebSocket implementation
+if (typeof WebSocket === 'undefined') {
+  const { default: ws } = await import('ws');
+  neonConfig.webSocketConstructor = ws;
+}
 import dotenv from 'dotenv';
 
 // Load environment variables
-dotenv.config({ path: '.env.local', override: true, expand: true });
+dotenv.config({ path: '.env.local', expand: true });
+dotenv.config({ path: '.env', expand: true });
 
 // Get database connection string
 const connectionString = process.env.DATABASE_URL || process.env.NEON_DATABASE_URL;
