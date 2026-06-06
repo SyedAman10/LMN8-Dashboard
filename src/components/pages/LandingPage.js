@@ -288,37 +288,65 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section - Full Screen */}
-      <section className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 mb-0 pt-20" data-hero-spotlight>
+      <section
+        className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 mb-0 pt-20"
+        data-hero-spotlight
+        data-hero-3d
+        style={{perspective: '1400px', perspectiveOrigin: '50% 50%'}}
+      >
         {/* Cursor spotlight — updated by PremiumEffects.js */}
         <div className="cursor-spotlight" />
 
-        <div className="max-w-6xl mx-auto w-full relative z-10">
+        {/* Floating depth orbs — purely decorative, parallax via PremiumEffects */}
+        <div data-depth="0.15" className="absolute top-1/4 left-[8%] w-72 h-72 rounded-full pointer-events-none"
+          style={{background: 'radial-gradient(circle, rgba(91,192,190,0.07) 0%, transparent 70%)', filter: 'blur(40px)'}} />
+        <div data-depth="0.35" className="absolute top-[15%] right-[10%] w-48 h-48 rounded-full pointer-events-none"
+          style={{background: 'radial-gradient(circle, rgba(111,255,233,0.05) 0%, transparent 70%)', filter: 'blur(32px)'}} />
+        <div data-depth="0.55" className="absolute bottom-[20%] left-[15%] w-32 h-32 rounded-full pointer-events-none"
+          style={{background: 'radial-gradient(circle, rgba(91,192,190,0.08) 0%, transparent 70%)', filter: 'blur(24px)'}} />
+        <div data-depth="0.7" className="absolute bottom-[30%] right-[8%] w-24 h-24 rounded-full pointer-events-none"
+          style={{background: 'radial-gradient(circle, rgba(111,255,233,0.06) 0%, transparent 70%)', filter: 'blur(20px)'}} />
+
+        {/* Floating accent lines — deep layer */}
+        <div data-depth="0.1" className="absolute top-1/3 left-0 w-[1px] h-32 pointer-events-none"
+          style={{background: 'linear-gradient(to bottom, transparent, rgba(91,192,190,0.2), transparent)'}} />
+        <div data-depth="0.2" className="absolute top-1/2 right-0 w-[1px] h-24 pointer-events-none"
+          style={{background: 'linear-gradient(to bottom, transparent, rgba(91,192,190,0.15), transparent)'}} />
+
+        {/* Content — perspective container */}
+        <div className="max-w-6xl mx-auto w-full relative z-10" data-hero-container>
           <div className="text-center">
-            {/* Eyebrow label */}
-            <div className="animate-page-load inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-primary/8 border border-accent-primary/20 mb-10">
+
+            {/* Eyebrow label — deepest layer feels closest */}
+            <div data-depth="0.9" className="animate-page-load inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-primary/8 border border-accent-primary/20 mb-10">
               <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-pulse" />
               <span className="text-accent-primary text-[11px] uppercase tracking-[0.25em] font-medium">Therapeutic Presence Technology</span>
             </div>
 
-            <h1 className="animate-load-d1 font-serif font-semibold text-text-100 mb-8 leading-[1.06] drop-shadow-lg"
-              style={{fontFamily: 'var(--font-display)', fontSize: 'clamp(3rem, 8vw, 7rem)', letterSpacing: '-0.02em'}}>
-              Technology Built to Heal,
-              <span className="block text-accent-primary mt-1">Not Replace</span>
-            </h1>
+            <div data-depth="0.7">
+              <h1 className="animate-load-d1 font-serif font-semibold text-text-100 mb-8 leading-[1.06]"
+                style={{fontFamily: 'var(--font-display)', fontSize: 'clamp(3rem, 8vw, 7rem)', letterSpacing: '-0.02em',
+                  textShadow: '0 0 80px rgba(91,192,190,0.12), 0 4px 40px rgba(0,0,0,0.4)'}}>
+                Technology Built to Heal,
+                <span className="block text-accent-primary mt-1" style={{textShadow: '0 0 60px rgba(91,192,190,0.3)'}}>Not Replace</span>
+              </h1>
+            </div>
 
-            <p className="animate-load-d2 text-xl lg:text-2xl text-text-85 mb-6 max-w-3xl mx-auto leading-relaxed font-light drop-shadow-md">
-              LMN8 ensures no ketamine therapy patient ever experiences abandonment during their most vulnerable moments.
-            </p>
+            <div data-depth="0.45">
+              <p className="animate-load-d2 text-xl lg:text-2xl text-text-85 mb-6 max-w-3xl mx-auto leading-relaxed font-light">
+                LMN8 ensures no ketamine therapy patient ever experiences abandonment during their most vulnerable moments.
+              </p>
 
-            <p className="animate-load-d3 text-base lg:text-lg text-text-60 mb-10 max-w-3xl mx-auto italic drop-shadow-md" style={{fontFamily: 'var(--font-display)'}}>
-              Built by a veteran who's been in that chair.
-            </p>
+              <p className="animate-load-d3 text-base lg:text-lg text-text-60 mb-10 max-w-3xl mx-auto italic" style={{fontFamily: 'var(--font-display)'}}>
+                Built by a veteran who's been in that chair.
+              </p>
 
-            <p className="animate-load-d4 text-sm lg:text-base text-text-60 mb-14 max-w-3xl mx-auto leading-relaxed drop-shadow-md font-light">
-              When therapeutic technology fails during crisis moments, patients lose trust. When systems forget their breakthroughs, healing stalls. When post-session support disappears, transformation becomes trauma.
-            </p>
+              <p className="animate-load-d4 text-sm lg:text-base text-text-60 mb-14 max-w-3xl mx-auto leading-relaxed font-light">
+                When therapeutic technology fails during crisis moments, patients lose trust. When systems forget their breakthroughs, healing stalls. When post-session support disappears, transformation becomes trauma.
+              </p>
+            </div>
 
-            <div className="animate-load-d5 flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div data-depth="1.1" className="animate-load-d5 flex flex-col sm:flex-row gap-4 justify-center items-center">
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-accent-primary to-accent-highlight rounded-xl blur opacity-30 group-hover:opacity-60 transition-opacity duration-500" />
                 <button
@@ -329,6 +357,7 @@ export default function LandingPage() {
                 </button>
               </div>
             </div>
+
           </div>
         </div>
 
