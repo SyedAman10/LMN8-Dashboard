@@ -130,17 +130,29 @@ export default function LandingPage() {
 
   const solutions = [
     {
-      icon: "🛡️",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10">
+          <path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+        </svg>
+      ),
       title: "Zero-Failure Commitment",
       description: "Reliable support during every vulnerable moment. When internet fails, when servers crash, when patients need support at 3am—LMN8 remains present."
     },
     {
-      icon: "🔗",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10">
+          <path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+        </svg>
+      ),
       title: "Integration Excellence",
       description: "Address the critical post-session phase that 73% of clinics miss entirely. Transform your biggest weakness into your strongest competitive advantage. Completion rates rise from 73% to 96%."
     },
     {
-      icon: "💝",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10">
+          <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+        </svg>
+      ),
       title: "Therapeutic Relationship Enhancement",
       description: "Your patients' healing journey is preserved and honored across time. Metaphors evolve, breakthroughs build on each other, and no patient ever has to start over or feel forgotten."
     }
@@ -148,22 +160,38 @@ export default function LandingPage() {
 
   const businessOutcomes = [
     {
-      icon: "🤝",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+          <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+        </svg>
+      ),
       title: "Deeper Patient Engagement",
       description: "When patients feel genuinely witnessed and never abandoned, they engage more fully in treatment. Trust deepens. Vulnerability increases. Healing accelerates."
     },
     {
-      icon: "⭐",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+          <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+        </svg>
+      ),
       title: "Enhanced Reputation",
       description: "Word spreads when patients experience truly transformative care. Your clinic becomes known for the depth and quality of therapeutic relationships, not operational efficiency."
     },
     {
-      icon: "📈",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+          <path d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+        </svg>
+      ),
       title: "Sustainable Growth",
       description: "Better therapeutic relationships create more referrals, higher patient satisfaction, and stronger insurance relationships. Growth emerges from excellence, not marketing."
     },
     {
-      icon: "✨",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8">
+          <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+        </svg>
+      ),
       title: "Clinical Staff Fulfillment",
       description: "When technology enhances rather than replaces therapeutic work, clinicians rediscover why they entered this field. Burnout decreases. Meaning increases."
     }
@@ -199,6 +227,13 @@ export default function LandingPage() {
         />
       )}
 
+      {/* Editorial side label — appears after hero on xl screens */}
+      <div className="side-label fixed left-5 top-1/2 -translate-y-1/2 z-20 hidden xl:flex flex-col items-center gap-4" aria-hidden="true">
+        <div className="h-20 w-px bg-gradient-to-b from-transparent via-accent-primary/35 to-transparent" />
+        <span className="writing-vertical text-text-60 text-[10px] uppercase tracking-[0.35em] font-light select-none">LMN8 — ClinicOS</span>
+        <div className="h-20 w-px bg-gradient-to-b from-transparent via-accent-primary/35 to-transparent" />
+      </div>
+
       {/* Use OceanStarryBackground only for hero section */}
       <div className="absolute inset-0 w-full h-screen overflow-hidden">
         <OceanStarryBackground />
@@ -209,15 +244,15 @@ export default function LandingPage() {
       <AnimatedBackground />
       </div>
       
-      {/* Navigation */}
-      <nav className="relative z-10 flex justify-between items-center p-6 lg:px-12 backdrop-blur-sm bg-bg-dark/30">
+      {/* Navigation — Floating frosted pill */}
+      <nav className="nav-lmn8 fixed top-4 left-4 right-4 z-50 flex justify-between items-center px-5 py-3 rounded-2xl">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-accent-primary rounded-lg flex items-center justify-center">
-            <span className="text-bg-dark font-bold text-lg">L8</span>
+          <div className="w-9 h-9 bg-accent-primary rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(91,192,190,0.35)]">
+            <span className="text-bg-dark font-bold text-sm tracking-tight">L8</span>
           </div>
           <div>
-            <span className="text-text-100 font-serif text-2xl font-bold tracking-wider">LMN8</span>
-            <span className="text-text-60 text-xs block -mt-1">ClinicOS</span>
+            <span className="text-text-100 font-serif text-xl font-semibold tracking-widest" style={{fontFamily: 'var(--font-display)'}}>LMN8</span>
+            <span className="text-text-60 text-[9px] block -mt-0.5 uppercase tracking-[0.2em]">ClinicOS</span>
           </div>
         </div>
         
@@ -253,40 +288,63 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section - Full Screen */}
-      <section className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 mb-0">
-        <div className="max-w-6xl mx-auto w-full">
-          <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <h1 className="text-5xl lg:text-7xl font-serif font-bold text-text-100 mb-8 leading-tight drop-shadow-lg">
+      <section className="relative z-10 min-h-screen flex items-center justify-center px-6 lg:px-12 mb-0 pt-20" data-hero-spotlight>
+        {/* Cursor spotlight — updated by PremiumEffects.js */}
+        <div className="cursor-spotlight" />
+
+        <div className="max-w-6xl mx-auto w-full relative z-10">
+          <div className="text-center">
+            {/* Eyebrow label */}
+            <div className="animate-page-load inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-primary/8 border border-accent-primary/20 mb-10">
+              <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-pulse" />
+              <span className="text-accent-primary text-[11px] uppercase tracking-[0.25em] font-medium">Therapeutic Presence Technology</span>
+            </div>
+
+            <h1 className="animate-load-d1 font-serif font-semibold text-text-100 mb-8 leading-[1.06] drop-shadow-lg"
+              style={{fontFamily: 'var(--font-display)', fontSize: 'clamp(3rem, 8vw, 7rem)', letterSpacing: '-0.02em'}}>
               Technology Built to Heal,
-              <span className="block text-accent-primary mt-2">Not Replace</span>
+              <span className="block text-accent-primary mt-1">Not Replace</span>
             </h1>
-            
-            <p className="text-2xl lg:text-3xl text-text-100 mb-6 max-w-4xl mx-auto leading-relaxed font-serif drop-shadow-md">
+
+            <p className="animate-load-d2 text-xl lg:text-2xl text-text-85 mb-6 max-w-3xl mx-auto leading-relaxed font-light drop-shadow-md">
               LMN8 ensures no ketamine therapy patient ever experiences abandonment during their most vulnerable moments.
             </p>
 
-            <p className="text-lg lg:text-xl text-text-85 mb-8 max-w-4xl mx-auto italic drop-shadow-md">
+            <p className="animate-load-d3 text-base lg:text-lg text-text-60 mb-10 max-w-3xl mx-auto italic drop-shadow-md" style={{fontFamily: 'var(--font-display)'}}>
               Built by a veteran who's been in that chair.
             </p>
 
-            <p className="text-base lg:text-lg text-text-85 mb-12 max-w-4xl mx-auto leading-relaxed drop-shadow-md">
-              When therapeutic technology fails during crisis moments, patients lose trust. When systems forget their breakthroughs, healing stalls. When post-session support disappears, transformation becomes trauma. LMN8 was built to solve the problem every ketamine clinic faces: ensuring unwavering presence when patients need it most.
+            <p className="animate-load-d4 text-sm lg:text-base text-text-60 mb-14 max-w-3xl mx-auto leading-relaxed drop-shadow-md font-light">
+              When therapeutic technology fails during crisis moments, patients lose trust. When systems forget their breakthroughs, healing stalls. When post-session support disappears, transformation becomes trauma.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button
-                onClick={() => setShowDemoForm(true)}
-                className="btn-primary text-lg px-10 py-4 rounded-xl hover:scale-105 transition-transform duration-300 shadow-xl"
-              >
-                Schedule Your Demo
-              </button>
+            <div className="animate-load-d5 flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-accent-primary to-accent-highlight rounded-xl blur opacity-30 group-hover:opacity-60 transition-opacity duration-500" />
+                <button
+                  onClick={() => setShowDemoForm(true)}
+                  className="relative btn-primary text-base px-10 py-4 rounded-xl shadow-xl"
+                >
+                  Schedule Your Demo
+                </button>
+              </div>
             </div>
+          </div>
+        </div>
+
+        {/* Scroll cue */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-load-d5">
+          <span className="text-text-60 text-[10px] uppercase tracking-[0.25em] font-light">Scroll</span>
+          <div className="scroll-cue w-5 h-5 text-accent-primary/60">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10 4v12M4 10l6 6 6-6" />
+            </svg>
           </div>
         </div>
       </section>
 
       {/* Clinic Challenges Section with Mountain Background - No Gap */}
-      <section className="relative px-6 lg:px-12 py-20 lg:py-32 overflow-hidden -mt-20">
+      <section className="reveal-section relative px-6 lg:px-12 py-20 lg:py-32 overflow-hidden -mt-20">
         {/* Mountain Background */}
         <div className="absolute inset-0">
           <MountainBackground />
@@ -303,9 +361,9 @@ export default function LandingPage() {
                   The Hidden Cost of Patient Abandonment
                 </h3>
                 
-                <div className="text-5xl lg:text-6xl font-bold text-accent-primary mb-6">
+                <div className="font-bold text-accent-primary mb-6" style={{fontFamily: 'var(--font-display)', fontSize: 'clamp(4rem, 10vw, 7rem)', lineHeight: 1, letterSpacing: '-0.04em'}}>
                   27%
-              </div>
+                </div>
 
                 <p className="text-xl lg:text-2xl text-text-100 mb-6 leading-relaxed">
                   27% of ketamine therapy patients fail to complete integration. The reason isn't the medicine. It's abandonment.
@@ -325,7 +383,7 @@ export default function LandingPage() {
       </section>
 
       {/* Solution & Outcomes Section - Unified */}
-      <section className="relative z-10 px-6 lg:px-12 py-16 lg:py-24 bg-gradient-to-b from-bg-dark via-container/10 to-bg-dark">
+      <section className="reveal-section relative z-10 px-6 lg:px-12 py-16 lg:py-24 bg-gradient-to-b from-bg-dark via-container/10 to-bg-dark">
         <div className="max-w-6xl mx-auto">
           <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             {/* Header */}
@@ -342,18 +400,18 @@ export default function LandingPage() {
           </div>
 
             {/* Core Solutions - Prominent Display */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 reveal-stagger">
               {solutions.map((solution, index) => (
-                <GlassCard key={index} className="p-8 hover:scale-105 transition-transform duration-300 border border-accent-primary/20 flex flex-col h-full">
-                  <div className="text-5xl mb-6 h-16 flex items-center justify-start">{solution.icon}</div>
-                  <h3 className="text-2xl font-serif font-semibold text-text-100 mb-4 h-16 flex items-start">
+                <GlassCard key={index} tilt className="p-8 border border-accent-primary/20 flex flex-col h-full card-tilt">
+                  <div className="mb-6 h-14 flex items-center justify-start text-accent-primary">{solution.icon}</div>
+                  <h3 className="font-serif font-semibold text-text-100 mb-4 h-16 flex items-start" style={{fontFamily: 'var(--font-display)', fontSize: 'clamp(1.2rem, 2vw, 1.6rem)', letterSpacing: '-0.01em'}}>
                     {solution.title}
-                </h3>
-                  <p className="text-text-85 leading-relaxed flex-1 text-base">
+                  </h3>
+                  <p className="text-text-85 leading-relaxed flex-1 text-sm font-light">
                     {solution.description}
-                </p>
-              </GlassCard>
-            ))}
+                  </p>
+                </GlassCard>
+              ))}
           </div>
 
             {/* Transition Element */}
@@ -369,11 +427,13 @@ export default function LandingPage() {
                       window.scrollTo({ top: y, behavior: 'smooth' });
                     }
                   }}
-                  className="text-accent-primary text-4xl hover:text-accent-highlight transition-all duration-300 hover:scale-125 animate-bounce cursor-pointer focus:outline-none group"
+                  className="text-accent-primary hover:text-accent-highlight transition-all duration-300 hover:scale-125 cursor-pointer focus:outline-none group"
                   aria-label="Scroll to outcomes"
                 >
-              <div className="relative">
-                    ↓
+              <div className="relative w-8 h-8">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 scroll-cue">
+                      <path d="M19 9l-7 7-7-7" />
+                    </svg>
                     <div className="absolute inset-0 bg-accent-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
                 </button>
@@ -396,7 +456,7 @@ export default function LandingPage() {
               {businessOutcomes.map((outcome, index) => (
                 <div key={index} className="group h-full">
                   <div className="bg-ui-secondary/30 backdrop-blur-sm rounded-xl p-6 h-full border border-ui-secondary/50 hover:border-accent-primary/50 transition-all duration-300 hover:transform hover:scale-105 flex flex-col">
-                    <div className="text-4xl mb-4 h-12 flex items-center justify-start group-hover:scale-110 transition-transform duration-300">{outcome.icon}</div>
+                    <div className="mb-4 h-12 flex items-center justify-start text-accent-primary group-hover:scale-110 transition-transform duration-300">{outcome.icon}</div>
                     <h4 className="text-xl font-serif font-semibold text-text-100 mb-3 h-14 flex items-start">
                       {outcome.title}
                     </h4>
@@ -412,7 +472,7 @@ export default function LandingPage() {
       </section>
 
       {/* Founding Partner Section - Premium */}
-      <section className="relative z-10 px-6 lg:px-12 py-20 lg:py-32 overflow-hidden">
+      <section className="reveal-section relative z-10 px-6 lg:px-12 py-20 lg:py-32 overflow-hidden">
         {/* Premium Background Elements */}
         <div className="absolute inset-0">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-accent-primary/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }}></div>
@@ -530,7 +590,7 @@ export default function LandingPage() {
       </section>
 
       {/* Founder Story Section */}
-      <section className="relative z-10 px-6 lg:px-12 py-16 lg:py-24 bg-gradient-to-b from-bg-dark to-container/20">
+      <section className="reveal-section relative z-10 px-6 lg:px-12 py-16 lg:py-24 bg-gradient-to-b from-bg-dark to-container/20">
         <div className="max-w-5xl mx-auto">
           <div className={`transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             
@@ -553,7 +613,7 @@ export default function LandingPage() {
               
               <GlassCard className="relative p-8 lg:p-12 border border-accent-primary/30">
                 {/* Opening Quote Mark */}
-                <div className="text-accent-primary/40 text-6xl font-serif leading-none mb-4">"</div>
+                <div className="text-accent-primary/35 leading-none mb-4 select-none" style={{fontFamily: 'var(--font-display)', fontSize: '5rem', lineHeight: 1}}>"</div>
                 
                 {/* Quote Content */}
                 <div className="space-y-6 mb-6">
@@ -571,7 +631,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Closing Quote Mark */}
-                <div className="text-accent-primary/40 text-6xl font-serif leading-none text-right">"</div>
+                <div className="text-accent-primary/35 leading-none text-right select-none" style={{fontFamily: 'var(--font-display)', fontSize: '5rem', lineHeight: 1}}>"</div>
 
                 {/* Connection Line */}
                 <div className="my-8 flex items-center justify-center">
@@ -612,7 +672,7 @@ export default function LandingPage() {
       `}</style>
 
       {/* Integration Advantage Section - Data-Focused */}
-      <section className="relative z-10 px-6 lg:px-12 py-16 lg:py-24 bg-gradient-to-b from-bg-dark to-container/20">
+      <section className="reveal-section relative z-10 px-6 lg:px-12 py-16 lg:py-24 bg-gradient-to-b from-bg-dark to-container/20">
         <div className="max-w-7xl mx-auto">
           <div className={`transition-all duration-1000 delay-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             
@@ -645,7 +705,7 @@ export default function LandingPage() {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-error/10 rounded-full blur-2xl"></div>
                   <div className="relative z-10">
                     <div className="text-error text-xs uppercase tracking-wider font-bold mb-4">Industry Standard</div>
-                    <div className="text-6xl lg:text-7xl font-bold text-error mb-2">73%</div>
+                    <div className="text-error mb-2" style={{fontFamily: 'var(--font-display)', fontSize: 'clamp(4rem, 8vw, 6rem)', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.04em'}}>73%</div>
                     <div className="text-text-85 text-sm mb-4">Integration Completion Rate</div>
                     <div className="h-px bg-error/30 mb-4"></div>
                     <div className="text-text-60 text-xs">
@@ -657,7 +717,11 @@ export default function LandingPage() {
                 {/* Arrow/Transformation */}
                 <div className="flex items-center justify-center">
                   <div className="text-center">
-                    <div className="text-5xl lg:text-6xl mb-4">→</div>
+                    <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 text-accent-primary">
+                      <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </div>
                     <div className="text-accent-primary font-semibold text-lg mb-2">+23%</div>
                     <div className="text-text-60 text-sm">Improvement</div>
                   </div>
@@ -668,7 +732,7 @@ export default function LandingPage() {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-accent-primary/10 rounded-full blur-2xl"></div>
                   <div className="relative z-10">
                     <div className="text-accent-primary text-xs uppercase tracking-wider font-bold mb-4">With LMN8</div>
-                    <div className="text-6xl lg:text-7xl font-bold text-accent-primary mb-2">96%</div>
+                    <div className="text-accent-primary mb-2" style={{fontFamily: 'var(--font-display)', fontSize: 'clamp(4rem, 8vw, 6rem)', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.04em'}}>96%</div>
                     <div className="text-text-85 text-sm mb-4">Integration Completion Rate</div>
                     <div className="h-px bg-accent-primary/30 mb-4"></div>
                     <div className="text-text-60 text-xs">
@@ -780,7 +844,7 @@ export default function LandingPage() {
       </section>
 
       {/* Vision Section */}
-      <section className="relative z-10 px-6 lg:px-12 py-20 lg:py-32 bg-gradient-to-b from-bg-dark via-container/10 to-bg-dark">
+      <section className="reveal-section relative z-10 px-6 lg:px-12 py-20 lg:py-32 bg-gradient-to-b from-bg-dark via-container/10 to-bg-dark">
         <div className="max-w-6xl mx-auto">
           <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <div className="text-center max-w-4xl mx-auto">
@@ -801,7 +865,7 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="relative z-10 px-6 lg:px-12 py-16 lg:py-24">
+      <section className="reveal-section relative z-10 px-6 lg:px-12 py-16 lg:py-24">
         <div className="max-w-6xl mx-auto">
           <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <h2 className="text-4xl lg:text-5xl font-serif font-bold text-text-100 text-center mb-16">
@@ -835,94 +899,80 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-ui-secondary/50 bg-gradient-to-b from-bg-dark to-container/30">
-        <div className="max-w-6xl mx-auto px-6 lg:px-12 py-16">
-          
-          {/* Main Footer Content */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-12">
-            
-            {/* Brand Column - Larger */}
-            <div className="md:col-span-5">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 bg-accent-primary rounded-lg flex items-center justify-center">
-                  <span className="text-bg-dark font-bold text-xl">L8</span>
+      {/* Footer — Architectural */}
+      <footer className="relative z-10 overflow-hidden">
+        {/* Ambient glow top */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px bg-gradient-to-r from-transparent via-accent-primary/40 to-transparent" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-40 bg-accent-primary/4 rounded-full blur-3xl -translate-y-1/2 pointer-events-none" />
+
+        <div className="relative bg-gradient-to-b from-bg-dark via-container/20 to-bg-dark/95">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-20 pb-10">
+
+            {/* Top row — brand statement */}
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 mb-16 pb-16 border-b border-ui-secondary/20">
+              <div className="max-w-xl">
+                <div className="flex items-center space-x-3 mb-5">
+                  <div className="w-10 h-10 bg-accent-primary rounded-xl flex items-center justify-center shadow-[0_0_24px_rgba(91,192,190,0.3)]">
+                    <span className="text-bg-dark font-bold text-sm">L8</span>
+                  </div>
+                  <div>
+                    <span className="text-text-100 font-semibold text-xl tracking-widest" style={{fontFamily: 'var(--font-display)'}}>LMN8</span>
+                    <span className="text-text-60 text-[9px] block -mt-0.5 uppercase tracking-[0.2em]">ClinicOS</span>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-text-100 font-serif text-2xl font-bold tracking-wider">LMN8</span>
-                  <span className="text-text-60 text-xs block -mt-1 uppercase tracking-widest">ClinicOS</span>
-                </div>
+                <p className="text-text-60 text-sm leading-relaxed font-light italic" style={{fontFamily: 'var(--font-display)', fontSize: '1rem'}}>
+                  "Technology built to heal, not replace."
+                </p>
               </div>
-              <p className="text-text-85 leading-relaxed mb-6">
-                Therapeutic presence technology ensuring no ketamine therapy patient ever experiences abandonment during their most vulnerable moments.
-              </p>
-              <p className="text-text-60 text-sm italic">
-                Technology built to heal, not replace.
-              </p>
-            </div>
-            
-            {/* Company Info */}
-            <div className="md:col-span-4">
-              <h3 className="text-text-100 font-semibold text-lg mb-4 uppercase tracking-wider text-sm">Company</h3>
-              <div className="space-y-3">
+
+              <div className="flex flex-col items-start lg:items-end gap-3">
                 <button
                   onClick={() => setShowDemoForm(true)}
-                  className="block text-text-85 hover:text-accent-primary transition-colors text-left"
+                  className="btn-primary px-8 py-3 rounded-xl text-sm"
                 >
-                  Schedule Demo
+                  Schedule Your Demo
                 </button>
-                <a
-                  href="/founding-partner"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-text-85 hover:text-accent-primary transition-colors"
-                >
-                  Founding Partnership
-                </a>
-                <button
-                  onClick={() => setShowContactForm(true)}
-                  className="block text-text-85 hover:text-accent-primary transition-colors text-left"
-                >
-                  Contact Us
-                </button>
-              </div>
-            </div>
-            
-            {/* Get in Touch */}
-            <div className="md:col-span-3">
-              <h3 className="text-text-100 font-semibold text-lg mb-4 uppercase tracking-wider text-sm">Get in Touch</h3>
-              <div className="space-y-3">
-                <p className="text-text-85 text-sm leading-relaxed">
-                  Have questions? We're here to help.
-                </p>
-                <button
-                  onClick={() => setShowContactForm(true)}
-                  className="btn-primary text-sm px-6 py-2"
-                >
-                  Send Message
-                </button>
-                <p className="text-text-60 text-xs pt-2">
-                  or email us at{' '}
+                <p className="text-text-60 text-xs">
+                  or{' '}
                   <a href="mailto:contact@lmn8.io" className="text-accent-primary hover:text-accent-highlight transition-colors">
                     contact@lmn8.io
                   </a>
                 </p>
-            </div>
-            </div>
-          </div>
-          
-          {/* Bottom Bar */}
-          <div className="border-t border-ui-secondary/30 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-              <div className="text-text-60 text-center md:text-left">
-                <p>&copy; 2024 LMN8. All rights reserved.</p>
               </div>
-              <div className="text-text-60 text-center md:text-right">
-                <p className="text-xs">
-                  LMN8 is therapeutic presence technology, not a replacement for professional clinical care.
+            </div>
+
+            {/* Mid row — links */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-16">
+              <div>
+                <p className="text-text-60 text-[10px] uppercase tracking-[0.2em] font-medium mb-4">Platform</p>
+                <div className="space-y-2.5">
+                  <button onClick={() => setShowDemoForm(true)} className="block text-text-85 hover:text-accent-primary transition-colors duration-200 text-sm font-light cursor-pointer">Schedule Demo</button>
+                  <a href="/founding-partner" target="_blank" rel="noopener noreferrer" className="block text-text-85 hover:text-accent-primary transition-colors duration-200 text-sm font-light">Founding Partnership</a>
+                </div>
+              </div>
+              <div>
+                <p className="text-text-60 text-[10px] uppercase tracking-[0.2em] font-medium mb-4">Connect</p>
+                <div className="space-y-2.5">
+                  <button onClick={() => setShowContactForm(true)} className="block text-text-85 hover:text-accent-primary transition-colors duration-200 text-sm font-light cursor-pointer">Contact Us</button>
+                  <a href="mailto:contact@lmn8.io" className="block text-text-85 hover:text-accent-primary transition-colors duration-200 text-sm font-light">contact@lmn8.io</a>
+                </div>
+              </div>
+              <div className="col-span-2 md:col-span-1">
+                <p className="text-text-60 text-[10px] uppercase tracking-[0.2em] font-medium mb-4">Mission</p>
+                <p className="text-text-60 text-xs leading-relaxed font-light">
+                  Therapeutic presence technology ensuring no ketamine therapy patient ever experiences abandonment during their most vulnerable moments.
                 </p>
               </div>
             </div>
+
+            {/* Bottom — legal */}
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-ui-secondary/15">
+              <p className="text-text-60 text-xs font-light">&copy; 2024 LMN8. All rights reserved.</p>
+              <p className="text-text-60 text-[10px] text-center md:text-right font-light max-w-xs">
+                LMN8 is therapeutic presence technology, not a replacement for professional clinical care.
+              </p>
+            </div>
+
           </div>
         </div>
       </footer>
