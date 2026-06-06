@@ -134,7 +134,7 @@ export default function SignupPage() {
       </div>
 
       {/* 3D Perspective Container */}
-      <div className="relative z-10 h-screen flex items-center justify-center px-4" style={{ perspective: '1000px' }}>
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-16" style={{ perspective: '1000px' }}>
         {/* Main 3D Card Container */}
         <div className="relative max-w-6xl w-full">
           {/* Floating Header */}

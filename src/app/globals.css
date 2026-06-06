@@ -133,42 +133,46 @@ body.cursor-hover .cursor-ring {
 
 /* ─────────────────────────────────────────────
    TYPOGRAPHY SCALE — APPLE
+   Placed in @layer base so Tailwind utilities
+   (text-3xl, text-xl, etc.) can override them.
 ───────────────────────────────────────────── */
 
-h1 {
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 8.5vw, 7.5rem);
-  font-weight: 700;
-  line-height: 1.04;
-  letter-spacing: -0.04em;
-  color: var(--color-text-100);
-}
+@layer base {
+  h1 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--color-text-100);
+  }
 
-h2 {
-  font-family: var(--font-display);
-  font-size: clamp(2.2rem, 5.5vw, 4.2rem);
-  font-weight: 700;
-  line-height: 1.07;
-  letter-spacing: -0.03em;
-  color: var(--color-text-100);
-}
+  h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--color-text-100);
+  }
 
-h3 {
-  font-family: var(--font-display);
-  font-size: clamp(1.3rem, 2.5vw, 1.75rem);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  color: var(--color-text-100);
-}
+  h3 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    color: var(--color-text-100);
+  }
 
-h4 {
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
-  font-weight: 600;
-  line-height: 1.3;
-  letter-spacing: -0.015em;
-  color: var(--color-text-100);
+  h4 {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--color-text-100);
+  }
 }
 
 .body-text {
