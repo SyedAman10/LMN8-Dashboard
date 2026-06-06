@@ -318,14 +318,14 @@ export default function LandingPage() {
           <div className="text-center">
 
             {/* Eyebrow label — deepest layer feels closest */}
-            <div data-depth="0.9" className="animate-page-load inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-primary/8 border border-accent-primary/20 mb-10">
+            <div data-depth="0.9" className="animate-page-load inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-primary/8 border border-accent-primary/20 mb-6 lg:mb-10">
               <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-pulse" />
               <span className="text-accent-primary text-[11px] uppercase tracking-[0.25em] font-medium">Therapeutic Presence Technology</span>
             </div>
 
             <div data-depth="0.7">
-              <h1 className="animate-load-d1 font-bold text-text-100 mb-8"
-                style={{fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', letterSpacing: '-0.045em', lineHeight: 1.04,
+              <h1 className="animate-load-d1 font-bold text-text-100 mb-5 lg:mb-8"
+                style={{fontSize: 'clamp(2.6rem, 5.5vw, 6rem)', letterSpacing: '-0.04em', lineHeight: 1.06,
                   textShadow: '0 0 80px rgba(91,192,190,0.1), 0 4px 40px rgba(0,0,0,0.4)'}}>
                 Technology Built to Heal,
                 <span className="block text-accent-primary mt-1" style={{textShadow: '0 0 60px rgba(91,192,190,0.25)'}}>Not Replace</span>
@@ -337,11 +337,11 @@ export default function LandingPage() {
                 LMN8 ensures no ketamine therapy patient ever experiences abandonment during their most vulnerable moments.
               </p>
 
-              <p className="animate-load-d3 text-base lg:text-lg text-text-60 mb-10 max-w-3xl mx-auto" style={{letterSpacing: '-0.01em'}}>
+              <p className="animate-load-d3 text-base lg:text-lg text-text-60 mb-6 lg:mb-10 max-w-3xl mx-auto" style={{letterSpacing: '-0.01em'}}>
                 Built by a veteran who's been in that chair.
               </p>
 
-              <p className="animate-load-d4 text-sm lg:text-base text-text-60 mb-14 max-w-3xl mx-auto leading-relaxed font-light">
+              <p className="animate-load-d4 text-sm lg:text-base text-text-60 mb-8 lg:mb-14 max-w-3xl mx-auto leading-relaxed font-light">
                 When therapeutic technology fails during crisis moments, patients lose trust. When systems forget their breakthroughs, healing stalls. When post-session support disappears, transformation becomes trauma.
               </p>
             </div>
