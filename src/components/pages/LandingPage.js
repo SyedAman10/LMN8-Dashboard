@@ -251,7 +251,7 @@ export default function LandingPage() {
             <span className="text-bg-dark font-bold text-sm tracking-tight">L8</span>
           </div>
           <div>
-            <span className="text-text-100 font-serif text-xl font-semibold tracking-widest" style={{fontFamily: 'var(--font-display)'}}>LMN8</span>
+            <span className="text-text-100 font-semibold tracking-widest" style={{letterSpacing: '-0.02em'}}>LMN8</span>
             <span className="text-text-60 text-[9px] block -mt-0.5 uppercase tracking-[0.2em]">ClinicOS</span>
           </div>
         </div>
@@ -324,11 +324,11 @@ export default function LandingPage() {
             </div>
 
             <div data-depth="0.7">
-              <h1 className="animate-load-d1 font-serif font-semibold text-text-100 mb-8 leading-[1.06]"
-                style={{fontFamily: 'var(--font-display)', fontSize: 'clamp(3rem, 8vw, 7rem)', letterSpacing: '-0.02em',
-                  textShadow: '0 0 80px rgba(91,192,190,0.12), 0 4px 40px rgba(0,0,0,0.4)'}}>
+              <h1 className="animate-load-d1 font-bold text-text-100 mb-8"
+                style={{fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', letterSpacing: '-0.045em', lineHeight: 1.04,
+                  textShadow: '0 0 80px rgba(91,192,190,0.1), 0 4px 40px rgba(0,0,0,0.4)'}}>
                 Technology Built to Heal,
-                <span className="block text-accent-primary mt-1" style={{textShadow: '0 0 60px rgba(91,192,190,0.3)'}}>Not Replace</span>
+                <span className="block text-accent-primary mt-1" style={{textShadow: '0 0 60px rgba(91,192,190,0.25)'}}>Not Replace</span>
               </h1>
             </div>
 
@@ -337,7 +337,7 @@ export default function LandingPage() {
                 LMN8 ensures no ketamine therapy patient ever experiences abandonment during their most vulnerable moments.
               </p>
 
-              <p className="animate-load-d3 text-base lg:text-lg text-text-60 mb-10 max-w-3xl mx-auto italic" style={{fontFamily: 'var(--font-display)'}}>
+              <p className="animate-load-d3 text-base lg:text-lg text-text-60 mb-10 max-w-3xl mx-auto" style={{letterSpacing: '-0.01em'}}>
                 Built by a veteran who's been in that chair.
               </p>
 
@@ -383,10 +383,10 @@ export default function LandingPage() {
             <div className={`transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <GlassCard className="p-12 lg:p-16 bg-container/60 backdrop-blur-md border-2 border-accent-primary/20">
                 <div className="text-center max-w-4xl mx-auto">
-                <h2 className="text-4xl lg:text-5xl font-serif font-bold text-text-100 mb-8">
+                <h2 className="text-4xl lg:text-5xl font-bold text-text-100 mb-8">
                   The Crisis Every Clinic Faces
                 </h2>
-                <h3 className="text-2xl lg:text-3xl font-serif text-accent-primary mb-8">
+                <h3 className="text-2xl lg:text-3xl text-accent-primary mb-8">
                   The Hidden Cost of Patient Abandonment
                 </h3>
                 
@@ -417,10 +417,10 @@ export default function LandingPage() {
           <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             {/* Header */}
             <div className="text-center mb-20">
-              <h2 className="text-4xl lg:text-5xl font-serif font-bold text-text-100 mb-6">
+              <h2 className="text-4xl lg:text-5xl font-bold text-text-100 mb-6">
                 The LMN8 Solution
               </h2>
-              <p className="text-2xl text-accent-primary font-serif mb-6">
+              <p className="text-2xl text-accent-primary mb-6">
                 Therapeutic Presence Technology
               </p>
               <p className="text-lg text-text-85 max-w-3xl mx-auto leading-relaxed">
@@ -433,7 +433,7 @@ export default function LandingPage() {
               {solutions.map((solution, index) => (
                 <GlassCard key={index} tilt className="p-8 border border-accent-primary/20 flex flex-col h-full card-tilt">
                   <div className="mb-6 h-14 flex items-center justify-start text-accent-primary">{solution.icon}</div>
-                  <h3 className="font-serif font-semibold text-text-100 mb-4 h-16 flex items-start" style={{fontFamily: 'var(--font-display)', fontSize: 'clamp(1.2rem, 2vw, 1.6rem)', letterSpacing: '-0.01em'}}>
+                  <h3 className="font-semibold text-text-100 mb-4 h-16 flex items-start" style={{fontSize: 'clamp(1.1rem, 2vw, 1.5rem)', letterSpacing: '-0.02em'}}>
                     {solution.title}
                   </h3>
                   <p className="text-text-85 leading-relaxed flex-1 text-sm font-light">
@@ -472,10 +472,10 @@ export default function LandingPage() {
               
             {/* Outcomes Header */}
             <div id="outcomes-section" className="text-center mb-12 scroll-mt-24">
-              <h3 className="text-3xl lg:text-4xl font-serif font-bold text-text-100 mb-4">
+              <h3 className="text-3xl lg:text-4xl font-bold text-text-100 mb-4">
                 What This Means for Your Clinic
                 </h3>
-              <p className="text-xl text-accent-primary font-serif">
+              <p className="text-xl text-accent-primary font-semibold" style={{letterSpacing: '-0.02em'}}>
                 The Natural Outcomes of Therapeutic Excellence
                 </p>
               </div>
@@ -486,7 +486,7 @@ export default function LandingPage() {
                 <div key={index} className="group h-full">
                   <div className="bg-ui-secondary/30 backdrop-blur-sm rounded-xl p-6 h-full border border-ui-secondary/50 hover:border-accent-primary/50 transition-all duration-300 hover:transform hover:scale-105 flex flex-col">
                     <div className="mb-4 h-12 flex items-center justify-start text-accent-primary group-hover:scale-110 transition-transform duration-300">{outcome.icon}</div>
-                    <h4 className="text-xl font-serif font-semibold text-text-100 mb-3 h-14 flex items-start">
+                    <h4 className="text-xl font-semibold text-text-100 mb-3 h-14 flex items-start">
                       {outcome.title}
                     </h4>
                     <p className="text-text-85 text-sm leading-relaxed flex-1">
@@ -539,7 +539,7 @@ export default function LandingPage() {
                   </div>
                   
                   {/* Main Heading */}
-                  <h2 className="text-5xl lg:text-6xl font-serif font-bold text-text-100 mb-6 leading-tight">
+                  <h2 className="text-5xl lg:text-6xl font-bold text-text-100 mb-6 leading-tight">
                     A Rare Invitation
                   </h2>
                   
@@ -553,7 +553,7 @@ export default function LandingPage() {
                     <div className="h-px w-24 bg-gradient-to-l from-transparent to-accent-primary"></div>
                 </div>
                   
-                  <p className="text-2xl lg:text-3xl text-accent-primary font-serif mb-12 italic">
+                  <p className="text-2xl lg:text-3xl text-accent-primary mb-12 font-medium">
                     Founding Partnership Opportunity
                   </p>
                   
@@ -567,7 +567,7 @@ export default function LandingPage() {
                       Founding Partners understand the cost of abandonment and the inevitability of this solution. They see beyond operational efficiency to the profound transformation possible when technology serves therapeutic relationship.
                     </p>
                     
-                    <p className="text-lg text-text-85 leading-relaxed italic">
+                    <p className="text-lg text-text-85 leading-relaxed">
                       If you've read this far, if this vision resonates deeply, if you recognize the sacred work of witnessing human transformation—you may be ready for this partnership.
                 </p>
               </div>
@@ -600,7 +600,7 @@ export default function LandingPage() {
                   </div>
 
                   {/* Limited availability notice */}
-                  <p className="text-text-60 text-sm mt-8 italic">
+                  <p className="text-text-60 text-sm mt-8">
                     Limited to a small cohort of visionary partners
                   </p>
 
@@ -625,7 +625,7 @@ export default function LandingPage() {
             
             {/* Elegant Header */}
             <div className="text-center mb-12">
-              <h2 className="text-4xl lg:text-5xl font-serif font-bold text-text-100 mb-4">
+              <h2 className="text-4xl lg:text-5xl font-bold text-text-100 mb-4">
                 Built by Someone Who's Been There
             </h2>
               <div className="flex items-center justify-center gap-2 mt-6">
@@ -641,8 +641,8 @@ export default function LandingPage() {
               <div className="absolute -inset-1 bg-gradient-to-r from-accent-primary/20 to-accent-highlight/20 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-1000"></div>
               
               <GlassCard className="relative p-8 lg:p-12 border border-accent-primary/30">
-                {/* Opening Quote Mark */}
-                <div className="text-accent-primary/35 leading-none mb-4 select-none" style={{fontFamily: 'var(--font-display)', fontSize: '5rem', lineHeight: 1}}>"</div>
+                {/* Opening accent line */}
+                <div className="w-10 h-0.5 bg-accent-primary/50 mb-8 mx-auto rounded-full" />
                 
                 {/* Quote Content */}
                 <div className="space-y-6 mb-6">
@@ -654,13 +654,13 @@ export default function LandingPage() {
                     LMN8 was born to end that failure. To build therapeutic technology that <span className="text-accent-primary font-semibold">deepens trust</span> instead of replacing it. Anti-fragile, radically ethical, designed for healing above all else.
                   </p>
                   
-                  <p className="text-xl lg:text-2xl text-accent-primary font-serif italic animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                  <p className="text-xl lg:text-2xl text-accent-primary font-semibold animate-fade-in" style={{ animationDelay: '0.6s' }}>
                     This isn't just business. It's mission.
                   </p>
                 </div>
 
-                {/* Closing Quote Mark */}
-                <div className="text-accent-primary/35 leading-none text-right select-none" style={{fontFamily: 'var(--font-display)', fontSize: '5rem', lineHeight: 1}}>"</div>
+                {/* Closing accent line */}
+                <div className="w-10 h-0.5 bg-accent-primary/50 mt-8 mx-auto rounded-full" />
 
                 {/* Connection Line */}
                 <div className="my-8 flex items-center justify-center">
@@ -707,10 +707,10 @@ export default function LandingPage() {
             
             {/* Header */}
             <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-serif font-bold text-text-100 mb-6">
+              <h2 className="text-4xl lg:text-5xl font-bold text-text-100 mb-6">
                 The Integration Advantage
               </h2>
-              <p className="text-2xl text-accent-primary font-serif mb-6">
+              <p className="text-2xl text-accent-primary mb-6">
                 The Critical Phase Most Clinics Miss
               </p>
               <p className="text-lg text-text-85 max-w-4xl mx-auto leading-relaxed">
@@ -877,7 +877,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <div className="text-center max-w-4xl mx-auto">
-              <h2 className="text-4xl lg:text-6xl font-serif font-bold text-text-100 mb-12">
+              <h2 className="text-4xl lg:text-6xl font-bold text-text-100 mb-12">
                 The Future of Therapeutic Technology
             </h2>
             
@@ -885,7 +885,7 @@ export default function LandingPage() {
                 In five years, LMN8 will be the foundation for therapeutic presence technology worldwide. Not a product. Not a protocol. A new standard of care: reliable presence in every healing journey.
               </p>
               
-              <p className="text-2xl lg:text-3xl text-accent-primary font-serif italic">
+              <p className="text-2xl lg:text-3xl text-accent-primary font-medium">
                 We're not building software. We're building a movement toward technology that serves healing rather than extracting from it.
               </p>
             </div>
@@ -897,7 +897,7 @@ export default function LandingPage() {
       <section className="reveal-section relative z-10 px-6 lg:px-12 py-16 lg:py-24">
         <div className="max-w-6xl mx-auto">
           <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <h2 className="text-4xl lg:text-5xl font-serif font-bold text-text-100 text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold text-text-100 text-center mb-16">
               Frequently Asked Questions
               </h2>
             
@@ -909,7 +909,7 @@ export default function LandingPage() {
                   onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
                 >
                   <div className="flex justify-between items-center">
-                    <h3 className="text-xl font-serif font-semibold text-text-100 pr-4">
+                    <h3 className="text-xl font-semibold text-text-100 pr-4">
                       {faq.question}
                     </h3>
                     <span className="text-2xl text-accent-primary flex-shrink-0">
@@ -945,11 +945,11 @@ export default function LandingPage() {
                     <span className="text-bg-dark font-bold text-sm">L8</span>
                   </div>
                   <div>
-                    <span className="text-text-100 font-semibold text-xl tracking-widest" style={{fontFamily: 'var(--font-display)'}}>LMN8</span>
+                    <span className="text-text-100 font-semibold text-xl tracking-widest" style={{letterSpacing: '-0.02em'}}>LMN8</span>
                     <span className="text-text-60 text-[9px] block -mt-0.5 uppercase tracking-[0.2em]">ClinicOS</span>
                   </div>
                 </div>
-                <p className="text-text-60 text-sm leading-relaxed font-light italic" style={{fontFamily: 'var(--font-display)', fontSize: '1rem'}}>
+                <p className="text-text-60 text-sm leading-relaxed" style={{letterSpacing: '-0.01em'}}>
                   "Technology built to heal, not replace."
                 </p>
               </div>
@@ -1019,7 +1019,7 @@ export default function LandingPage() {
 
             {demoSubmitted ? (
               <>
-                <h2 className="text-2xl font-serif font-bold text-text-100 mb-2">Pick a Time</h2>
+                <h2 className="text-2xl font-bold text-text-100 mb-2">Pick a Time</h2>
                 <p className="text-text-60 text-sm mb-4">We received your info — now choose a slot that works for you.</p>
                 <div
                   className="calendly-inline-widget"
@@ -1029,7 +1029,7 @@ export default function LandingPage() {
               </>
             ) : (
             <>
-            <h2 className="text-3xl font-serif font-bold text-text-100 mb-6">Schedule Your Demo</h2>
+            <h2 className="text-3xl font-bold text-text-100 mb-6">Schedule Your Demo</h2>
 
             <form onSubmit={handleDemoSubmit} className="space-y-4">
               <div>
@@ -1111,7 +1111,7 @@ export default function LandingPage() {
               ×
             </button>
             
-            <h2 className="text-3xl font-serif font-bold text-text-100 mb-6">Contact Us</h2>
+            <h2 className="text-3xl font-bold text-text-100 mb-6">Contact Us</h2>
             <p className="text-text-85 mb-6">We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
             
             <form onSubmit={handleContactSubmit} className="space-y-4">
