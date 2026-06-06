@@ -639,6 +639,48 @@ body.hero-passed .side-label {
 .scrollbar-thin::-webkit-scrollbar { display: none; }
 
 /* ─────────────────────────────────────────────
+   CUSTOM SCROLLBAR
+───────────────────────────────────────────── */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(91, 192, 190, 0.35) rgba(11, 19, 43, 0.6);
+}
+
+/* Chrome / Edge / Safari */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(11, 19, 43, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(91, 192, 190, 0.5) 0%,
+    rgba(111, 255, 233, 0.3) 100%
+  );
+  border-radius: 99px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(91, 192, 190, 0.85) 0%,
+    rgba(111, 255, 233, 0.6) 100%
+  );
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ─────────────────────────────────────────────
    REDUCED MOTION — FULL FALLBACK
 ───────────────────────────────────────────── */
 
