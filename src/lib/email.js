@@ -3,15 +3,18 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.local' });
 
+const FROM_NAME = process.env.FROM_NAME || 'LMN8';
+const FROM_EMAIL = process.env.FROM_EMAIL || process.env.SMTP_USER || process.env.EMAIL_USER;
+
 // Email configuration
 const createTransporter = () => {
-  // For development, we'll use Gmail SMTP
-  // In production, you might want to use SendGrid, AWS SES, or other services
   return nodemailer.createTransport({
-    service: 'gmail',
+    host: process.env.SMTP_HOST || 'smtpout.secureserver.net',
+    port: parseInt(process.env.SMTP_PORT || '465'),
+    secure: process.env.SMTP_SECURE === 'true',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_APP_PASSWORD, // Use App Password for Gmail
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
     },
   });
 };
@@ -23,7 +26,7 @@ export const createPasswordResetEmailTemplate = (email, resetToken, username) =>
   const resetLink = `lumen8://reset-password?token=${resetToken}`;
   
   return {
-    from: `"LMN8" <${process.env.EMAIL_USER}>`,
+    from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
     to: email,
     subject: `Password Reset Request - LMN8`,
     html: `
@@ -263,7 +266,7 @@ export const createWelcomeEmailTemplate = (patient) => {
   const { name, email, therapist, totalSessions } = patient;
   
   return {
-    from: `"Luminate Clinician" <${process.env.EMAIL_USER}>`,
+    from: `"Luminate Clinician" <${FROM_EMAIL}>`,
     to: email,
     subject: `Welcome to Luminate Clinician - Your Treatment Journey Begins!`,
     html: `
@@ -488,7 +491,7 @@ export const createPatientCredentialsEmailTemplate = (patient, credentials) => {
   const { username, password } = credentials;
   
   return {
-    from: `"Luminate Clinician" <${process.env.EMAIL_USER}>`,
+    from: `"Luminate Clinician" <${FROM_EMAIL}>`,
     to: email,
     subject: `Your Patient Portal Access - Luminate Clinician`,
     html: `
@@ -758,6 +761,93 @@ export const sendPatientCredentialsEmail = async (patient, credentials) => {
       error: error.message,
       message: 'Failed to send patient credentials email'
     };
+  }
+};
+
+// Staff credentials email template
+export const createStaffCredentialsEmailTemplate = (staff, credentials, clinicianName) => {
+  const baseUrl = process.env.PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
+  const loginUrl = `${baseUrl}/staff-login?user=${encodeURIComponent(staff.email)}&name=${encodeURIComponent(staff.firstName)}`;
+  return {
+    from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+    to: staff.email,
+    subject: `Your LMN8 Dashboard Staff Account`,
+    html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Your LMN8 Staff Account</title>
+      <style>
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;background-color:#f8fafc}
+        .container{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:20px;padding:40px;box-shadow:0 20px 40px rgba(0,0,0,0.1)}
+        .header{text-align:center;margin-bottom:30px}
+        .logo{font-size:32px;font-weight:bold;color:#5bc0be;margin-bottom:10px}
+        .title{color:#ffffff;font-size:28px;margin-bottom:10px;font-weight:600}
+        .content{background:rgba(255,255,255,0.05);border-radius:15px;padding:30px;margin-bottom:30px;border:1px solid rgba(255,255,255,0.1)}
+        .greeting{color:#ffffff;font-size:18px;margin-bottom:20px}
+        .credentials-box{background:rgba(6,182,212,0.1);border:2px solid #06b6d4;border-radius:15px;padding:25px;margin:25px 0;text-align:center}
+        .credentials-title{color:#06b6d4;font-weight:600;margin-bottom:15px;font-size:18px}
+        .credential-item{background:rgba(0,0,0,0.3);border-radius:10px;padding:15px;margin:10px 0;border:1px solid rgba(255,255,255,0.1)}
+        .credential-label{color:#94a3b8;font-size:14px;margin-bottom:5px}
+        .credential-value{color:#ffffff;font-size:20px;font-weight:bold;font-family:'Courier New',monospace;letter-spacing:1px}
+        .cta-button{display:inline-block;background:linear-gradient(135deg,#06b6d4,#10b981);color:white;padding:15px 30px;text-decoration:none;border-radius:10px;font-weight:600;text-align:center;margin:20px 0}
+        .footer{text-align:center;color:#64748b;font-size:14px;margin-top:30px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1)}
+        .highlight{color:#06b6d4;font-weight:600}
+      </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header"><div class="logo">LMN8</div><h1 class="title">Your Staff Account</h1></div>
+          <div class="content">
+            <p class="greeting">Dear <span class="highlight">${staff.firstName} ${staff.lastName}</span>,</p>
+            <p style="color:#e2e8f0;margin-bottom:20px;">Your dashboard account has been created by <span class="highlight">${clinicianName}</span>.</p>
+            <div class="credentials-box">
+              <div class="credentials-title">🔐 Your Login Credentials</div>
+              <div class="credential-item"><div class="credential-label">Email</div><div class="credential-value">${staff.email}</div></div>
+              <div class="credential-item"><div class="credential-label">Password</div><div class="credential-value">${credentials.password}</div></div>
+            </div>
+            <div style="text-align:center;margin:30px 0;">
+              <a href="${loginUrl}" class="cta-button">Access Your Dashboard</a>
+            </div>
+            <p style="color:#94a3b8;font-size:14px;">For security, please change your password after first login.</p>
+          </div>
+          <div class="footer"><p>© 2024 LMN8. All rights reserved.</p></div>
+        </div>
+      </body>
+      </html>
+    `,
+    text: `
+Your LMN8 Dashboard Staff Account
+
+Dear ${staff.firstName} ${staff.lastName},
+
+Your dashboard account has been created by ${clinicianName}.
+
+Login: ${staff.email}
+Password: ${credentials.password}
+
+Login URL: ${loginUrl}
+
+For security, please change your password after first login.
+
+© 2024 LMN8. All rights reserved.
+    `
+  };
+};
+
+export const sendStaffCredentialsEmail = async (staff, credentials, clinicianName) => {
+  try {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.warn('Email configuration missing. Skipping staff credentials email.');
+      return { success: false, error: 'Email configuration missing' };
+    }
+    const transporter = createTransporter();
+    const emailTemplate = createStaffCredentialsEmailTemplate(staff, credentials, clinicianName);
+    const result = await transporter.sendMail(emailTemplate);
+    return { success: true, messageId: result.messageId };
+  } catch (error) {
+    console.error('Error sending staff credentials email:', error);
+    return { success: false, error: error.message };
   }
 };
 

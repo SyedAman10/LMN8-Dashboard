@@ -389,8 +389,8 @@ export default function ReportsContent() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Custom Reports</h1>
-          <p className="text-slate-600 mt-1">Create and manage custom reports for your data</p>
+          <h1 className="text-3xl font-bold text-white">Custom Reports</h1>
+          <p className="text-slate-300 mt-1">Create and manage custom reports for your data</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}

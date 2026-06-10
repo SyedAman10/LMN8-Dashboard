@@ -4,132 +4,10 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LocationsContent() {
-  // Dummy data for demonstration
-  const [locations, setLocations] = useState([
-    {
-      id: '1',
-      name: 'Downtown Portland Clinic',
-      address: '123 Main Street',
-      city: 'Portland',
-      state: 'Oregon',
-      zipCode: '97201',
-      phone: '(555) 234-5678',
-      email: 'downtown@lumen8.com',
-      managerName: 'Dr. Sarah Johnson',
-      establishedDate: '2020-01-15',
-      status: 'active',
-      staffCount: 24,
-      patientCount: 156
-    },
-    {
-      id: '2',
-      name: 'Eastside Medical Center',
-      address: '456 Oak Avenue',
-      city: 'Portland',
-      state: 'Oregon',
-      zipCode: '97202',
-      phone: '(555) 345-6789',
-      email: 'eastside@lumen8.com',
-      managerName: 'Dr. Michael Chen',
-      establishedDate: '2021-03-20',
-      status: 'active',
-      staffCount: 18,
-      patientCount: 98
-    },
-    {
-      id: '3',
-      name: 'Riverside Wellness Hub',
-      address: '789 River Drive',
-      city: 'Beaverton',
-      state: 'Oregon',
-      zipCode: '97005',
-      phone: '(555) 456-7890',
-      email: 'riverside@lumen8.com',
-      managerName: 'Dr. Emily Rodriguez',
-      establishedDate: '2019-08-10',
-      status: 'active',
-      staffCount: 31,
-      patientCount: 203
-    }
-  ]);
+  const [locations, setLocations] = useState([]);
+  const [editingLocation, setEditingLocation] = useState(null);
 
-  const [users, setUsers] = useState([
-    {
-      id: '1',
-      firstName: 'Alex',
-      lastName: 'Thompson',
-      email: 'alex.thompson@lumen8.com',
-      phone: '(555) 111-2222',
-      role: 'admin',
-      roleLabel: 'Admin',
-      locationName: 'Downtown Portland Clinic',
-      locationId: '1',
-      department: 'Administration',
-      licenseNumber: 'N/A',
-      status: 'active',
-      lastLogin: '2024-01-20T15:30:00Z'
-    },
-    {
-      id: '2',
-      firstName: 'Dr. Sarah',
-      lastName: 'Johnson',
-      email: 'sarah.johnson@lumen8.com',
-      phone: '(555) 222-3333',
-      role: 'clinician',
-      roleLabel: 'Clinician',
-      locationName: 'Downtown Portland Clinic',
-      locationId: '1',
-      department: 'Mental Health',
-      licenseNumber: 'OR-LIC-12345',
-      status: 'active',
-      lastLogin: '2024-01-20T14:15:00Z'
-    },
-    {
-      id: '3',
-      firstName: 'Maria',
-      lastName: 'Garcia',
-      email: 'maria.garcia@lumen8.com',
-      phone: '(555) 333-4444',
-      role: 'nurse',
-      roleLabel: 'Nurse',
-      locationName: 'Eastside Medical Center',
-      locationId: '2',
-      department: 'Clinical Support',
-      licenseNumber: 'OR-RN-67890',
-      status: 'active',
-      lastLogin: '2024-01-20T10:45:00Z'
-    },
-    {
-      id: '4',
-      firstName: 'James',
-      lastName: 'Wilson',
-      email: 'james.wilson@lumen8.com',
-      phone: '(555) 444-5555',
-      role: 'frontDesk',
-      roleLabel: 'Front Desk',
-      locationName: 'Riverside Wellness Hub',
-      locationId: '3',
-      department: 'Front Office',
-      licenseNumber: 'N/A',
-      status: 'active',
-      lastLogin: '2024-01-20T16:20:00Z'
-    },
-    {
-      id: '5',
-      firstName: 'Lisa',
-      lastName: 'Anderson',
-      email: 'lisa.anderson@lumen8.com',
-      phone: '(555) 555-6666',
-      role: 'finance',
-      roleLabel: 'Finance',
-      locationName: 'Downtown Portland Clinic',
-      locationId: '1',
-      department: 'Billing & Finance',
-      licenseNumber: 'N/A',
-      status: 'active',
-      lastLogin: '2024-01-20T09:30:00Z'
-    }
-  ]);
+  const [staff, setStaff] = useState([]);
 
   const [activeTab, setActiveTab] = useState('locations');
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -158,17 +36,55 @@ export default function LocationsContent() {
     lastName: '',
     email: '',
     phone: '',
-    role: 'staff',
-    locationId: '',
-    department: '',
-    licenseNumber: '',
-    status: 'active'
+    role: 'staff'
   });
 
-  // Dummy data is already loaded, no API calls needed
-  // In production, you would fetch from your backend
+  const [userPermissions, setUserPermissions] = useState({
+    can_view_dashboard: true,
+    can_view_patients: false,
+    can_edit_patients: false,
+    can_delete_patients: false,
+    can_view_sessions: false,
+    can_view_integration: false,
+    can_view_resources: false,
+    can_view_reports: false,
+    can_create_reports: false,
+    can_edit_reports: false,
+    can_delete_reports: false,
+    can_view_locations: false,
+    can_view_settings: false
+  });
 
-  const handleCreateLocation = async () => {
+  const fetchLocations = async () => {
+    try {
+      const response = await fetch('/api/locations', { credentials: 'include' });
+      if (response.ok) {
+        const data = await response.json();
+        setLocations(data.locations || []);
+      }
+    } catch (error) {
+      console.error('Error fetching locations:', error);
+    }
+  };
+
+  const fetchStaff = async () => {
+    try {
+      const response = await fetch('/api/staff', { credentials: 'include' });
+      if (response.ok) {
+        const data = await response.json();
+        setStaff(data.staff || []);
+      }
+    } catch (error) {
+      console.error('Error fetching staff:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchLocations();
+    fetchStaff();
+  }, []);
+
+  const handleSaveLocation = async () => {
     if (!locationForm.name || !locationForm.address || !locationForm.city) {
       showNotification('error', 'Please fill in all required fields');
       return;
@@ -176,8 +92,12 @@ export default function LocationsContent() {
 
     try {
       setLoading(true);
-      const response = await fetch('/api/locations', {
-        method: 'POST',
+      const isEditing = !!editingLocation;
+      const url = isEditing ? `/api/locations/${editingLocation.id}` : '/api/locations';
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json'
         },
@@ -186,17 +106,17 @@ export default function LocationsContent() {
       });
 
       if (response.ok) {
-        showNotification('success', 'Location created successfully');
+        showNotification('success', isEditing ? 'Location updated successfully' : 'Location created successfully');
         setShowLocationModal(false);
         fetchLocations();
         resetLocationForm();
       } else {
         const error = await response.json();
-        showNotification('error', error.message || 'Failed to create location');
+        showNotification('error', error.message || `Failed to ${isEditing ? 'update' : 'create'} location`);
       }
     } catch (error) {
-      console.error('Error creating location:', error);
-      showNotification('error', 'Error creating location');
+      console.error('Error saving location:', error);
+      showNotification('error', 'Error saving location');
     } finally {
       setLoading(false);
     }
@@ -210,27 +130,34 @@ export default function LocationsContent() {
 
     try {
       setLoading(true);
-      const response = await fetch('/api/users', {
+      const response = await fetch('/api/staff', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         credentials: 'include',
-        body: JSON.stringify(userForm)
+        body: JSON.stringify({
+          ...userForm,
+          permissions: userPermissions
+        })
       });
 
       if (response.ok) {
-        showNotification('success', 'User created successfully');
+        const data = await response.json();
+        const msg = data.emailSent
+          ? `Staff created. Credentials sent to ${userForm.email}.`
+          : `Staff created. Email failed. Login: ${userForm.email} / Password: ${data.password}`;
+        showNotification('success', msg);
         setShowUserModal(false);
-        fetchUsers();
+        fetchStaff();
         resetUserForm();
       } else {
         const error = await response.json();
-        showNotification('error', error.message || 'Failed to create user');
+        showNotification('error', error.message || 'Failed to create staff member');
       }
     } catch (error) {
-      console.error('Error creating user:', error);
-      showNotification('error', 'Error creating user');
+      console.error('Error creating staff:', error);
+      showNotification('error', 'Error creating staff member');
     } finally {
       setLoading(false);
     }
@@ -258,23 +185,23 @@ export default function LocationsContent() {
   };
 
   const handleDeleteUser = async (userId) => {
-    if (!confirm('Are you sure you want to deactivate this user?')) return;
+    if (!confirm('Are you sure you want to deactivate this staff member?')) return;
 
     try {
-      const response = await fetch(`/api/users/${userId}`, {
+      const response = await fetch(`/api/staff/${userId}`, {
         method: 'DELETE',
         credentials: 'include'
       });
 
       if (response.ok) {
-        showNotification('success', 'User deactivated successfully');
-        fetchUsers();
+        showNotification('success', 'Staff member deactivated successfully');
+        fetchStaff();
       } else {
-        showNotification('error', 'Failed to deactivate user');
+        showNotification('error', 'Failed to deactivate staff member');
       }
     } catch (error) {
-      console.error('Error deactivating user:', error);
-      showNotification('error', 'Error deactivating user');
+      console.error('Error deactivating staff:', error);
+      showNotification('error', 'Error deactivating staff member');
     }
   };
 
@@ -291,6 +218,7 @@ export default function LocationsContent() {
       establishedDate: '',
       status: 'active'
     });
+    setEditingLocation(null);
   };
 
   const resetUserForm = () => {
@@ -299,11 +227,22 @@ export default function LocationsContent() {
       lastName: '',
       email: '',
       phone: '',
-      role: 'staff',
-      locationId: selectedLocation?.id || '',
-      department: '',
-      licenseNumber: '',
-      status: 'active'
+      role: 'staff'
+    });
+    setUserPermissions({
+      can_view_dashboard: true,
+      can_view_patients: false,
+      can_edit_patients: false,
+      can_delete_patients: false,
+      can_view_sessions: false,
+      can_view_integration: false,
+      can_view_resources: false,
+      can_view_reports: false,
+      can_create_reports: false,
+      can_edit_reports: false,
+      can_delete_reports: false,
+      can_view_locations: false,
+      can_view_settings: false
     });
   };
 
@@ -351,6 +290,7 @@ export default function LocationsContent() {
           <button
             onClick={() => {
               setActiveTab('locations');
+              resetLocationForm();
               setShowLocationModal(true);
             }}
             className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-lg hover:shadow-lg transition-all duration-200 flex items-center gap-2"
@@ -391,7 +331,7 @@ export default function LocationsContent() {
               : 'text-slate-600 hover:text-slate-800'
           }`}
         >
-          👥 Users ({users.length})
+          👥 Users ({staff.length})
         </button>
         <button
           onClick={() => setActiveTab('roles')}
@@ -463,7 +403,19 @@ export default function LocationsContent() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setLocationForm(location);
+                          setEditingLocation(location);
+                          setLocationForm({
+                            name: location.name,
+                            address: location.address,
+                            city: location.city,
+                            state: location.state || '',
+                            zipCode: location.zipCode || '',
+                            phone: location.phone || '',
+                            email: location.email || '',
+                            managerName: location.managerName || '',
+                            establishedDate: location.establishedDate || '',
+                            status: location.status || 'active'
+                          });
                           setShowLocationModal(true);
                         }}
                         className="flex-1 px-3 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg hover:shadow-lg text-sm transition-all"
@@ -492,26 +444,20 @@ export default function LocationsContent() {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-white">Users & Staff</h2>
               <div className="flex gap-2">
-                <select className="px-4 py-2 bg-slate-800/50 border border-slate-600/50 rounded-lg text-white text-sm">
-                  <option>All Locations</option>
-                  {locations.map(loc => (
-                    <option key={loc.id} value={loc.id}>{loc.name}</option>
-                  ))}
-                </select>
                 <input
                   type="text"
-                  placeholder="Search users..."
+                  placeholder="Search staff..."
                   className="px-4 py-2 bg-slate-800/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 text-sm"
                 />
               </div>
             </div>
 
-            {loading && users.length === 0 ? (
-              <div className="text-center py-12 text-slate-400">Loading users...</div>
-            ) : users.length === 0 ? (
+            {loading && staff.length === 0 ? (
+              <div className="text-center py-12 text-slate-400">Loading staff...</div>
+            ) : staff.length === 0 ? (
               <div className="text-center py-12 text-slate-400">
                 <p className="text-4xl mb-4">👥</p>
-                <p>No users yet</p>
+                <p>No staff yet</p>
                 <p className="text-sm mt-2">Add your first team member</p>
               </div>
             ) : (
@@ -521,24 +467,23 @@ export default function LocationsContent() {
                     <tr>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-white">Name</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-white">Role</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-white">Location</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-white">Email</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-white">Department</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-white">Status</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-white">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {users.map(user => {
-                      const role = roleConfig[user.role] || roleConfig.staff;
+                    {staff.map(member => {
+                      const role = roleConfig[member.role] || roleConfig.staff;
+                      const isActive = member.is_active;
                       return (
-                        <tr key={user.id} className="border-b border-slate-600/30 hover:bg-slate-700/30">
+                        <tr key={member.id} className="border-b border-slate-600/30 hover:bg-slate-700/30">
                           <td className="px-4 py-3 text-sm">
                             <div className="flex items-center gap-2">
                               <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-500 flex items-center justify-center text-white font-bold text-sm">
-                                {user.firstName[0]}{user.lastName[0]}
+                                {member.first_name?.[0]}{member.last_name?.[0]}
                               </div>
-                              <span className="font-medium text-white">{user.firstName} {user.lastName}</span>
+                              <span className="font-medium text-white">{member.first_name} {member.last_name}</span>
                             </div>
                           </td>
                           <td className="px-4 py-3 text-sm">
@@ -546,21 +491,19 @@ export default function LocationsContent() {
                               {role.label}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-sm text-slate-300">{user.locationName || 'N/A'}</td>
-                          <td className="px-4 py-3 text-sm text-slate-300">{user.email}</td>
-                          <td className="px-4 py-3 text-sm text-slate-300">{user.department || 'N/A'}</td>
+                          <td className="px-4 py-3 text-sm text-slate-300">{member.email}</td>
                           <td className="px-4 py-3 text-sm">
                             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                              user.status === 'active' 
-                                ? 'bg-green-500/20 text-green-400' 
+                              isActive
+                                ? 'bg-green-500/20 text-green-400'
                                 : 'bg-red-500/20 text-red-400'
                             }`}>
-                              {user.status}
+                              {isActive ? 'active' : 'inactive'}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-sm">
                             <button
-                              onClick={() => handleDeleteUser(user.id)}
+                              onClick={() => handleDeleteUser(member.id)}
                               className="text-red-400 hover:text-red-300 font-semibold transition-colors"
                             >
                               Deactivate
@@ -663,8 +606,8 @@ export default function LocationsContent() {
               <div className="bg-gradient-to-r from-slate-700/50 to-slate-600/50 p-6 border-b border-slate-600/30">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-2xl font-bold text-white">Add New Location</h2>
-                    <p className="text-slate-300">Create a new clinic branch</p>
+                    <h2 className="text-2xl font-bold text-white">{editingLocation ? 'Edit Location' : 'Add New Location'}</h2>
+                    <p className="text-slate-300">{editingLocation ? 'Update clinic branch information' : 'Create a new clinic branch'}</p>
                   </div>
                   <button
                     onClick={() => setShowLocationModal(false)}
@@ -792,11 +735,11 @@ export default function LocationsContent() {
                   Cancel
                 </button>
                 <button
-                  onClick={handleCreateLocation}
+                  onClick={handleSaveLocation}
                   disabled={loading}
                   className="px-6 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg hover:shadow-lg disabled:opacity-50 transition-all"
                 >
-                  {loading ? 'Creating...' : 'Create Location'}
+                  {loading ? 'Saving...' : editingLocation ? 'Update Location' : 'Create Location'}
                 </button>
               </div>
             </motion.div>
@@ -808,7 +751,7 @@ export default function LocationsContent() {
       <AnimatePresence>
         {showUserModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div 
+            <div
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
               onClick={() => setShowUserModal(false)}
             />
@@ -822,7 +765,7 @@ export default function LocationsContent() {
               <div className="bg-gradient-to-r from-slate-700/50 to-slate-600/50 p-6 border-b border-slate-600/30">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-2xl font-bold text-white">Add New User</h2>
+                    <h2 className="text-2xl font-bold text-white">Add New Staff Member</h2>
                     <p className="text-slate-300">Create a new staff member account</p>
                   </div>
                   <button
@@ -836,117 +779,279 @@ export default function LocationsContent() {
 
               <div className="p-6 max-h-[60vh] overflow-y-auto">
                 <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">First Name *</label>
-                    <input
-                      type="text"
-                      value={userForm.firstName}
-                      onChange={(e) => setUserForm({ ...userForm, firstName: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-white mb-2">First Name *</label>
+                      <input
+                        type="text"
+                        value={userForm.firstName}
+                        onChange={(e) => setUserForm({ ...userForm, firstName: e.target.value })}
+                        className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-cyan-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-white mb-2">Last Name *</label>
+                      <input
+                        type="text"
+                        value={userForm.lastName}
+                        onChange={(e) => setUserForm({ ...userForm, lastName: e.target.value })}
+                        className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-cyan-500"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Last Name *</label>
-                    <input
-                      type="text"
-                      value={userForm.lastName}
-                      onChange={(e) => setUserForm({ ...userForm, lastName: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Email *</label>
-                    <input
-                      type="email"
-                      value={userForm.email}
-                      onChange={(e) => setUserForm({ ...userForm, email: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-white mb-2">Email *</label>
+                      <input
+                        type="email"
+                        value={userForm.email}
+                        onChange={(e) => setUserForm({ ...userForm, email: e.target.value })}
+                        className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-cyan-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-white mb-2">Phone</label>
+                      <input
+                        type="tel"
+                        value={userForm.phone}
+                        onChange={(e) => setUserForm({ ...userForm, phone: e.target.value })}
+                        className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-cyan-500"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Phone</label>
-                    <input
-                      type="tel"
-                      value={userForm.phone}
-                      onChange={(e) => setUserForm({ ...userForm, phone: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Role *</label>
+                    <label className="block text-sm font-semibold text-white mb-2">Role *</label>
                     <select
                       value={userForm.role}
-                      onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                      onChange={(e) => {
+                        setUserForm({ ...userForm, role: e.target.value });
+                        if (e.target.value === 'admin') {
+                          setUserPermissions({
+                            can_view_dashboard: true,
+                            can_view_patients: true,
+                            can_edit_patients: true,
+                            can_delete_patients: true,
+                            can_view_sessions: true,
+                            can_view_integration: true,
+                            can_view_resources: true,
+                            can_view_reports: true,
+                            can_create_reports: true,
+                            can_edit_reports: true,
+                            can_delete_reports: true,
+                            can_view_locations: true,
+                            can_view_settings: true
+                          });
+                        } else {
+                          setUserPermissions({
+                            can_view_dashboard: true,
+                            can_view_patients: false,
+                            can_edit_patients: false,
+                            can_delete_patients: false,
+                            can_view_sessions: false,
+                            can_view_integration: false,
+                            can_view_resources: false,
+                            can_view_reports: false,
+                            can_create_reports: false,
+                            can_edit_reports: false,
+                            can_delete_reports: false,
+                            can_view_locations: false,
+                            can_view_settings: false
+                          });
+                        }
+                      }}
+                      className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white focus:border-cyan-500"
                     >
-                      <option value="staff">Staff</option>
-                      <option value="admin">Admin</option>
-                      <option value="clinician">Clinician</option>
-                      <option value="nurse">Nurse</option>
-                      <option value="frontDesk">Front Desk</option>
-                      <option value="finance">Finance</option>
+                      <option value="staff" className="bg-slate-800">Staff</option>
+                      <option value="admin" className="bg-slate-800">Admin</option>
+                      <option value="clinician" className="bg-slate-800">Clinician</option>
+                      <option value="nurse" className="bg-slate-800">Nurse</option>
+                      <option value="frontDesk" className="bg-slate-800">Front Desk</option>
+                      <option value="finance" className="bg-slate-800">Finance</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Location</label>
-                    <select
-                      value={userForm.locationId}
-                      onChange={(e) => setUserForm({ ...userForm, locationId: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                    >
-                      <option value="">Select Location</option>
-                      {locations.map(loc => (
-                        <option key={loc.id} value={loc.id}>{loc.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Department</label>
-                    <input
-                      type="text"
-                      value={userForm.department}
-                      onChange={(e) => setUserForm({ ...userForm, department: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">License Number</label>
-                    <input
-                      type="text"
-                      value={userForm.licenseNumber}
-                      onChange={(e) => setUserForm({ ...userForm, licenseNumber: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                    />
-                  </div>
-                </div>
+                  {/* Permissions Section */}
+                  {userForm.role === 'admin' ? (
+                    <div className="bg-cyan-500/10 p-4 rounded-lg border border-cyan-500/30">
+                      <p className="text-sm text-cyan-300 font-semibold">
+                        ✓ Admin role — all permissions are auto-granted.
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="block text-sm font-semibold text-white mb-3">Permissions</label>
+                      <div className="space-y-4">
+                        {/* Dashboard */}
+                        <div className="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30">
+                          <h4 className="text-sm font-semibold text-cyan-400 mb-2">Dashboard</h4>
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={userPermissions.can_view_dashboard}
+                              onChange={(e) => setUserPermissions({ ...userPermissions, can_view_dashboard: e.target.checked })}
+                              className="accent-cyan-500"
+                            />
+                            <span className="text-sm text-white">View Dashboard</span>
+                          </label>
+                        </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Status</label>
-                  <select
-                    value={userForm.status}
-                    onChange={(e) => setUserForm({ ...userForm, status: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg"
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
-                </div>
+                        {/* Patients */}
+                        <div className="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30">
+                          <h4 className="text-sm font-semibold text-cyan-400 mb-2">Patients</h4>
+                          <div className="space-y-2">
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={userPermissions.can_view_patients}
+                                onChange={(e) => setUserPermissions({ ...userPermissions, can_view_patients: e.target.checked })}
+                                className="accent-cyan-500"
+                              />
+                              <span className="text-sm text-white">View Patients</span>
+                            </label>
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={userPermissions.can_edit_patients}
+                                onChange={(e) => setUserPermissions({ ...userPermissions, can_edit_patients: e.target.checked })}
+                                className="accent-cyan-500"
+                              />
+                              <span className="text-sm text-white">Edit Patients</span>
+                            </label>
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={userPermissions.can_delete_patients}
+                                onChange={(e) => setUserPermissions({ ...userPermissions, can_delete_patients: e.target.checked })}
+                                className="accent-cyan-500"
+                              />
+                              <span className="text-sm text-white">Delete Patients</span>
+                            </label>
+                          </div>
+                        </div>
 
-                <div className="bg-cyan-500/10 p-4 rounded-lg border-l-4 border-cyan-500">
-                  <p className="text-sm text-cyan-300">
-                    <strong>Note:</strong> User will receive login credentials via email after creation.
-                  </p>
-                </div>
+                        {/* Sessions */}
+                        <div className="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30">
+                          <h4 className="text-sm font-semibold text-cyan-400 mb-2">Sessions</h4>
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={userPermissions.can_view_sessions}
+                              onChange={(e) => setUserPermissions({ ...userPermissions, can_view_sessions: e.target.checked })}
+                              className="accent-cyan-500"
+                            />
+                            <span className="text-sm text-white">View Sessions</span>
+                          </label>
+                        </div>
+
+                        {/* Integration */}
+                        <div className="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30">
+                          <h4 className="text-sm font-semibold text-cyan-400 mb-2">Integration</h4>
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={userPermissions.can_view_integration}
+                              onChange={(e) => setUserPermissions({ ...userPermissions, can_view_integration: e.target.checked })}
+                              className="accent-cyan-500"
+                            />
+                            <span className="text-sm text-white">View Integration</span>
+                          </label>
+                        </div>
+
+                        {/* Resources */}
+                        <div className="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30">
+                          <h4 className="text-sm font-semibold text-cyan-400 mb-2">Resources</h4>
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={userPermissions.can_view_resources}
+                              onChange={(e) => setUserPermissions({ ...userPermissions, can_view_resources: e.target.checked })}
+                              className="accent-cyan-500"
+                            />
+                            <span className="text-sm text-white">View Resources</span>
+                          </label>
+                        </div>
+
+                        {/* Reports */}
+                        <div className="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30">
+                          <h4 className="text-sm font-semibold text-cyan-400 mb-2">Reports</h4>
+                          <div className="space-y-2">
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={userPermissions.can_view_reports}
+                                onChange={(e) => setUserPermissions({ ...userPermissions, can_view_reports: e.target.checked })}
+                                className="accent-cyan-500"
+                              />
+                              <span className="text-sm text-white">View Reports</span>
+                            </label>
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={userPermissions.can_create_reports}
+                                onChange={(e) => setUserPermissions({ ...userPermissions, can_create_reports: e.target.checked })}
+                                className="accent-cyan-500"
+                              />
+                              <span className="text-sm text-white">Create Reports</span>
+                            </label>
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={userPermissions.can_edit_reports}
+                                onChange={(e) => setUserPermissions({ ...userPermissions, can_edit_reports: e.target.checked })}
+                                className="accent-cyan-500"
+                              />
+                              <span className="text-sm text-white">Edit Reports</span>
+                            </label>
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={userPermissions.can_delete_reports}
+                                onChange={(e) => setUserPermissions({ ...userPermissions, can_delete_reports: e.target.checked })}
+                                className="accent-cyan-500"
+                              />
+                              <span className="text-sm text-white">Delete Reports</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        {/* Locations */}
+                        <div className="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30">
+                          <h4 className="text-sm font-semibold text-cyan-400 mb-2">Locations</h4>
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={userPermissions.can_view_locations}
+                              onChange={(e) => setUserPermissions({ ...userPermissions, can_view_locations: e.target.checked })}
+                              className="accent-cyan-500"
+                            />
+                            <span className="text-sm text-white">View Locations</span>
+                          </label>
+                        </div>
+
+                        {/* Settings */}
+                        <div className="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30">
+                          <h4 className="text-sm font-semibold text-cyan-400 mb-2">Settings</h4>
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={userPermissions.can_view_settings}
+                              onChange={(e) => setUserPermissions({ ...userPermissions, can_view_settings: e.target.checked })}
+                              className="accent-cyan-500"
+                            />
+                            <span className="text-sm text-white">View Settings</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="bg-cyan-500/10 p-4 rounded-lg border-l-4 border-cyan-500">
+                    <p className="text-sm text-cyan-300">
+                      <strong>Note:</strong> Staff member will receive login credentials via email after creation.
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -962,7 +1067,7 @@ export default function LocationsContent() {
                   disabled={loading}
                   className="px-6 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg hover:shadow-lg disabled:opacity-50 transition-all"
                 >
-                  {loading ? 'Creating...' : 'Create User'}
+                  {loading ? 'Creating...' : 'Create Staff Member'}
                 </button>
               </div>
             </motion.div>

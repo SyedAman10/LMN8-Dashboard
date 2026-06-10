@@ -1,23 +1,15 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { getUserBySession } from '@/lib/auth';
+import { getAuthUser } from '@/lib/auth';
 
 // GET - Fetch dashboard statistics for the authenticated user
 export async function GET(request) {
   try {
-    const sessionToken = request.cookies.get('session_token')?.value;
+    const auth = await getAuthUser(request);
 
-    if (!sessionToken) {
+    if (!auth) {
       return NextResponse.json(
         { error: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
-
-    const user = await getUserBySession(sessionToken);
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid or expired session' },
         { status: 401 }
       );
     }
@@ -27,7 +19,7 @@ export async function GET(request) {
       `SELECT COUNT(*) as count 
        FROM patients 
        WHERE user_id = $1 AND status = 'active'`,
-      [user.id]
+      [auth.clinicianId]
     );
     const activePatients = parseInt(activePatientsResult.rows[0].count);
 
@@ -36,7 +28,7 @@ export async function GET(request) {
       `SELECT COUNT(*) as count 
        FROM patients 
        WHERE user_id = $1`,
-      [user.id]
+      [auth.clinicianId]
     );
     const totalPatients = parseInt(totalPatientsResult.rows[0].count);
 
@@ -50,7 +42,7 @@ export async function GET(request) {
          COUNT(*) as total
        FROM patients 
        WHERE user_id = $1`,
-      [user.id]
+      [auth.clinicianId]
     );
     
     const completedPatients = parseInt(completionRateResult.rows[0].completed);
@@ -64,7 +56,7 @@ export async function GET(request) {
        WHERE user_id = $1 
        ORDER BY created_at DESC 
        LIMIT 5`,
-      [user.id]
+      [auth.clinicianId]
     );
 
     // Get patients by status
@@ -73,7 +65,7 @@ export async function GET(request) {
        FROM patients 
        WHERE user_id = $1 
        GROUP BY status`,
-      [user.id]
+      [auth.clinicianId]
     );
 
     const patientsByStatus = patientsByStatusResult.rows.reduce((acc, row) => {
@@ -86,7 +78,7 @@ export async function GET(request) {
       `SELECT AVG(sessions_completed) as avg_completed, AVG(total_sessions) as avg_total
        FROM patients 
        WHERE user_id = $1`,
-      [user.id]
+      [auth.clinicianId]
     );
 
     const avgSessionsCompleted = Math.round(avgSessionsResult.rows[0].avg_completed || 0);

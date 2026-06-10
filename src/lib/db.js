@@ -170,6 +170,72 @@ export async function initDatabase() {
       console.log('   ⚠️  Some indexes may already exist:', indexError.message);
     }
 
+    // Create clinician_staff table for staff user management
+    console.log('   Creating clinician_staff table...');
+    await query(`
+      CREATE TABLE IF NOT EXISTS clinician_staff (
+        id SERIAL PRIMARY KEY,
+        clinician_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        first_name VARCHAR(100) NOT NULL,
+        last_name VARCHAR(100) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(20),
+        role VARCHAR(50) NOT NULL DEFAULT 'staff',
+        password_hash VARCHAR(255) NOT NULL,
+        is_active BOOLEAN DEFAULT true,
+        can_view_dashboard BOOLEAN DEFAULT true,
+        can_view_patients BOOLEAN DEFAULT false,
+        can_edit_patients BOOLEAN DEFAULT false,
+        can_delete_patients BOOLEAN DEFAULT false,
+        can_view_sessions BOOLEAN DEFAULT false,
+        can_view_integration BOOLEAN DEFAULT false,
+        can_view_resources BOOLEAN DEFAULT false,
+        can_view_reports BOOLEAN DEFAULT false,
+        can_create_reports BOOLEAN DEFAULT false,
+        can_edit_reports BOOLEAN DEFAULT false,
+        can_delete_reports BOOLEAN DEFAULT false,
+        can_view_locations BOOLEAN DEFAULT false,
+        can_view_settings BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_login TIMESTAMP,
+        UNIQUE(clinician_id, email)
+      )
+    `);
+    console.log('   ✅ clinician_staff table created');
+
+    // Create locations table for clinician-specific locations
+    console.log('   Creating locations table...');
+    await query(`
+      CREATE TABLE IF NOT EXISTS locations (
+        id SERIAL PRIMARY KEY,
+        clinician_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        name VARCHAR(255) NOT NULL,
+        address VARCHAR(255) NOT NULL,
+        city VARCHAR(100) NOT NULL,
+        state VARCHAR(50),
+        zip_code VARCHAR(20),
+        phone VARCHAR(20),
+        email VARCHAR(255),
+        manager_name VARCHAR(255),
+        established_date DATE,
+        status VARCHAR(20) DEFAULT 'active',
+        staff_count INTEGER DEFAULT 0,
+        patient_count INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('   ✅ locations table created');
+
+    // Add index for locations
+    try {
+      await query(`CREATE INDEX IF NOT EXISTS idx_locations_clinician_id ON locations(clinician_id)`);
+      console.log('   ✅ locations index created');
+    } catch (idxError) {
+      console.log('   ⚠️  Locations index error:', idxError.message);
+    }
+
     console.log('✅ Database schema initialized successfully');
     return true;
   } catch (error) {

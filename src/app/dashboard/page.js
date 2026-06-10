@@ -60,55 +60,46 @@ export default function Dashboard() {
     {
       id: 'dashboard',
       title: 'Dashboard',
-      icon: '🏠',
       description: 'Overview & Progress'
     },
     {
       id: 'patients',
       title: 'Patients',
-      icon: '👥',
       description: 'Patient Management'
     },
     {
       id: 'onboarding',
       title: 'Onboarding',
-      icon: '🌱',
       description: 'New Patient Setup'
     },
     {
       id: 'sessions',
       title: 'Sessions',
-      icon: '🌊',
       description: 'Therapeutic Sessions'
     },
     {
       id: 'integration',
       title: 'Integration',
-      icon: '🦋',
       description: 'Post-Session Processing'
     },
     {
       id: 'resources',
       title: 'Resources',
-      icon: '📚',
       description: 'Tools & Materials'
     },
     {
       id: 'settings',
       title: 'Settings',
-      icon: '⚙️',
       description: 'Account & Preferences'
     },
     {
       id: 'reports',
       title: 'Reports',
-      icon: '📊',
       description: 'Analytics & Insights'
     },
     {
       id: 'locations',
       title: 'Locations',
-      icon: '🏢',
       description: 'Multi-Location Management'
     }
   ];
@@ -198,7 +189,6 @@ export default function Dashboard() {
       default:
         return (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">{sidebarItems.find(item => item.id === activePage)?.icon}</div>
             <h3 className="text-2xl font-semibold text-white mb-2">
               {sidebarItems.find(item => item.id === activePage)?.title}
             </h3>

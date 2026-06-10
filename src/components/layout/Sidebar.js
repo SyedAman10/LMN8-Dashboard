@@ -2,60 +2,64 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { LayoutDashboard, Users, UserPlus, Calendar, HeartHandshake, BookOpen, BarChart3, Building2, Settings } from 'lucide-react';
+
+const iconMap = {
+  dashboard: LayoutDashboard,
+  patients: Users,
+  onboarding: UserPlus,
+  sessions: Calendar,
+  integration: HeartHandshake,
+  resources: BookOpen,
+  reports: BarChart3,
+  locations: Building2,
+  settings: Settings
+};
 
 const sidebarItems = [
   {
     id: 'dashboard',
     title: 'Dashboard',
-    icon: '🏠',
     description: 'Overview & Progress'
   },
   {
     id: 'patients',
     title: 'Patients',
-    icon: '👥',
     description: 'Patient Management'
   },
   {
     id: 'onboarding',
     title: 'Onboarding',
-    icon: '🌱',
     description: 'New Patient Setup'
   },
   {
     id: 'sessions',
     title: 'Sessions',
-    icon: '🌊',
     description: 'Therapeutic Sessions'
   },
   {
     id: 'integration',
     title: 'Integration',
-    icon: '🦋',
     description: 'Post-Session Processing'
   },
   {
     id: 'resources',
     title: 'Resources',
-    icon: '📚',
     description: 'Tools & Materials'
   },
   {
     id: 'reports',
     title: 'Reports',
-    icon: '📊',
     description: 'Analytics & Insights'
   },
   {
     id: 'locations',
     title: 'Locations',
-    icon: '🏢',
     description: 'Multi-Location Management'
   },
   {
     id: 'settings',
     title: 'Settings',
-    icon: '⚙️',
     description: 'Account & Preferences'
   }
 ];
@@ -67,8 +71,8 @@ export default function Sidebar({ activePage, setActivePage, sidebarOpen, setSid
       {/* Sidebar Header */}
       <div className={`${sidebarOpen ? 'p-4' : 'p-2'} border-b border-slate-700/50`}>
         <div className={`flex items-center ${sidebarOpen ? 'justify-center' : 'flex-col space-y-2'}`}>
-          <div className="w-12 h-12 flex items-center justify-center mx-auto">
-            <span className="text-white font-bold text-xl">LMN8</span>
+          <div className="flex flex-col items-center mx-auto">
+            <span className="text-white font-bold text-sm">{user ? `${user.firstName} ${user.lastName}` : 'User'}</span>
           </div>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -81,26 +85,29 @@ export default function Sidebar({ activePage, setActivePage, sidebarOpen, setSid
 
       {/* Sidebar Navigation */}
       <div className="p-3 space-y-2">
-        {sidebarItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => setActivePage(item.id)}
-            className={`w-full flex items-center ${sidebarOpen ? 'space-x-3 p-3' : 'justify-center p-2'} rounded-xl transition-all duration-200 ${
-              activePage === item.id
-                ? 'bg-gradient-to-r from-cyan-600/30 to-teal-600/30 border border-cyan-500/50 text-white'
-                : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
-            }`}
-            title={!sidebarOpen ? item.title : ''}
-          >
-            <span className={`${sidebarOpen ? 'text-2xl' : 'text-xl'}`}>{item.icon}</span>
-            {sidebarOpen && (
-              <div className="text-left">
-                <div className="font-semibold">{item.title}</div>
-                <div className="text-xs text-slate-500">{item.description}</div>
-              </div>
-            )}
-          </button>
-        ))}
+        {sidebarItems.map((item) => {
+          const Icon = iconMap[item.id];
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActivePage(item.id)}
+              className={`w-full flex items-center ${sidebarOpen ? 'space-x-3 p-3' : 'justify-center p-2'} rounded-xl transition-all duration-200 ${
+                activePage === item.id
+                  ? 'bg-gradient-to-r from-cyan-600/30 to-teal-600/30 border border-cyan-500/50 text-white'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+              }`}
+              title={!sidebarOpen ? item.title : ''}
+            >
+              {Icon && <Icon className={`${sidebarOpen ? 'w-5 h-5' : 'w-5 h-5'}`} />}
+              {sidebarOpen && (
+                <div className="text-left">
+                  <div className="font-semibold">{item.title}</div>
+                  <div className="text-xs text-slate-500">{item.description}</div>
+                </div>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* Sidebar Footer */}
@@ -116,11 +123,6 @@ export default function Sidebar({ activePage, setActivePage, sidebarOpen, setSid
               <div>
                 <div className="text-white font-semibold text-sm">
                   {user ? `${user.firstName} ${user.lastName}` : 'User'}
-                </div>
-                <div className="text-slate-400 text-xs">
-                  {user?.role === 'clinician' ? 'Licensed Therapist' : 
-                   user?.role === 'researcher' ? 'Researcher' : 
-                   user?.role === 'student' ? 'Student' : 'User'}
                 </div>
               </div>
             </div>

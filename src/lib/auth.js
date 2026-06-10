@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import { query } from './db.js';
 
 // Hash password
@@ -43,6 +44,30 @@ export async function getUserBySession(sessionToken) {
   );
 
   return result.rows[0] || null;
+}
+
+// Get authenticated user from either clinician session or staff token
+export async function getAuthUser(request) {
+  const sessionToken = request.cookies.get('session_token')?.value;
+  if (sessionToken) {
+    const user = await getUserBySession(sessionToken);
+    if (user) {
+      const { hashed_password, ...safe } = user;
+      return { type: 'clinician', user: safe, clinicianId: user.id };
+    }
+  }
+
+  const staffToken = request.cookies.get('staff_token')?.value;
+  if (staffToken) {
+    try {
+      const decoded = jwt.verify(staffToken, process.env.JWT_SECRET || 'your-secret-key');
+      if (decoded.type === 'staff') {
+        return { type: 'staff', clinicianId: decoded.clinicianId, staffId: decoded.staffId };
+      }
+    } catch (e) {}
+  }
+
+  return null;
 }
 
 // Clean up expired sessions

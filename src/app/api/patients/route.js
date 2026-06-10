@@ -1,25 +1,17 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { getUserBySession } from '@/lib/auth';
+import { getAuthUser } from '@/lib/auth';
 import { sendWelcomeEmail, sendPatientCredentialsEmail } from '@/lib/email';
 import { createPatientUser } from '@/lib/patientAuth';
 
 // GET - Fetch all patients for the authenticated user
 export async function GET(request) {
   try {
-    const sessionToken = request.cookies.get('session_token')?.value;
+    const auth = await getAuthUser(request);
 
-    if (!sessionToken) {
+    if (!auth) {
       return NextResponse.json(
         { error: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
-
-    const user = await getUserBySession(sessionToken);
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid or expired session' },
         { status: 401 }
       );
     }
@@ -29,7 +21,7 @@ export async function GET(request) {
       `SELECT * FROM patients 
        WHERE user_id = $1 
        ORDER BY created_at DESC`,
-      [user.id]
+      [auth.clinicianId]
     );
 
     return NextResponse.json({

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export default function DashboardContent({ onAddPatient, refreshTrigger }) {
+export default function DashboardContent({ onAddPatient, refreshTrigger, userName }) {
   const [currentPhase, setCurrentPhase] = useState('preparation');
   const [dashboardStats, setDashboardStats] = useState({
     activePatients: 0,
@@ -117,7 +117,7 @@ export default function DashboardContent({ onAddPatient, refreshTrigger }) {
       <div className="bg-gradient-to-r from-cyan-600/20 via-teal-600/20 to-cyan-600/20 rounded-2xl p-6 border border-cyan-500/30">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-white mb-2">Welcome Back! 👋</h2>
+            <h2 className="text-3xl font-bold text-white mb-2">Welcome back, {userName || 'Clinician'}!</h2>
             <p className="text-slate-300">Here's your clinical overview for today</p>
           </div>
           <div className="text-right">

@@ -2,18 +2,18 @@ import nodemailer from 'nodemailer';
 
 function createCrisisTransporter() {
   return nodemailer.createTransport({
-    host: process.env.CRISIS_SMTP_HOST,
-    port: parseInt(process.env.CRISIS_SMTP_PORT || '465', 10),
-    secure: process.env.CRISIS_SMTP_SECURE === 'true',
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT || '465', 10),
+    secure: process.env.SMTP_SECURE === 'true',
     auth: {
-      user: process.env.CRISIS_SMTP_USER,
-      pass: process.env.CRISIS_SMTP_PASS,
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
     },
   });
 }
 
 export async function sendCrisisAlertToClinician(clinicianEmail, clinicianName, content, source, patientName, patientEmail) {
-  if (!process.env.CRISIS_SMTP_USER || !process.env.CRISIS_SMTP_PASS) {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
     console.warn('[CRISIS EMAIL] SMTP not configured');
     return { success: false, error: 'SMTP not configured' };
   }
@@ -26,7 +26,7 @@ export async function sendCrisisAlertToClinician(clinicianEmail, clinicianName, 
         </p>`
       : '';
     const info = await transporter.sendMail({
-      from: `"LMN8 Crisis Alert" <${process.env.CRISIS_SMTP_USER}>`,
+      from: `"LMN8 Crisis Alert" <${process.env.SMTP_USER}>`,
       to: clinicianEmail,
       subject: 'LMN8 - CRISIS ALERT: Patient Needs Immediate Support',
       html: `<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px;">
@@ -43,7 +43,7 @@ export async function sendCrisisAlertToClinician(clinicianEmail, clinicianName, 
         <p style="color:#9ca3af;font-size:12px;">This is an automated alert from LMN8. Please take appropriate action.</p>
       </div>`,
     });
-    console.log(`[CRISIS EMAIL] Alert sent to clinician ${clinicianEmail} via ${process.env.CRISIS_SMTP_HOST} id=${info.messageId}`);
+    console.log(`[CRISIS EMAIL] Alert sent to clinician ${clinicianEmail} via ${process.env.SMTP_HOST} id=${info.messageId}`);
     return { success: true, messageId: info.messageId };
   } catch (err) {
     console.error('[CRISIS EMAIL] Failed:', err.message);

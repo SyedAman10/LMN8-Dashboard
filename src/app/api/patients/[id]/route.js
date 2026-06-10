@@ -1,22 +1,14 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { getUserBySession } from '@/lib/auth';
+import { getAuthUser } from '@/lib/auth';
 
 export async function PUT(request, { params }) {
   try {
-    const sessionToken = request.cookies.get('session_token')?.value;
+    const auth = await getAuthUser(request);
 
-    if (!sessionToken) {
+    if (!auth) {
       return NextResponse.json(
         { error: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
-
-    const user = await getUserBySession(sessionToken);
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid or expired session' },
         { status: 401 }
       );
     }
@@ -106,12 +98,12 @@ export async function PUT(request, { params }) {
         medicalHistory,
         emergencyContact || null,
         emergencyPhone || null,
-        therapist || user.full_name || '',
+        therapist || (auth.user?.full_name) || '',
         normalizedTotalSessions,
         notes || null,
         normalizedStatus,
         patientId,
-        user.id
+        auth.clinicianId
       ]
     );
 
