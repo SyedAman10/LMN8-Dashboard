@@ -765,9 +765,10 @@ export const sendPatientCredentialsEmail = async (patient, credentials) => {
 };
 
 // Staff credentials email template
-export const createStaffCredentialsEmailTemplate = (staff, credentials, clinicianName) => {
+export const createStaffCredentialsEmailTemplate = (staff, credentials, clinicianName, clinicName) => {
   const baseUrl = process.env.PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
-  const loginUrl = `${baseUrl}/staff-login?user=${encodeURIComponent(staff.email)}&name=${encodeURIComponent(staff.firstName)}`;
+  const clinicParam = clinicName ? `&clinic=${encodeURIComponent(clinicName)}` : '';
+  const loginUrl = `${baseUrl}/staff-login?user=${encodeURIComponent(staff.email)}&name=${encodeURIComponent(staff.firstName)}${clinicParam}`;
   return {
     from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
     to: staff.email,
@@ -835,18 +836,113 @@ For security, please change your password after first login.
   };
 };
 
-export const sendStaffCredentialsEmail = async (staff, credentials, clinicianName) => {
+export const sendStaffCredentialsEmail = async (staff, credentials, clinicianName, clinicName) => {
   try {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
       console.warn('Email configuration missing. Skipping staff credentials email.');
       return { success: false, error: 'Email configuration missing' };
     }
     const transporter = createTransporter();
-    const emailTemplate = createStaffCredentialsEmailTemplate(staff, credentials, clinicianName);
+    const emailTemplate = createStaffCredentialsEmailTemplate(staff, credentials, clinicianName, clinicName);
     const result = await transporter.sendMail(emailTemplate);
     return { success: true, messageId: result.messageId };
   } catch (error) {
     console.error('Error sending staff credentials email:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Clinician credentials email template (sent by LMN8 admin when creating a clinic)
+export const createClinicianCredentialsEmailTemplate = (clinician, credentials, adminName, clinicName) => {
+  const baseUrl = process.env.PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
+  const clinicParam = clinicName ? `&clinic=${encodeURIComponent(clinicName)}` : '';
+  const loginUrl = `${baseUrl}/login?user=${encodeURIComponent(clinician.email)}&name=${encodeURIComponent(clinician.firstName)}${clinicParam}`;
+  return {
+    from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+    to: clinician.email,
+    subject: `Your LMN8 Clinician Dashboard Account - ${clinicName}`,
+    html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Your LMN8 Clinician Account</title>
+      <style>
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;background-color:#f8fafc}
+        .container{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:20px;padding:40px;box-shadow:0 20px 40px rgba(0,0,0,0.1)}
+        .header{text-align:center;margin-bottom:30px}
+        .logo{font-size:32px;font-weight:bold;color:#5bc0be;margin-bottom:10px}
+        .title{color:#ffffff;font-size:28px;margin-bottom:10px;font-weight:600}
+        .content{background:rgba(255,255,255,0.05);border-radius:15px;padding:30px;margin-bottom:30px;border:1px solid rgba(255,255,255,0.1)}
+        .greeting{color:#ffffff;font-size:18px;margin-bottom:20px}
+        .credentials-box{background:rgba(6,182,212,0.1);border:2px solid #06b6d4;border-radius:15px;padding:25px;margin:25px 0;text-align:center}
+        .credentials-title{color:#06b6d4;font-weight:600;margin-bottom:15px;font-size:18px}
+        .credential-item{background:rgba(0,0,0,0.3);border-radius:10px;padding:15px;margin:10px 0;border:1px solid rgba(255,255,255,0.1)}
+        .credential-label{color:#94a3b8;font-size:14px;margin-bottom:5px}
+        .credential-value{color:#ffffff;font-size:20px;font-weight:bold;font-family:'Courier New',monospace;letter-spacing:1px}
+        .cta-button{display:inline-block;background:linear-gradient(135deg,#06b6d4,#10b981);color:white;padding:15px 30px;text-decoration:none;border-radius:10px;font-weight:600;text-align:center;margin:20px 0}
+        .info-box{background:rgba(16,185,129,0.1);border:1px solid #10b981;border-radius:10px;padding:15px;margin:20px 0}
+        .info-text{color:#e2e8f0;font-size:14px}
+        .footer{text-align:center;color:#64748b;font-size:14px;margin-top:30px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1)}
+        .highlight{color:#06b6d4;font-weight:600}
+      </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header"><div class="logo">LMN8</div><h1 class="title">Your Clinician Dashboard</h1></div>
+          <div class="content">
+            <p class="greeting">Dear <span class="highlight">${clinician.firstName} ${clinician.lastName}</span>,</p>
+            <p style="color:#e2e8f0;margin-bottom:20px;">Your clinician dashboard account for <span class="highlight">${clinicName}</span> has been created by <span class="highlight">${adminName}</span>.</p>
+            <div class="info-box">
+              <div class="info-text"><strong>Clinic:</strong> ${clinicName}</div>
+            </div>
+            <div class="credentials-box">
+              <div class="credentials-title">🔐 Your Login Credentials</div>
+              <div class="credential-item"><div class="credential-label">Email</div><div class="credential-value">${clinician.email}</div></div>
+              <div class="credential-item"><div class="credential-label">Password</div><div class="credential-value">${credentials.password}</div></div>
+            </div>
+            <div style="text-align:center;margin:30px 0;">
+              <a href="${loginUrl}" class="cta-button">Access Your Dashboard</a>
+            </div>
+            <p style="color:#94a3b8;font-size:14px;">For security, please change your password after first login.</p>
+          </div>
+          <div class="footer"><p>© 2024 LMN8. All rights reserved.</p></div>
+        </div>
+      </body>
+      </html>
+    `,
+    text: `
+Your LMN8 Clinician Dashboard Account
+
+Dear ${clinician.firstName} ${clinician.lastName},
+
+Your clinician dashboard account for ${clinicName} has been created by ${adminName}.
+
+Clinic: ${clinicName}
+
+Login: ${clinician.email}
+Password: ${credentials.password}
+
+Login URL: ${loginUrl}
+
+For security, please change your password after first login.
+
+© 2024 LMN8. All rights reserved.
+    `
+  };
+};
+
+export const sendClinicianCredentialsEmail = async (clinician, credentials, adminName, clinicName) => {
+  try {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.warn('Email configuration missing. Skipping clinician credentials email.');
+      return { success: false, error: 'Email configuration missing' };
+    }
+    const transporter = createTransporter();
+    const emailTemplate = createClinicianCredentialsEmailTemplate(clinician, credentials, adminName, clinicName);
+    const result = await transporter.sendMail(emailTemplate);
+    return { success: true, messageId: result.messageId };
+  } catch (error) {
+    console.error('Error sending clinician credentials email:', error);
     return { success: false, error: error.message };
   }
 };

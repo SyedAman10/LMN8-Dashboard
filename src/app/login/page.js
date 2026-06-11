@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function LoginPage() {
+function LoginForm() {
   const { login, isAuthenticated, loading: authLoading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [clinicName, setClinicName] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -16,6 +19,22 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const userParam = searchParams.get('user');
+    if (userParam) {
+      setFormData(prev => ({ ...prev, email: userParam }));
+    }
+    const clinicParam = searchParams.get('clinic');
+    if (clinicParam) {
+      setClinicName(clinicParam);
+    } else {
+      const nameParam = searchParams.get('name');
+      if (nameParam && !nameParam.includes('@')) {
+        setClinicName(nameParam);
+      }
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     // Redirect if already authenticated
@@ -125,9 +144,9 @@ export default function LoginPage() {
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                   </svg>
                 </div>
-                <span className="text-3xl font-bold text-white">LMN8</span>
+                <span className="text-3xl font-bold text-white">{clinicName || 'LMN8'}</span>
                 <div className="text-white/60 text-sm">|</div>
-                <span className="text-white/80">Psychedelic Therapy Platform</span>
+                <span className="text-white/80">{clinicName ? 'Clinic Portal' : 'Psychedelic Therapy Platform'}</span>
               </div>
             </div>
           </div>
@@ -159,7 +178,7 @@ export default function LoginPage() {
                      <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent mb-3">
                        let's continue your journey.
                      </h2>
-                    <p className="text-white/70 text-lg">Sign in to your LMN8 account</p>
+                    <p className="text-white/70 text-lg">Sign in to your {clinicName || 'LMN8'} account</p>
                   </div>
 
                   {/* Form */}
@@ -306,5 +325,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"><p className="text-white/70">Loading...</p></div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -261,7 +261,7 @@ export default function LocationsContent() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 h-screen">
       {/* Notification */}
       <AnimatePresence>
         {notification && (
@@ -864,7 +864,6 @@ export default function LocationsContent() {
                       className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white focus:border-cyan-500"
                     >
                       <option value="staff" className="bg-slate-800">Staff</option>
-                      <option value="admin" className="bg-slate-800">Admin</option>
                       <option value="clinician" className="bg-slate-800">Clinician</option>
                       <option value="nurse" className="bg-slate-800">Nurse</option>
                       <option value="frontDesk" className="bg-slate-800">Front Desk</option>

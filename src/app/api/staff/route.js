@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { getAuthUser } from '@/lib/auth';
 import { createStaff, getStaffByClinician } from '@/lib/staffAuth';
 import { sendStaffCredentialsEmail } from '@/lib/email';
+import { query } from '@/lib/db';
 
 export async function GET(request) {
   try {
@@ -27,11 +28,13 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { firstName, lastName, email, phone, role, permissions } = body;
+    const { firstName, lastName, email, phone, role, permissions, clinicId } = body;
 
     if (!firstName || !lastName || !email || !role) {
       return NextResponse.json({ error: 'First name, last name, email, and role are required' }, { status: 400 });
     }
+
+    const resolvedClinicId = clinicId || (auth.user?.clinic_id) || null;
 
     const result = await createStaff({
       clinicianId: auth.clinicianId,
@@ -40,14 +43,23 @@ export async function POST(request) {
       email,
       phone,
       role,
-      permissions
+      permissions,
+      clinicId: resolvedClinicId
     });
 
     const clinicianName = auth.type === 'clinician' ? (auth.user?.first_name || auth.user?.full_name || 'Clinician') : 'Clinician';
+    let clinicName = null;
+    if (resolvedClinicId) {
+      const clinicResult = await query(`SELECT name FROM clinics WHERE id = $1`, [resolvedClinicId]);
+      if (clinicResult.rows.length > 0) {
+        clinicName = clinicResult.rows[0].name;
+      }
+    }
     const emailResult = await sendStaffCredentialsEmail(
       { firstName, lastName, email, phone },
       { password: result.plainPassword },
-      clinicianName
+      clinicianName,
+      clinicName
     );
 
     return NextResponse.json({

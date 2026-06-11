@@ -115,15 +115,10 @@ export default function StaffDashboard() {
       <div className="bg-slate-800/60 border-b border-cyan-500/30 px-6 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           
-          <span className="text-white font-bold text-lg">{staff?.firstName ? `Hi ${staff.firstName}` : 'Staff Dashboard'}</span>
+          <span className="text-white font-bold text-lg">{staff?.clinicName || staff?.firstName || 'Staff Dashboard'}</span>
+          {staff?.firstName && <span className="text-slate-400 text-sm ml-2">{staff.firstName} {staff.lastName || ''}</span>}
         </div>
         <div className="flex items-center space-x-4">
-          <div className="text-right">
-            <span className="text-white/70 text-sm block">{staff?.firstName} {staff?.lastName}</span>
-            {staff?.clinicianName && (
-              <span className="text-cyan-400/60 text-xs">Created by {staff.clinicianName}</span>
-            )}
-          </div>
           <button onClick={handleLogout} className="flex items-center space-x-1 text-red-400 hover:text-red-300 text-sm">
             <LogOut className="w-4 h-4" />
             <span>Sign Out</span>

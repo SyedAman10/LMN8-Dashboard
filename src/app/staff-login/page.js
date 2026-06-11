@@ -12,6 +12,7 @@ function StaffLoginForm() {
     password: '',
   });
   const [staffName, setStaffName] = useState('');
+  const [clinicParam, setClinicParam] = useState('');
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -24,6 +25,15 @@ function StaffLoginForm() {
     const nameParam = searchParams.get('name');
     if (nameParam) {
       setStaffName(nameParam);
+    }
+    const clinicParam = searchParams.get('clinic');
+    if (clinicParam) {
+      setClinicParam(clinicParam);
+    } else {
+      const nameParam = searchParams.get('name');
+      if (nameParam && !nameParam.includes('@')) {
+        setClinicParam(nameParam);
+      }
     }
   }, [searchParams]);
 
@@ -97,7 +107,11 @@ function StaffLoginForm() {
             style={{ transform: `translateX(-50%) translateY(${mousePosition.y * 0.1 - 5}px) rotateX(${mousePosition.y * 0.1}deg)` }}
           >
             <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl px-6 py-3 shadow-2xl">
-              <span className="text-3xl font-bold text-white">{staffName ? `Hi ${staffName}` : 'Staff User'}</span>
+              <div className="flex items-center space-x-4">
+                <span className="text-3xl font-bold text-white">{staffName || 'Staff'}</span>
+                <div className="text-white/60 text-sm">|</div>
+                <span className="text-white/80">{clinicParam || 'Staff Portal'}</span>
+              </div>
             </div>
           </div>
 
@@ -118,7 +132,7 @@ function StaffLoginForm() {
                 <div className="p-6 relative">
                   <div className="mb-4">
                     <h1 className="text-3xl font-bold text-white mb-1">Staff Login</h1>
-                    <p className="text-white/70 text-lg mb-3">Sign in to your staff account</p>
+                    <p className="text-white/70 text-lg mb-3">Sign in to your {clinicParam || 'staff'} account</p>
                   </div>
 
                   <div className="space-y-3">

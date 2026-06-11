@@ -23,6 +23,14 @@ export async function POST(request) {
     );
     const clinicianName = clinicianResult.rows[0]?.full_name || 'Clinician';
 
+    let clinicName = null;
+    if (staff.clinic_id) {
+      const clinicResult = await query(`SELECT name FROM clinics WHERE id = $1`, [staff.clinic_id]);
+      if (clinicResult.rows.length > 0) {
+        clinicName = clinicResult.rows[0].name;
+      }
+    }
+
     const token = jwt.sign(
       {
         staffId: staff.id,
@@ -45,6 +53,7 @@ export async function POST(request) {
         email: staff.email,
         role: staff.role,
         clinicianName,
+        clinicName,
         permissions: {
           can_view_dashboard: staff.can_view_dashboard,
           can_view_patients: staff.can_view_patients,

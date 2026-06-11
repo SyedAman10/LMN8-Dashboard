@@ -1,4 +1,5 @@
 import { Pool, neonConfig } from '@neondatabase/serverless';
+import bcrypt from 'bcryptjs';
 
 // In Node.js environments (scripts), provide a WebSocket implementation
 if (typeof WebSocket === 'undefined') {
@@ -234,6 +235,79 @@ export async function initDatabase() {
       console.log('   ✅ locations index created');
     } catch (idxError) {
       console.log('   ⚠️  Locations index error:', idxError.message);
+    }
+
+    // Create clinics table for LMN8 admin to manage clinics
+    console.log('   Creating clinics table...');
+    await query(`
+      CREATE TABLE IF NOT EXISTS clinics (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        address VARCHAR(255),
+        city VARCHAR(100),
+        state VARCHAR(50),
+        zip_code VARCHAR(20),
+        phone VARCHAR(20),
+        email VARCHAR(255),
+        website VARCHAR(255),
+        status VARCHAR(20) DEFAULT 'active',
+        created_by UUID REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('   ✅ clinics table created');
+
+    // Add clinic_id and phone to users table (if not exist)
+    console.log('   Adding clinic_id and phone columns to users...');
+    try {
+      await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)`);
+      await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS clinic_id INTEGER REFERENCES clinics(id)`);
+      console.log('   ✅ users columns added');
+    } catch (colError) {
+      console.log('   ⚠️  Users alter error:', colError.message);
+    }
+
+    // Add clinic_id to clinician_staff (if not exist)
+    console.log('   Adding clinic_id column to clinician_staff...');
+    try {
+      await query(`ALTER TABLE clinician_staff ADD COLUMN IF NOT EXISTS clinic_id INTEGER REFERENCES clinics(id)`);
+      console.log('   ✅ clinician_staff column added');
+    } catch (colError) {
+      console.log('   ⚠️  clinician_staff alter error:', colError.message);
+    }
+
+    // Ensure lmn8_admin and clinician are valid enum values
+    try {
+      await query(`ALTER TYPE userrole ADD VALUE IF NOT EXISTS 'lmn8_admin'`);
+      await query(`ALTER TYPE userrole ADD VALUE IF NOT EXISTS 'clinician'`);
+      console.log('   ✅ lmn8_admin and clinician roles added to userrole enum');
+    } catch (enumError) {
+      console.log('   ⚠️  Enum alter error (may not apply if role is VARCHAR):', enumError.message);
+    }
+
+    // Seed LMN8 admin user if not exists
+    console.log('   Checking LMN8 admin account...');
+    try {
+      const adminResult = await query(`SELECT id, role FROM users WHERE email = 'amanullahnaqvi@gmail.com'`);
+      if (adminResult.rows.length === 0) {
+        const adminPassword = 'Admin@123456';
+        const adminHash = await bcrypt.hash(adminPassword, 12);
+        await query(
+          `INSERT INTO users (email, username, full_name, hashed_password, role, is_active)
+           VALUES ($1, $2, $3, $4, $5, true)`,
+          ['amanullahnaqvi@gmail.com', 'lmn8admin', 'LMN8 Admin', adminHash, 'lmn8_admin']
+        );
+        console.log('   ✅ LMN8 admin account created (email: amanullahnaqvi@gmail.com, password: Admin@123456)');
+        console.log('   ⚠️  PLEASE CHANGE THE DEFAULT ADMIN PASSWORD AFTER FIRST LOGIN');
+      } else if (adminResult.rows[0].role !== 'lmn8_admin') {
+        await query(`UPDATE users SET role = 'lmn8_admin' WHERE email = 'amanullahnaqvi@gmail.com'`);
+        console.log('   ✅ LMN8 admin role updated for existing user (email: amanullahnaqvi@gmail.com)');
+      } else {
+        console.log('   ✅ LMN8 admin account already exists with correct role');
+      }
+    } catch (seedError) {
+      console.log('   ⚠️  Admin seed error:', seedError.message);
     }
 
     console.log('✅ Database schema initialized successfully');

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { validateUser, createUserSession } from '@/lib/auth';
-import { initDatabase } from '@/lib/db';
+import { initDatabase, query } from '@/lib/db';
 import jwt from 'jsonwebtoken';
 
 export async function POST(request) {
@@ -46,6 +46,14 @@ export async function POST(request) {
     const [firstName, ...restNames] = fullName.trim().split(/\s+/);
     const lastName = restNames.join(' ');
 
+    let clinicName = null;
+    if (user.clinic_id) {
+      const clinicResult = await query(`SELECT name FROM clinics WHERE id = $1`, [user.clinic_id]);
+      if (clinicResult.rows.length > 0) {
+        clinicName = clinicResult.rows[0].name;
+      }
+    }
+
     // Create JWT token for backend API calls
     const jwtToken = jwt.sign(
       {
@@ -70,7 +78,9 @@ export async function POST(request) {
           fullName: fullName,
           username: user.username,
           email: user.email,
-          role: user.role
+          role: user.role,
+          clinicId: user.clinic_id,
+          clinicName: clinicName
         }
       },
       { status: 200 }

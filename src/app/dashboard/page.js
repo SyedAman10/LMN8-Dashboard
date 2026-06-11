@@ -16,6 +16,7 @@ import IntegrationContent from '@/components/pages/IntegrationContent';
 import ResourcesContent from '@/components/pages/ResourcesContent';
 import ReportsContent from '@/components/pages/ReportsContent';
 import LocationsContent from '@/components/pages/LocationsContent';
+import ClinicsContent from '@/components/pages/ClinicsContent';
 import AddPatientModal from '@/components/modals/AddPatientModal';
 import ImportPatientModal from '@/components/modals/ImportPatientModal';
 import CreateTreatmentPlanModal from '@/components/modals/CreateTreatmentPlanModal';
@@ -101,6 +102,11 @@ export default function Dashboard() {
       id: 'locations',
       title: 'Locations',
       description: 'Multi-Location Management'
+    },
+    {
+      id: 'clinics',
+      title: 'Clinics',
+      description: 'Manage Clinics & Clinicians'
     }
   ];
 
@@ -186,6 +192,8 @@ export default function Dashboard() {
         return <SettingsContent />;
       case 'patients':
         return <PatientsContent />;
+      case 'clinics':
+        return <ClinicsContent />;
       default:
         return (
           <div className="text-center py-12">

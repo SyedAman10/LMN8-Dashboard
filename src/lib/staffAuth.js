@@ -60,7 +60,7 @@ export const getDefaultPermissions = (role) => {
   };
 };
 
-export const createStaff = async ({ clinicianId, firstName, lastName, email, phone, role, permissions }) => {
+export const createStaff = async ({ clinicianId, firstName, lastName, email, phone, role, permissions, clinicId }) => {
   const password = generatePassword();
   const passwordHash = await hashPassword(password);
 
@@ -82,15 +82,15 @@ export const createStaff = async ({ clinicianId, firstName, lastName, email, pho
 
   const result = await query(
     `INSERT INTO clinician_staff (
-      clinician_id, first_name, last_name, email, phone, role, password_hash,
+      clinician_id, first_name, last_name, email, phone, role, password_hash, clinic_id,
       can_view_dashboard, can_view_patients, can_edit_patients, can_delete_patients,
       can_view_sessions, can_view_integration, can_view_resources,
       can_view_reports, can_create_reports, can_edit_reports, can_delete_reports,
       can_view_locations, can_view_settings
-    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
     RETURNING id, first_name, last_name, email, role, created_at`,
     [
-      clinicianId, firstName, lastName, email, phone || null, role, passwordHash,
+      clinicianId, firstName, lastName, email, phone || null, role, passwordHash, clinicId || null,
       perms.can_view_dashboard, perms.can_view_patients, perms.can_edit_patients, perms.can_delete_patients,
       perms.can_view_sessions, perms.can_view_integration, perms.can_view_resources,
       perms.can_view_reports, perms.can_create_reports, perms.can_edit_reports, perms.can_delete_reports,
@@ -138,7 +138,7 @@ export const getStaffById = async (id) => {
 
 export const getStaffByClinician = async (clinicianId) => {
   const result = await query(
-    `SELECT cs.id, cs.first_name, cs.last_name, cs.email, cs.phone, cs.role, cs.is_active,
+    `SELECT cs.id, cs.first_name, cs.last_name, cs.email, cs.phone, cs.role, cs.is_active, cs.clinic_id,
             cs.can_view_dashboard, cs.can_view_patients, cs.can_edit_patients, cs.can_delete_patients,
             cs.can_view_sessions, cs.can_view_integration, cs.can_view_resources,
             cs.can_view_reports, cs.can_create_reports, cs.can_edit_reports, cs.can_delete_reports,

@@ -134,7 +134,7 @@ export default function PatientsContent() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 h-screen">
       {/* Header with Search and Filters */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h3 className="text-xl font-semibold text-white">Patient Management</h3>
