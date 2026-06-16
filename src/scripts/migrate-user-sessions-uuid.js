@@ -8,7 +8,7 @@ async function migrateUserSessionsToUuid() {
       throw new Error('Database connection failed');
     }
 
-    
+  
 
     console.log('🔍 Inspecting current schema...');
     const usersIdTypeResult = await query(
