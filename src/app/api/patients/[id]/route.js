@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { logClinicianAccess } from '@/lib/accessLogger';
 
 export async function PUT(request, { params }) {
   try {
@@ -71,6 +72,23 @@ export async function PUT(request, { params }) {
     const normalizedStatus = allowedStatuses.has(String(status || '').toLowerCase())
       ? String(status).toLowerCase()
       : 'active';
+
+    // Log the access before query — capture patient info even if update fails
+    const patientResult = await query(
+      `SELECT name, email FROM patients WHERE id = $1`,
+      [patientId]
+    );
+    const patientInfo = patientResult.rows[0] || { name: 'Unknown', email: '' };
+
+    await logClinicianAccess({
+      clinicianId: auth.clinicianId,
+      clinicianEmail: auth.user?.email || '',
+      clinicianName: auth.user?.full_name || '',
+      patientId,
+      patientName: patientInfo.name,
+      patientEmail: patientInfo.email,
+      action: 'update',
+    });
 
     const updateResult = await query(
       `UPDATE patients

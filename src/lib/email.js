@@ -8,14 +8,16 @@ const FROM_EMAIL = process.env.FROM_EMAIL || process.env.SMTP_USER || process.en
 
 // Email configuration
 const createTransporter = () => {
+  const host = process.env.SMTP_HOST || process.env.CRISIS_SMTP_HOST || 'smtpout.secureserver.net';
+  const port = parseInt(process.env.SMTP_PORT || process.env.CRISIS_SMTP_PORT || '465');
+  const secure = (process.env.SMTP_SECURE || process.env.CRISIS_SMTP_SECURE) === 'true';
+  const user = process.env.SMTP_USER || process.env.CRISIS_SMTP_USER || process.env.EMAIL_USER;
+  const pass = process.env.SMTP_PASS || process.env.CRISIS_SMTP_PASS || process.env.EMAIL_APP_PASSWORD;
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtpout.secureserver.net',
-    port: parseInt(process.env.SMTP_PORT || '465'),
-    secure: process.env.SMTP_SECURE === 'true',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
+    host,
+    port,
+    secure,
+    auth: { user, pass },
   });
 };
 

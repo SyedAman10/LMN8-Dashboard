@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { getAuthUser } from '@/lib/auth';
+import { getAuthUser, getUserBySession } from '@/lib/auth';
 import { sendWelcomeEmail, sendPatientCredentialsEmail } from '@/lib/email';
 import { createPatientUser } from '@/lib/patientAuth';
 

@@ -1,19 +1,23 @@
 import nodemailer from 'nodemailer';
 
 function createCrisisTransporter() {
+  const host = process.env.SMTP_HOST || process.env.CRISIS_SMTP_HOST;
+  const port = parseInt(process.env.SMTP_PORT || process.env.CRISIS_SMTP_PORT || '465', 10);
+  const secure = (process.env.SMTP_SECURE || process.env.CRISIS_SMTP_SECURE) === 'true';
+  const user = process.env.SMTP_USER || process.env.CRISIS_SMTP_USER;
+  const pass = process.env.SMTP_PASS || process.env.CRISIS_SMTP_PASS;
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '465', 10),
-    secure: process.env.SMTP_SECURE === 'true',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
+    host,
+    port,
+    secure,
+    auth: { user, pass },
   });
 }
 
 export async function sendCrisisAlertToClinician(clinicianEmail, clinicianName, content, source, patientName, patientEmail) {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+  const smtpUser = process.env.SMTP_USER || process.env.CRISIS_SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS || process.env.CRISIS_SMTP_PASS;
+  if (!smtpUser || !smtpPass) {
     console.warn('[CRISIS EMAIL] SMTP not configured');
     return { success: false, error: 'SMTP not configured' };
   }

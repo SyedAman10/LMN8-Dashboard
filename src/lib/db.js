@@ -286,6 +286,29 @@ export async function initDatabase() {
       console.log('   ⚠️  Enum alter error (may not apply if role is VARCHAR):', enumError.message);
     }
 
+    // Create audit_logs table for patient data access tracking
+    console.log('   Creating audit_logs table...');
+    try {
+      await query(`
+        CREATE TABLE IF NOT EXISTS clinician_access_log (
+          id SERIAL PRIMARY KEY,
+          clinician_id UUID NOT NULL,
+          clinician_email VARCHAR(255) NOT NULL,
+          clinician_name VARCHAR(255) NOT NULL,
+          patient_id INTEGER NOT NULL,
+          patient_name VARCHAR(255) NOT NULL,
+          patient_email VARCHAR(255) DEFAULT '',
+          action VARCHAR(50) NOT NULL,
+          violation_type VARCHAR(50),
+          details TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      console.log('   ✅ Clinician access log table created');
+    } catch (err) {
+      console.log('   ⚠️  Clinician access log table error:', err.message);
+    }
+
     // Seed LMN8 admin user if not exists
     console.log('   Checking LMN8 admin account...');
     try {
