@@ -840,7 +840,9 @@ For security, please change your password after first login.
 
 export const sendStaffCredentialsEmail = async (staff, credentials, clinicianName, clinicName) => {
   try {
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    const smtpUser = process.env.SMTP_USER || process.env.CRISIS_SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS || process.env.CRISIS_SMTP_PASS;
+    if (!smtpUser || !smtpPass) {
       console.warn('Email configuration missing. Skipping staff credentials email.');
       return { success: false, error: 'Email configuration missing' };
     }
@@ -935,7 +937,9 @@ For security, please change your password after first login.
 
 export const sendClinicianCredentialsEmail = async (clinician, credentials, adminName, clinicName) => {
   try {
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    const smtpUser = process.env.SMTP_USER || process.env.CRISIS_SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS || process.env.CRISIS_SMTP_PASS;
+    if (!smtpUser || !smtpPass) {
       console.warn('Email configuration missing. Skipping clinician credentials email.');
       return { success: false, error: 'Email configuration missing' };
     }
