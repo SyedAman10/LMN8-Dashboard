@@ -120,7 +120,6 @@ export async function POST(request) {
     let transcribedText = null;
 
     const contentType = request.headers.get('content-type') || '';
-    let isVoiceWithoutText = false;
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData();
@@ -135,17 +134,6 @@ export async function POST(request) {
 
       if (audioFile && audioFile instanceof File && audioFile.size > 0) {
         const buffer = Buffer.from(await audioFile.arrayBuffer());
-        const ext = path.extname(audioFile.name) || '.m4a';
-        const filename = `audio_${Date.now()}_${Math.random().toString(36).slice(2, 8)}${ext}`;
-        const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'audio');
-        if (!existsSync(uploadDir)) await mkdir(uploadDir, { recursive: true });
-        const filePath = path.join(uploadDir, filename);
-        await writeFile(filePath, buffer);
-
-        audioFilePath = `/uploads/audio/${filename}`;
-        mediaUrl = audioFilePath;
-
-        isVoiceWithoutText = mediaType === 'voice' && (!content || content === 'Voice memo entry');
 
         if (!transcribedText) {
           console.log('🎙️ Starting local transcription, audio size:', buffer.length);
