@@ -45,7 +45,7 @@ export async function POST(request) {
         type: 'patient'
       },
       process.env.JWT_SECRET || 'your_super_secret_jwt_key_here_change_this_in_production',
-      { expiresIn: '7d' }
+      { expiresIn: '1d' }
     );
 
     console.log('✅ Token created:', token.substring(0, 50) + '...');
@@ -73,7 +73,7 @@ export async function POST(request) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      maxAge: 24 * 60 * 60 * 1000 // 1 day
     });
 
     console.log('✅ Response prepared and returning...');
