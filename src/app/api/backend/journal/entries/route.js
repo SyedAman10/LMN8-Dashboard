@@ -6,6 +6,7 @@ import { existsSync } from 'fs';
 import path from 'path';
 import { transcribeAudioLocally } from '@/lib/transcribe';
 import { sendCrisisAlert } from '@/lib/crisisEmail';
+import { updateJournalSummary } from '@/lib/journalSummary';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key_here_change_this_in_production';
 
@@ -186,6 +187,11 @@ export async function POST(request) {
 
     const entry = result.rows[0];
     console.log(`Journal entry created: ID=${entry.id}, type=${mediaType}, transcribed=${!!transcribedText}`);
+
+    // Update journal summary in real-time (non-blocking)
+    updateJournalSummary(String(userId)).catch(err =>
+      console.error('Background journal summary update failed:', err)
+    );
 
     // Crisis check: scan journal content + transcribed text for harmful keywords
     const combinedContent = [title, content, transcribedText].filter(Boolean).join(' ');

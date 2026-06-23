@@ -258,6 +258,20 @@ export async function initDatabase() {
     `);
     console.log('   ✅ clinics table created');
 
+    // Create patient_chat_sessions table for linking chat sessions to patients
+    console.log('   Creating patient_chat_sessions table...');
+    await query(`
+      CREATE TABLE IF NOT EXISTS patient_chat_sessions (
+        id SERIAL PRIMARY KEY,
+        patient_id INTEGER REFERENCES patient_users(id) ON DELETE CASCADE,
+        session_id VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await query(`CREATE INDEX IF NOT EXISTS idx_patient_chat_sessions_patient ON patient_chat_sessions(patient_id)`);
+    await query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_patient_chat_sessions_session ON patient_chat_sessions(session_id)`);
+    console.log('   ✅ patient_chat_sessions table created');
+
     // Add clinic_id and phone to users table (if not exist)
     console.log('   Adding clinic_id and phone columns to users...');
     try {

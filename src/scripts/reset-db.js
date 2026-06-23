@@ -23,6 +23,13 @@ async function resetDatabase() {
     
     // Drop tables in reverse order (to handle foreign key constraints)
     try {
+      await query('DROP TABLE IF EXISTS patient_chat_sessions CASCADE');
+      console.log('   - Dropped patient_chat_sessions table');
+    } catch (error) {
+      console.log('   - patient_chat_sessions table not found or already dropped');
+    }
+
+    try {
       await query('DROP TABLE IF EXISTS patients CASCADE');
       console.log('   - Dropped patients table');
     } catch (error) {
@@ -98,12 +105,25 @@ async function resetDatabase() {
     `);
     console.log('   ✅ Created patients table');
     
+    // Create patient_chat_sessions table
+    await query(`
+      CREATE TABLE patient_chat_sessions (
+        id SERIAL PRIMARY KEY,
+        patient_id INTEGER REFERENCES patient_users(id) ON DELETE CASCADE,
+        session_id VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('   ✅ Created patient_chat_sessions table');
+    
     console.log('📊 Creating indexes...');
     
     // Create indexes
     await query('CREATE INDEX idx_users_email ON users(email)');
     await query('CREATE INDEX idx_sessions_token ON user_sessions(session_token)');
     await query('CREATE INDEX idx_patients_user_id ON patients(user_id)');
+    await query('CREATE INDEX idx_patient_chat_sessions_patient ON patient_chat_sessions(patient_id)');
+    await query('CREATE UNIQUE INDEX idx_patient_chat_sessions_session ON patient_chat_sessions(session_id)');
     
     console.log('   ✅ Created all indexes');
     
