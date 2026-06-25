@@ -1,6 +1,9 @@
 import { spawn } from 'child_process';
 import { writeFileSync, mkdirSync } from 'fs';
 import path from 'path';
+import os from 'os';
+
+const CACHE_DIR = path.join(os.tmpdir(), 'lmn8-whisper-cache');
 
 const WORKER_CODE = `
 const { pipeline } = require('@xenova/transformers');
@@ -56,9 +59,8 @@ let workerPath = null;
 
 function getWorkerPath() {
   if (!workerPath) {
-    const dir = path.join(process.cwd(), 'node_modules/.cache');
-    mkdirSync(dir, { recursive: true });
-    workerPath = path.join(dir, 'whisper-worker.js');
+    mkdirSync(CACHE_DIR, { recursive: true });
+    workerPath = path.join(CACHE_DIR, 'whisper-worker.js');
     writeFileSync(workerPath, WORKER_CODE);
   }
   return workerPath;
@@ -68,6 +70,11 @@ function getWorker() {
   if (!worker) {
     worker = spawn(process.execPath, [getWorkerPath()], {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
+      env: {
+        ...process.env,
+        TRANSFORMERS_CACHE: CACHE_DIR,
+        HF_HOME: CACHE_DIR,
+      },
     });
     worker.on('exit', () => { worker = null; });
   }

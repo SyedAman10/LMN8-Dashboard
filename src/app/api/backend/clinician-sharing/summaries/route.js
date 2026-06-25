@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { query } from '@/lib/db';
-import { generateAIConversationSummaries } from '@/lib/conversationSummary';
+import { generateAIConversationSummaries, generateLatestAIConversationSummary } from '@/lib/conversationSummary';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key_here_change_this_in_production';
 
@@ -35,7 +35,20 @@ export async function GET(request) {
     const limit = parseInt(searchParams.get('limit') || '20', 10);
     const offset = parseInt(searchParams.get('offset') || '0', 10);
 
+    // Check if sharing is enabled for this summary type
+    const prefResult = await query(
+      'SELECT share_ai_conversation_summary, share_journal_entry_summary FROM clinician_sharing_preferences WHERE user_id = $1',
+      [userId]
+    );
+    const prefs = prefResult.rows[0] || {};
+    const shareAI = prefs.share_ai_conversation_summary ?? true;
+    const shareJournal = prefs.share_journal_entry_summary ?? true;
+    if ((summaryType === 'ai_conversation' && !shareAI) || (summaryType === 'journal_entry' && !shareJournal)) {
+      return NextResponse.json({ success: true, data: [], pagination: { limit, offset, count: 0 } });
+    }
+
     if (summaryType === 'ai_conversation') {
+      await generateLatestAIConversationSummary(userId);
       generateAIConversationSummaries(userId).catch(err =>
         console.error('Background AI conversation summary generation failed:', err)
       );

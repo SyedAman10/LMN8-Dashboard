@@ -120,3 +120,64 @@ export async function generateAIConversationSummaries(userId) {
     await closeBackendPool();
   }
 }
+
+export async function generateLatestAIConversationSummary(userId) {
+  try {
+    if (!HF_API_KEY) return null;
+
+    const linkedResult = await query(
+      `SELECT session_id FROM patient_chat_sessions WHERE patient_id = $1`,
+      [userId]
+    );
+    if (linkedResult.rows.length === 0) return null;
+
+    const sessionIds = linkedResult.rows.map(r => r.session_id);
+    const pool = getBackendPool();
+
+    const sessionsResult = await pool.query(
+      `SELECT s.id, s.created_at
+       FROM sessions s
+       WHERE s.id = ANY($1::uuid[])
+         AND EXISTS (SELECT 1 FROM messages m WHERE m.session_id = s.id)
+       ORDER BY s.created_at DESC
+       LIMIT 1`,
+      [sessionIds]
+    );
+    if (sessionsResult.rows.length === 0) return null;
+
+    const session = sessionsResult.rows[0];
+
+    // Delete old summary for this session (if any) so it regenerates fresh
+    await query(
+      `DELETE FROM ai_conversation WHERE user_id = $1 AND type = 'ai_conversation' AND metadata->>'sessionId' = $2`,
+      [String(userId), session.id]
+    );
+
+    const messagesResult = await pool.query(
+      `SELECT role, content FROM messages WHERE session_id = $1 ORDER BY created_at ASC`,
+      [session.id]
+    );
+    if (messagesResult.rows.length < 2) return null;
+
+    const summaryText = await generateSessionSummary('Chat Session', messagesResult.rows);
+
+    const insertResult = await query(
+      `INSERT INTO ai_conversation (user_id, type, summary_text, metadata, updated_at)
+       VALUES ($1, 'ai_conversation', $2, $3::jsonb, NOW())
+       RETURNING id, summary_text, created_at`,
+      [
+        String(userId),
+        summaryText,
+        JSON.stringify({ sessionId: session.id, messageCount: messagesResult.rows.length }),
+      ]
+    );
+
+    console.log(`📋 AI conversation summary generated synchronously for latest session ${session.id}`);
+    return insertResult.rows[0];
+  } catch (err) {
+    console.error('Failed to generate latest AI conversation summary:', err);
+    return null;
+  } finally {
+    await closeBackendPool();
+  }
+}
