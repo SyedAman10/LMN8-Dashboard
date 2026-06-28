@@ -3,14 +3,31 @@ import { query } from './db';
 const HF_API_KEY = process.env.HUGGINGFACE_API_KEY;
 const HF_MODEL = process.env.HUGGINGFACE_MODEL || 'Qwen/Qwen2.5-72B-Instruct';
 
-async function generateClinicalSummary(entriesText, moodInfo) {
-  const systemPrompt = `You are a clinical behavioral health analyst. Given a patient's recent journal entries (including mood scores and transcribed voice notes), generate a concise 3rd-person clinical summary that captures:
-- The patient's current emotional state and themes
+async function getPatientGreetingName(patientId) {
+  try {
+    const result = await query(`
+      SELECT c.patient_greeting_name
+      FROM patients p
+      JOIN users u ON p.user_id = u.id
+      JOIN clinics c ON u.clinic_id = c.id
+      WHERE p.id = $1
+    `, [patientId]);
+    return result.rows[0]?.patient_greeting_name || 'Patient';
+  } catch {
+    return 'Patient';
+  }
+}
+
+async function generateClinicalSummary(entriesText, moodInfo, patientGreetingName = 'Patient') {
+  const lower = patientGreetingName.toLowerCase();
+  const greetingForPrompt = ['patient', 'client', 'individual'].includes(lower) ? `the ${lower}` : `the ${lower} (${patientGreetingName})`;
+  const systemPrompt = `You are a clinical behavioral health analyst. Given ${greetingForPrompt}'s recent journal entries (including mood scores and transcribed voice notes), generate a concise 3rd-person clinical summary that captures:
+- ${patientGreetingName}'s current emotional state and themes
 - Notable behavioral patterns or shifts
 - Any indicators of distress, anxiety, hopelessness, or suicidal ideation
 - Progress, coping strategies, or positive developments
 
-Write in professional clinical narrative style (e.g., "The patient reports...", "The individual exhibits..."). Keep it 3-5 sentences. Do NOT include statistics or data counts.`;
+Write in professional clinical narrative style (e.g., "${greetingForPrompt} reports...", "${greetingForPrompt} exhibits..."). Keep it 3-5 sentences. Do NOT include statistics or data counts.`;
 
   const userMessage = `Recent journal entries and mood data:\n\n${entriesText}\n\n${moodInfo}\n\nGenerate a clinical behavioral summary:`;
 
@@ -85,7 +102,8 @@ export async function updateJournalSummary(userId) {
       ? `Average mood across entries: ${avgMood}/10. Recent mood scores: ${moodValues.join(', ')}.`
       : '';
 
-    const summaryText = await generateClinicalSummary(entriesText, moodInfo);
+    const patientGreetingName = await getPatientGreetingName(Number(userId));
+    const summaryText = await generateClinicalSummary(entriesText, moodInfo, patientGreetingName);
 
     const metadata = {
       totalEntries: entriesResult.rows.length,

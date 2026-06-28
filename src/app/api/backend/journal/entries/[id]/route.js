@@ -32,7 +32,13 @@ export async function GET(request, { params }) {
     const result = await query('SELECT * FROM journal_entries WHERE id = $1', [parseInt(id, 10)]);
     if (result.rows.length === 0) return NextResponse.json({ error: 'Entry not found' }, { status: 404 });
 
-    return NextResponse.json({ success: true, data: result.rows[0] });
+    const r = result.rows[0];
+    return NextResponse.json({ success: true, data: {
+      id: r.id, title: r.title, content: r.content, mediaType: r.media_type,
+      mood: r.mood, mediaUrl: r.media_url, audioFilePath: r.audio_file_path,
+      transcribedText: r.transcribed_text, userId: r.user_id,
+      timestamp: r.timestamp, createdAt: r.created_at, updatedAt: r.updated_at,
+    }});
   } catch (err) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
@@ -62,7 +68,13 @@ export async function PUT(request, { params }) {
     );
 
     if (result.rows.length === 0) return NextResponse.json({ error: 'Entry not found' }, { status: 404 });
-    return NextResponse.json({ success: true, data: result.rows[0] });
+    const r = result.rows[0];
+    return NextResponse.json({ success: true, data: {
+      id: r.id, title: r.title, content: r.content, mediaType: r.media_type,
+      mood: r.mood, mediaUrl: r.media_url, audioFilePath: r.audio_file_path,
+      transcribedText: r.transcribed_text, userId: r.user_id,
+      timestamp: r.timestamp, createdAt: r.created_at, updatedAt: r.updated_at,
+    }});
   } catch (err) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }

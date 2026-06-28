@@ -66,6 +66,8 @@ export async function GET(request, { params }) {
         email: row.email,
         website: row.website,
         status: row.status,
+        patientGreetingName: row.patient_greeting_name,
+        showCommunity: row.show_community,
         clinicianName: row.clinician_name || null,
         clinicianEmail: row.clinician_email || null,
         clinicianId: row.clinician_id || null,
@@ -126,15 +128,15 @@ export async function PUT(request, { params }) {
     }
 
     const body = await request.json();
-    const { name, address, city, state, zipCode, phone, email, website, status } = body;
+    const { name, address, city, state, zipCode, phone, email, website, status, patientGreetingName, showCommunity } = body;
 
     const result = await query(
       `UPDATE clinics SET name = COALESCE($1, name), address = COALESCE($2, address), city = COALESCE($3, city),
         state = COALESCE($4, state), zip_code = COALESCE($5, zip_code), phone = COALESCE($6, phone),
         email = COALESCE($7, email), website = COALESCE($8, website), status = COALESCE($9, status),
-        updated_at = CURRENT_TIMESTAMP
-       WHERE id = $10 RETURNING *`,
-      [name || null, address || null, city || null, state || null, zipCode || null, phone || null, email || null, website || null, status || null, params.id]
+        patient_greeting_name = COALESCE($10, patient_greeting_name), show_community = COALESCE($12, show_community), updated_at = CURRENT_TIMESTAMP
+       WHERE id = $11 RETURNING *`,
+      [name || null, address || null, city || null, state || null, zipCode || null, phone || null, email || null, website || null, status || null, patientGreetingName || null, params.id, showCommunity !== undefined ? showCommunity : null]
     );
 
     if (result.rows.length === 0) {
@@ -155,6 +157,8 @@ export async function PUT(request, { params }) {
         email: row.email,
         website: row.website,
         status: row.status,
+        patientGreetingName: row.patient_greeting_name,
+        showCommunity: row.show_community,
         updatedAt: row.updated_at
       }
     });

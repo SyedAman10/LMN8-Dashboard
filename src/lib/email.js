@@ -270,14 +270,14 @@ export const createWelcomeEmailTemplate = (patient) => {
   return {
     from: `"Luminate Clinician" <${FROM_EMAIL}>`,
     to: email,
-    subject: `Welcome to Luminate Clinician - Your Treatment Journey Begins!`,
+    subject: `Welcome - Your Treatment Journey Begins!`,
     html: `
       <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Welcome to Luminate Clinician</title>
+        <title>Welcome</title>
         <style>
           body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -388,7 +388,7 @@ export const createWelcomeEmailTemplate = (patient) => {
             <p class="greeting">Dear <span class="highlight">${name}</span>,</p>
             
             <p style="color: #e2e8f0; margin-bottom: 20px;">
-              Welcome to Luminate Clinician! We're thrilled to have you as part of our healthcare family. 
+              Welcome! We're thrilled to have you as part of our healthcare family. 
               Your treatment journey has been carefully planned and personalized just for you.
             </p>
             
@@ -403,10 +403,6 @@ export const createWelcomeEmailTemplate = (patient) => {
               Our team is committed to providing you with the highest quality care and support throughout your treatment. 
               You'll receive regular updates about your progress and any important information about your sessions.
             </p>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="#" class="cta-button">Access Your Patient Portal</a>
-            </div>
             
             <p style="color: #e2e8f0; font-size: 14px; margin-top: 20px;">
               If you have any questions or need assistance, please don't hesitate to contact our support team. 
@@ -423,11 +419,11 @@ export const createWelcomeEmailTemplate = (patient) => {
       </html>
     `,
     text: `
-      Welcome to Luminate Clinician!
+      Welcome!
       
       Dear ${name},
       
-      Welcome to Luminate Clinician! We're thrilled to have you as part of our healthcare family. 
+      Welcome! We're thrilled to have you as part of our healthcare family. 
       Your treatment journey has been carefully planned and personalized just for you.
       
       Your Treatment Details:
@@ -660,10 +656,6 @@ export const createPatientCredentialsEmailTemplate = (patient, credentials) => {
                 <div class="credential-label">Password</div>
                 <div class="credential-value">${password}</div>
               </div>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="#" class="cta-button">Access Your Patient Portal</a>
             </div>
             
             <div class="security-notice">

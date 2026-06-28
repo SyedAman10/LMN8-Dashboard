@@ -282,6 +282,15 @@ export async function initDatabase() {
       console.log('   ⚠️  Users alter error:', colError.message);
     }
 
+    // Add patient_greeting_name to clinics table (if not exist)
+    console.log('   Adding patient_greeting_name column to clinics...');
+    try {
+      await query(`ALTER TABLE clinics ADD COLUMN IF NOT EXISTS patient_greeting_name VARCHAR(100) DEFAULT 'Patient'`);
+      console.log('   ✅ patient_greeting_name column added to clinics');
+    } catch (colError) {
+      console.log('   ⚠️  clinics alter error:', colError.message);
+    }
+
     // Add clinic_id to clinician_staff (if not exist)
     console.log('   Adding clinic_id column to clinician_staff...');
     try {
@@ -322,6 +331,52 @@ export async function initDatabase() {
     } catch (err) {
       console.log('   ⚠️  Clinician access log table error:', err.message);
     }
+
+    // Create community tables for patient community feature
+    console.log('   Creating community_posts table...');
+    await query(`
+      CREATE TABLE IF NOT EXISTS community_posts (
+        id SERIAL PRIMARY KEY,
+        patient_user_id INTEGER REFERENCES patient_users(id) ON DELETE CASCADE,
+        content TEXT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    await query(`CREATE INDEX IF NOT EXISTS idx_community_posts_patient ON community_posts(patient_user_id)`);
+    console.log('   ✅ community_posts table created');
+
+    console.log('   Creating community_likes table...');
+    await query(`
+      CREATE TABLE IF NOT EXISTS community_likes (
+        id SERIAL PRIMARY KEY,
+        post_id INTEGER REFERENCES community_posts(id) ON DELETE CASCADE,
+        patient_user_id INTEGER REFERENCES patient_users(id) ON DELETE CASCADE,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(post_id, patient_user_id)
+      )
+    `);
+    await query(`CREATE INDEX IF NOT EXISTS idx_community_likes_post ON community_likes(post_id)`);
+    console.log('   ✅ community_likes table created');
+
+    console.log('   Creating community_comments table...');
+    await query(`
+      CREATE TABLE IF NOT EXISTS community_comments (
+        id SERIAL PRIMARY KEY,
+        post_id INTEGER REFERENCES community_posts(id) ON DELETE CASCADE,
+        patient_user_id INTEGER REFERENCES patient_users(id) ON DELETE CASCADE,
+        content TEXT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    await query(`CREATE INDEX IF NOT EXISTS idx_community_comments_post ON community_comments(post_id)`);
+    console.log('   ✅ community_comments table created');
+
+    // Migrate existing TIMESTAMP columns to TIMESTAMPTZ for consistent timezone handling
+    try { await query(`ALTER TABLE community_posts ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`); } catch {}
+    try { await query(`ALTER TABLE community_posts ALTER COLUMN updated_at TYPE TIMESTAMPTZ USING updated_at AT TIME ZONE 'UTC'`); } catch {}
+    try { await query(`ALTER TABLE community_likes ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`); } catch {}
+    try { await query(`ALTER TABLE community_comments ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`); } catch {}
 
     // Seed LMN8 admin user if not exists
     console.log('   Checking LMN8 admin account...');

@@ -11,7 +11,9 @@ export default function AddClinicModal({ isOpen, onClose, onSave }) {
     zipCode: '',
     phone: '',
     email: '',
-    website: ''
+    website: '',
+    patientGreetingName: '',
+    showCommunity: true
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +23,8 @@ export default function AddClinicModal({ isOpen, onClose, onSave }) {
       document.body.style.overflow = 'hidden';
       setFormData({
         name: '', address: '', city: '', state: '', zipCode: '',
-        phone: '', email: '', website: ''
+        phone: '', email: '', website: '', patientGreetingName: '',
+        showCommunity: true
       });
       setErrors({});
     } else {
@@ -96,6 +99,21 @@ export default function AddClinicModal({ isOpen, onClose, onSave }) {
                   className={`w-full bg-slate-800/50 border rounded-lg px-3 py-2 text-white placeholder-slate-400 ${errors.name ? 'border-red-500' : 'border-slate-600/50 focus:border-cyan-500'}`}
                   placeholder="Enter clinic name" />
                 {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">Patient Greeting Name</label>
+                <input type="text" name="patientGreetingName" value={formData.patientGreetingName} onChange={handleInputChange}
+                  className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400"
+                  placeholder="e.g., Seekers, Warriors, Healers" />
+                <p className="text-slate-400 text-xs mt-1">How will this clinic refer to its patients?</p>
+              </div>
+              <div className="md:col-span-2">
+                <label className="flex items-center space-x-3 cursor-pointer">
+                  <input type="checkbox" name="showCommunity" checked={formData.showCommunity} onChange={(e) => setFormData(prev => ({ ...prev, showCommunity: e.target.checked }))}
+                    className="w-5 h-5 rounded border-slate-600 bg-slate-800 text-cyan-500 focus:ring-cyan-500" />
+                  <span className="text-sm font-medium text-slate-300">Show Community</span>
+                </label>
+                <p className="text-slate-400 text-xs mt-1 ml-8">Patients under this clinic will see the community feature in the app.</p>
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-slate-300 mb-2">Address</label>

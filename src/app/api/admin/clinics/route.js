@@ -40,6 +40,8 @@ export async function GET(request) {
       email: row.email,
       website: row.website,
       status: row.status,
+      patientGreetingName: row.patient_greeting_name,
+      showCommunity: row.show_community,
       clinicianName: row.clinician_name || null,
       clinicianEmail: row.clinician_email || null,
       clinicianId: row.clinician_id || null,
@@ -64,7 +66,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { name, address, city, state, zipCode, phone, email, website } = body;
+    const { name, address, city, state, zipCode, phone, email, website, patientGreetingName, showCommunity } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: 'Clinic name and email are required' }, { status: 400 });
@@ -76,10 +78,10 @@ export async function POST(request) {
     }
 
     const clinicResult = await query(
-      `INSERT INTO clinics (name, address, city, state, zip_code, phone, email, website, created_by)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `INSERT INTO clinics (name, address, city, state, zip_code, phone, email, website, patient_greeting_name, show_community, created_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
        RETURNING *`,
-      [name, address || null, city || null, state || null, zipCode || null, phone || null, email || null, website || null, admin.id]
+      [name, address || null, city || null, state || null, zipCode || null, phone || null, email || null, website || null, patientGreetingName || 'Patient', showCommunity !== false, admin.id]
     );
 
     const clinic = clinicResult.rows[0];
@@ -117,6 +119,8 @@ export async function POST(request) {
         email: clinic.email,
         website: clinic.website,
         status: clinic.status,
+        patientGreetingName: clinic.patient_greeting_name,
+        showCommunity: clinic.show_community,
         clinicianName: clinicianName,
         clinicianEmail: email,
         createdAt: clinic.created_at

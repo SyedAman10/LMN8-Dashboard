@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { query } from '@/lib/db';
-import { writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import path from 'path';
 import { transcribeAudioLocally } from '@/lib/transcribe';
 import { sendCrisisAlert } from '@/lib/crisisEmail';
 import { updateJournalSummary } from '@/lib/journalSummary';
@@ -84,9 +81,23 @@ export async function GET(request) {
       [String(userId), limit, offset]
     );
 
+    const mapped = result.rows.map(r => ({
+      id: r.id,
+      title: r.title,
+      content: r.content,
+      mediaType: r.media_type,
+      mood: r.mood,
+      mediaUrl: r.media_url,
+      audioFilePath: r.audio_file_path,
+      transcribedText: r.transcribed_text,
+      userId: r.user_id,
+      timestamp: r.timestamp,
+      createdAt: r.created_at,
+      updatedAt: r.updated_at,
+    }));
     return NextResponse.json({
       success: true,
-      data: result.rows,
+      data: mapped,
       pagination: {
         page,
         limit,
@@ -119,6 +130,7 @@ export async function POST(request) {
     let mediaUrl = null;
     let audioFilePath = null;
     let transcribedText = null;
+    let audioBufferForBg = null;
 
     const contentType = request.headers.get('content-type') || '';
 
@@ -133,25 +145,10 @@ export async function POST(request) {
       const audioFile = formData.get('audio');
       const imageFile = formData.get('image');
 
+      // Store audio buffer for transcription
       if (audioFile && audioFile instanceof File && audioFile.size > 0) {
-        const buffer = Buffer.from(await audioFile.arrayBuffer());
-
-        if (!transcribedText) {
-          console.log('🎙️ Starting local transcription, audio size:', buffer.length);
-          const transcription = await transcribeAudioLocally(buffer);
-          console.log('🎙️ Transcription result:', transcription ? `"${transcription.slice(0, 100)}"` : '(empty)');
-          if (transcription) transcribedText = transcription;
-        }
-
-        if (mediaType === 'voice' && transcribedText) {
-          if (!content || content === 'Voice memo entry') {
-            content = transcribedText;
-          } else if (!content.includes(transcribedText.slice(0, 50))) {
-            content = content + '\n\n[Voice transcription]: ' + transcribedText;
-          }
-        } else if (mediaType === 'voice' && !content) {
-          content = 'Voice memo entry';
-        }
+        audioBufferForBg = Buffer.from(await audioFile.arrayBuffer());
+        if (mediaType === 'voice' && !content) content = 'Voice memo entry';
       }
 
       if (imageFile && imageFile instanceof File && imageFile.size > 0) {
@@ -188,13 +185,40 @@ export async function POST(request) {
     const entry = result.rows[0];
     console.log(`Journal entry created: ID=${entry.id}, type=${mediaType}, transcribed=${!!transcribedText}`);
 
+    // Synchronous transcription for voice entries (blocking - keeps app showing "Saving...")
+    let transcriptionError = null;
+    if (audioBufferForBg && !transcribedText) {
+      const eid = entry.id;
+      console.log(`🎙️ Starting transcription for entry ${eid}, buffer size: ${audioBufferForBg.length}`);
+      try {
+        const transcription = await transcribeAudioLocally(audioBufferForBg);
+        if (transcription) {
+          console.log(`🎙️ Transcription complete for entry ${eid}:`, transcription.slice(0, 100));
+          await query(
+            `UPDATE journal_entries SET transcribed_text = $1, content = CASE WHEN content = 'Voice memo entry' OR content = $1 THEN $1 ELSE content || E'\\n\\n[Voice transcription]: ' || $1 END WHERE id = $2`,
+            [transcription, eid]
+          );
+          entry.transcribed_text = transcription;
+          if (entry.content === 'Voice memo entry' || entry.content === transcription) {
+            entry.content = transcription;
+          } else {
+            entry.content = entry.content + '\n\n[Voice transcription]: ' + transcription;
+          }
+        } else {
+          transcriptionError = 'transcription_empty';
+        }
+      } catch (transErr) {
+        transcriptionError = transErr.message || 'transcription_failed';
+      }
+    }
+
     // Update journal summary in real-time (non-blocking)
     updateJournalSummary(String(userId)).catch(err =>
       console.error('Background journal summary update failed:', err)
     );
 
     // Crisis check: scan journal content + transcribed text for harmful keywords
-    const combinedContent = [title, content, transcribedText].filter(Boolean).join(' ');
+    const combinedContent = [entry.title, entry.content, entry.transcribed_text].filter(Boolean).join(' ');
     let crisisResult = 'not_checked';
     if (containsHarmfulContent(combinedContent)) {
       crisisResult = 'detected';
@@ -240,11 +264,26 @@ export async function POST(request) {
       }
     }
 
+    const mappedEntry = {
+      id: entry.id,
+      title: entry.title,
+      content: entry.content,
+      mediaType: entry.media_type,
+      mood: entry.mood,
+      mediaUrl: entry.media_url,
+      audioFilePath: entry.audio_file_path,
+      transcribedText: entry.transcribed_text,
+      userId: entry.user_id,
+      timestamp: entry.timestamp,
+      createdAt: entry.created_at,
+      updatedAt: entry.updated_at,
+    };
     return NextResponse.json({
       success: true,
-      data: entry,
+      data: mappedEntry,
       message: 'Journal entry created successfully',
       crisis: crisisResult,
+      transcriptionError,
     }, { status: 201 });
   } catch (err) {
     console.error('POST journal entry error:', err);

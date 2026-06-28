@@ -63,6 +63,21 @@ export default function ClinicsContent() {
     }
   };
 
+  const handleRefresh = async () => {
+    await fetchClinics();
+    if (selectedClinic?.id) {
+      try {
+        const response = await fetch(`/api/admin/clinics/${selectedClinic.id}`, { credentials: 'include' });
+        if (response.ok) {
+          const data = await response.json();
+          setSelectedClinic({ ...data.clinic, staff: data.staff, patients: data.patients });
+        }
+      } catch (error) {
+        console.error('Error refreshing clinic details:', error);
+      }
+    }
+  };
+
   const handleDeactivate = async (clinicId) => {
     if (!confirm('Are you sure you want to deactivate this clinic? This will also deactivate the clinician account.')) return;
     try {
@@ -150,7 +165,7 @@ export default function ClinicsContent() {
 
       <AddClinicModal isOpen={showAddClinic} onClose={() => setShowAddClinic(false)} onSave={handleAddClinic} />
       <ClinicDetailsModal isOpen={showDetails} clinic={selectedClinic} onClose={() => { setShowDetails(false); setSelectedClinic(null); }}
-        onDeactivate={handleDeactivate} onRefresh={fetchClinics} />
+        onDeactivate={handleDeactivate} onRefresh={handleRefresh} />
       <SuccessAlert isOpen={showSuccessAlert.isOpen}
         onClose={() => setShowSuccessAlert({ isOpen: false, title: '', message: '' })}
         title={showSuccessAlert.title} message={showSuccessAlert.message} duration={4000} />

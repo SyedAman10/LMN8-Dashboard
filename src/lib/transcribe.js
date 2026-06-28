@@ -1,21 +1,29 @@
-import { spawn } from 'child_process';
-import { writeFileSync, mkdirSync } from 'fs';
+import { execSync } from 'child_process';
+import { writeFileSync, readFileSync, unlinkSync } from 'fs';
 import path from 'path';
 import os from 'os';
 
-const CACHE_DIR = path.join(os.tmpdir(), 'lmn8-whisper-cache');
-
-const WORKER_CODE = `
-const { pipeline } = require('@xenova/transformers');
-const { execSync } = require('child_process');
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
+function getFfmpegPath() {
+  const knownPaths = [
+    () => { try { return eval('require')('ffmpeg-static') } catch {} },
+    () => path.join(process.cwd(), 'node_modules', 'ffmpeg-static',
+      process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg'),
+    () => path.join(require.resolve('ffmpeg-static/package.json').replace('package.json', ''),
+      process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg'),
+    () => 'ffmpeg',
+  ];
+  for (const p of knownPaths) {
+    try { const v = p(); if (v) return v } catch {}
+  }
+  return 'ffmpeg';
+}
+const ffmpeg = getFfmpegPath();
 
 let transcriber = null;
 
 async function getTranscriber() {
   if (!transcriber) {
+    const { pipeline } = await import('@xenova/transformers');
     transcriber = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny.en');
   }
   return transcriber;
@@ -29,80 +37,29 @@ function wavToFloat32(buffer) {
   return samples;
 }
 
-process.on('message', async (msg) => {
-  if (msg.type === 'transcribe') {
-    const tmpDir = os.tmpdir();
-    const id = Date.now();
-    const tmpInput = path.join(tmpDir, 'audio_' + id + '.m4a');
-    const tmpWav = path.join(tmpDir, 'audio_' + id + '.wav');
-    try {
-      fs.writeFileSync(tmpInput, Buffer.from(msg.buffer.data));
-      const ffmpeg = require('ffmpeg-static');
-      execSync('"' + ffmpeg + '" -y -i "' + tmpInput + '" -ar 16000 -ac 1 -sample_fmt s16 "' + tmpWav + '"', { stdio: 'pipe' });
-      const wav = fs.readFileSync(tmpWav);
-      const audio = wavToFloat32(wav);
-      const tr = await getTranscriber();
-      const result = await tr(audio, { return_timestamps: false });
-      process.send({ type: 'result', text: (result && result.text) ? result.text.trim() : null });
-    } catch (err) {
-      process.send({ type: 'result', text: null, error: err.message });
-    } finally {
-      try { fs.unlinkSync(tmpInput); } catch {}
-      try { fs.unlinkSync(tmpWav); } catch {}
-    }
+export async function transcribeAudioLocally(audioBuffer) {
+  const tmpDir = os.tmpdir();
+  const id = Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  const tmpInput = path.join(tmpDir, 'audio_' + id + '.m4a');
+  const tmpWav = path.join(tmpDir, 'audio_' + id + '.wav');
+  try {
+    writeFileSync(tmpInput, audioBuffer);
+
+    const ffmpegPath = ffmpeg;
+    execSync('"' + ffmpegPath + '" -y -i "' + tmpInput + '" -ar 16000 -ac 1 -sample_fmt s16 "' + tmpWav + '"', { stdio: 'pipe', timeout: 30000 });
+
+    const wav = readFileSync(tmpWav);
+    if (wav.length <= 44) return null;
+
+    const audio = wavToFloat32(wav);
+    const tr = await getTranscriber();
+    const result = await tr(audio, { return_timestamps: false });
+    return (result && result.text) ? result.text.trim() : null;
+  } catch (err) {
+    console.error('🎙️ Transcription error:', err.message);
+    return null;
+  } finally {
+    try { unlinkSync(tmpInput); } catch {}
+    try { unlinkSync(tmpWav); } catch {}
   }
-});
-`;
-
-let worker = null;
-let workerPath = null;
-
-function getWorkerPath() {
-  if (!workerPath) {
-    mkdirSync(CACHE_DIR, { recursive: true });
-    workerPath = path.join(CACHE_DIR, 'whisper-worker.js');
-    writeFileSync(workerPath, WORKER_CODE);
-  }
-  return workerPath;
-}
-
-function getWorker() {
-  if (!worker) {
-    worker = spawn(process.execPath, [getWorkerPath()], {
-      stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
-      env: {
-        ...process.env,
-        TRANSFORMERS_CACHE: CACHE_DIR,
-        HF_HOME: CACHE_DIR,
-      },
-    });
-    worker.on('exit', () => { worker = null; });
-  }
-  return worker;
-}
-
-export function transcribeAudioLocally(audioBuffer) {
-  return new Promise((resolve) => {
-    const w = getWorker();
-    const timeout = setTimeout(() => {
-      worker = null;
-      w.kill();
-      resolve(null);
-    }, 120000);
-
-    w.on('message', (msg) => {
-      clearTimeout(timeout);
-      if (msg.type === 'result') {
-        resolve(msg.text);
-      }
-    });
-
-    w.on('error', () => {
-      clearTimeout(timeout);
-      worker = null;
-      resolve(null);
-    });
-
-    w.send({ type: 'transcribe', buffer: audioBuffer });
-  });
 }

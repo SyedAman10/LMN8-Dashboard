@@ -18,7 +18,9 @@ export default function ClinicDetailsModal({ isOpen, clinic, onClose, onDeactiva
         zipCode: clinic.zipCode || '',
         phone: clinic.phone || '',
         email: clinic.email || '',
-        website: clinic.website || ''
+        website: clinic.website || '',
+        patientGreetingName: clinic.patientGreetingName || '',
+        showCommunity: clinic.showCommunity !== false
       });
       setEditing(false);
     } else {
@@ -42,6 +44,8 @@ export default function ClinicDetailsModal({ isOpen, clinic, onClose, onDeactiva
         body: JSON.stringify(formData)
       });
       if (response.ok) {
+        const data = await response.json();
+        setFormData(prev => ({ ...prev, ...data.clinic }));
         setEditing(false);
         onRefresh();
       }
@@ -132,6 +136,21 @@ export default function ClinicDetailsModal({ isOpen, clinic, onClose, onDeactiva
                     <input type="text" name="zipCode" value={formData.zipCode} onChange={handleInputChange}
                       className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white text-sm" />
                   </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs text-slate-400 mb-1">Patient Greeting Name</label>
+                    <input type="text" name="patientGreetingName" value={formData.patientGreetingName} onChange={handleInputChange}
+                      className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white text-sm"
+                      placeholder="e.g., Seekers, Warriors, Healers" />
+                    <p className="text-slate-300 text-xs mt-1">How will this clinic refer to its patients?</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="flex items-center space-x-3 cursor-pointer">
+                      <input type="checkbox" name="showCommunity" checked={formData.showCommunity} onChange={(e) => setFormData(prev => ({ ...prev, showCommunity: e.target.checked }))}
+                        className="w-5 h-5 rounded border-slate-600 bg-slate-800 text-cyan-500 focus:ring-cyan-500" />
+                      <span className="text-sm font-medium text-slate-300">Show Community</span>
+                    </label>
+                    <p className="text-slate-300 text-xs mt-1 ml-8">Patients under this clinic will see the community feature in the app.</p>
+                  </div>
                 </div>
                 <div className="flex space-x-2 pt-2">
                   <button onClick={handleSave} disabled={isLoading}
@@ -148,6 +167,8 @@ export default function ClinicDetailsModal({ isOpen, clinic, onClose, onDeactiva
                 <div><span className="text-slate-400">Address:</span> <span className="text-white">{clinic.address || '—'}</span></div>
                 <div><span className="text-slate-400">Website:</span> <span className="text-white">{clinic.website || '—'}</span></div>
                 <div><span className="text-slate-400">Clinician Email:</span> <span className="text-white">{clinic.clinicianEmail || '—'}</span></div>
+                <div><span className="text-slate-400">Patient Greeting:</span> <span className="text-white">{formData.patientGreetingName ? `Dear ${formData.patientGreetingName}` : '—'}</span></div>
+                <div><span className="text-slate-400">Show Community:</span> <span className={`${formData.showCommunity ? 'text-green-400' : 'text-red-400'}`}>{formData.showCommunity ? 'Yes' : 'No'}</span></div>
               </div>
             )}
           </div>

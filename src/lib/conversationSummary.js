@@ -19,17 +19,21 @@ async function closeBackendPool() {
   try { if (backendPool) { await backendPool.end(); backendPool = null; } } catch {}
 }
 
-async function generateSessionSummary(sessionTitle, messages) {
-  const systemPrompt = `You are a clinical behavioral health analyst. Given a patient's conversation with an AI therapy assistant, generate a concise 3rd-person clinical summary that captures:
-- The patient's emotional state and concerns
+async function generateSessionSummary(sessionTitle, messages, patientGreetingName = 'Patient') {
+  const greetingForPrompt = patientGreetingName.toLowerCase() === 'patient'
+    ? 'the patient'
+    : `the ${patientGreetingName.toLowerCase()}`;
+
+  const systemPrompt = `You are a clinical behavioral health analyst. Given a ${patientGreetingName.toLowerCase()}'s conversation with an AI therapy assistant, generate a concise 3rd-person clinical summary that captures:
+- The ${patientGreetingName.toLowerCase()}'s emotional state and concerns
 - Topics discussed and themes explored
 - Any indicators of distress, anxiety, hopelessness, or progress
 - The overall therapeutic trajectory
 
-Write in professional clinical narrative style (e.g., "The patient discussed...", "The individual expressed..."). Keep it 2-4 sentences. Focus on the PATIENT's content, not the AI assistant's responses.`;
+Write in professional clinical narrative style (e.g., "${greetingForPrompt} discussed...", "${greetingForPrompt} expressed..."). Keep it 2-4 sentences. Focus on the ${patientGreetingName.toLowerCase()}'s content, not the AI assistant's responses.`;
 
   const transcript = messages.map(m =>
-    `${m.role === 'user' ? 'Patient' : 'AI Assistant'}: ${m.content}`
+    `${m.role === 'user' ? patientGreetingName : 'AI Assistant'}: ${m.content}`
   ).join('\n\n');
 
   const res = await fetch('https://router.huggingface.co/v1/chat/completions', {
@@ -55,12 +59,31 @@ Write in professional clinical narrative style (e.g., "The patient discussed..."
   return result?.choices?.[0]?.message?.content?.trim() || '';
 }
 
+async function getPatientGreetingName(userId) {
+  try {
+    const result = await query(
+      `SELECT c.patient_greeting_name
+       FROM patient_users pu
+       JOIN patients p ON pu.patient_id = p.id
+       JOIN users u ON p.user_id = u.id
+       JOIN clinics c ON u.clinic_id = c.id
+       WHERE pu.id = $1`,
+      [userId]
+    );
+    return result.rows[0]?.patient_greeting_name || 'Patient';
+  } catch {
+    return 'Patient';
+  }
+}
+
 export async function generateAIConversationSummaries(userId) {
   try {
     if (!HF_API_KEY) {
       console.warn('⚠️ HUGGINGFACE_API_KEY not set — skipping AI conversation summary');
       return;
     }
+
+    const patientGreetingName = await getPatientGreetingName(userId);
 
     const linkedResult = await query(
       `SELECT session_id FROM patient_chat_sessions WHERE patient_id = $1`,
@@ -100,7 +123,7 @@ export async function generateAIConversationSummaries(userId) {
 
       if (messagesResult.rows.length < 2) continue;
 
-      const summaryText = await generateSessionSummary('Chat Session', messagesResult.rows);
+      const summaryText = await generateSessionSummary('Chat Session', messagesResult.rows, patientGreetingName);
 
       await query(
         `INSERT INTO ai_conversation (user_id, type, summary_text, metadata, updated_at)
@@ -124,6 +147,8 @@ export async function generateAIConversationSummaries(userId) {
 export async function generateLatestAIConversationSummary(userId) {
   try {
     if (!HF_API_KEY) return null;
+
+    const patientGreetingName = await getPatientGreetingName(userId);
 
     const linkedResult = await query(
       `SELECT session_id FROM patient_chat_sessions WHERE patient_id = $1`,
@@ -159,7 +184,7 @@ export async function generateLatestAIConversationSummary(userId) {
     );
     if (messagesResult.rows.length < 2) return null;
 
-    const summaryText = await generateSessionSummary('Chat Session', messagesResult.rows);
+    const summaryText = await generateSessionSummary('Chat Session', messagesResult.rows, patientGreetingName);
 
     const insertResult = await query(
       `INSERT INTO ai_conversation (user_id, type, summary_text, metadata, updated_at)
