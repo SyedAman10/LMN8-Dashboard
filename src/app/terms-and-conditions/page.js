@@ -447,27 +447,6 @@ export default function TermsPage() {
   </tbody>
 </table>
 
-<h2>Pre-Publication Checklist — INTERNAL USE ONLY / REMOVE BEFORE PUBLISHING</h2>
-
-<p><em>REMOVE THIS SECTION ENTIRELY BEFORE PUBLISHING</em></p>
-
-<p>The following items must be resolved and confirmed by counsel before this document goes live:</p>
-
-<ul>
-  <li>[ ] 1. Set Effective Date (replace [INSERT DATE])</li>
-  <li>[ ] 2. Arbitration decision: Confirm Option A (binding arbitration / AAA) or Option B (court jurisdiction only) — Section 17B. This is a material business and legal decision requiring counsel input.</li>
-  <li>[ ] 3. Class action waiver: Confirm enforceability with Texas health law counsel given the healthcare services context — Section 17C.</li>
-  <li>[ ] 4. Fees / Payment: Confirm subscription model, payment processor (Stripe, etc.), refund policy, and auto-renewal disclosure language — Section 12.</li>
-  <li>[ ] 5. Third-Party Services: List all material integrations (EHR, SMS, analytics, scheduling) and confirm BAA/DPA coverage for each — Section 11.</li>
-  <li>[ ] 6. Confirm BAA execution process and template readiness — referenced throughout.</li>
-  <li>[ ] 7. Confirm analytics tooling (PostHog, GA4, Plausible, etc.) and add to Section 11 or Privacy Policy.</li>
-  <li>[ ] 8. Confirm whether 42 C.F.R. Part 2 (substance use disorder) applies to any partner programs — Section 5C.</li>
-  <li>[ ] 9. Confirm COPPA compliance protocol for any programs serving minors under 13 — Section 3.</li>
-  <li>[ ] 10. Confirm user role taxonomy (participant, facilitator, clinician, admin) is finalized and reflected accurately in Section 4C.</li>
-  <li>[ ] 11. Add any required state-specific consumer rights disclosures (e.g., Texas Deceptive Trade Practices Act notice if applicable).</li>
-  <li>[ ] 12. Ensure Terms, Privacy Policy, and BAA template are reviewed together by licensed Texas health law counsel as a package before any go-live.</li>
-  <li>[ ] 13. Implement clickwrap acceptance mechanism (affirmative checkbox + timestamp logging) to create enforceable record of user agreement.</li>
-</ul>
 
 <hr/>
 

@@ -352,26 +352,6 @@ export default function PrivacyPage() {
   </tbody>
 </table>
 
-<h2>Pre-Publication Checklist — INTERNAL USE ONLY / REMOVE BEFORE PUBLISHING</h2>
-
-<p><em>REMOVE THIS SECTION ENTIRELY BEFORE PUBLISHING</em></p>
-
-<p>The following items must be resolved and confirmed by counsel before this document goes live:</p>
-
-<ul>
-  <li>[ ] 1. Set Effective Date (replace [INSERT DATE])</li>
-  <li>[ ] 2. Confirm DigitalOcean hosting region(s) and update Section 12</li>
-  <li>[ ] 3. Confirm HIPAA/PHI posture: Does LMN8 process PHI? Will LMN8 execute BAAs? (If yes, Section 13 is live. If not, revise.)</li>
-  <li>[ ] 4. Confirm and name analytics tools (Section 3E) — e.g., PostHog, Plausible, GA4. Add cookie consent mechanism if using GA4 or any behavioral tracking.</li>
-  <li>[ ] 5. Confirm deletion workflow and SLA (Section 7 — placeholder: 30 days)</li>
-  <li>[ ] 6. Confirm log data retention period (Section 7 — placeholder: 90 days)</li>
-  <li>[ ] 7. Confirm whether 42 C.F.R. Part 2 (substance use disorder) applies to any partner programs (Section 10)</li>
-  <li>[ ] 8. Confirm whether any partner programs serve minors under 13 (COPPA implications — Section 11)</li>
-  <li>[ ] 9. Confirm integrations receiving content: EHR systems, SMS/email providers, scheduling tools (add to Section 3 and/or Section 5 as applicable)</li>
-  <li>[ ] 10. Confirm exact user role taxonomy (participant, facilitator, clinician, admin) and align with Section 6</li>
-  <li>[ ] 11. Prepare companion BAA template and DPA addendum for organizational partners</li>
-  <li>[ ] 12. Review with licensed Texas health law counsel before publication</li>
-</ul>
 
 <hr/>
 
