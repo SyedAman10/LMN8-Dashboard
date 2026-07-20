@@ -247,8 +247,8 @@ export default function LandingPage() {
       {/* Navigation — Floating frosted pill */}
       <nav className="nav-lmn8 fixed top-4 left-4 right-4 z-50 flex justify-between items-center px-5 py-3 rounded-2xl">
         <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 bg-accent-primary rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(91,192,190,0.35)]">
-            <span className="text-bg-dark font-bold text-sm tracking-tight">MT8</span>
+          <div className="w-9 h-9 bg-accent-primary rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(91,192,190,0.35)] overflow-hidden">
+            <img src="/metat8-logo.png" alt="METAT8" className="w-7 h-7 object-contain" />
           </div>
           <div>
             <span className="text-text-100 font-semibold tracking-widest" style={{letterSpacing: '-0.02em'}}>METAT8</span>
@@ -941,8 +941,8 @@ export default function LandingPage() {
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 mb-16 pb-16 border-b border-ui-secondary/20">
               <div className="max-w-xl">
                 <div className="flex items-center space-x-3 mb-5">
-                  <div className="w-10 h-10 bg-accent-primary rounded-xl flex items-center justify-center shadow-[0_0_24px_rgba(91,192,190,0.3)]">
-                    <span className="text-bg-dark font-bold text-sm">MT8</span>
+                  <div className="w-10 h-10 bg-accent-primary rounded-xl flex items-center justify-center shadow-[0_0_24px_rgba(91,192,190,0.3)] overflow-hidden">
+                    <img src="/metat8-logo.png" alt="METAT8" className="w-8 h-8 object-contain" />
                   </div>
                   <div>
                     <span className="text-text-100 font-semibold text-xl tracking-widest" style={{letterSpacing: '-0.02em'}}>METAT8</span>

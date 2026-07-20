@@ -25,11 +25,11 @@ export default function ScreenLoader({ message = "Preparing your dashboard..." }
       <div className="relative z-10 text-center">
         {/* Logo */}
         <div className="mb-8">
-          <div className="w-20 h-20 bg-accent-primary rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <span className="text-bg-dark font-bold text-3xl">L</span>
+          <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse overflow-hidden">
+            <img src="/metat8-logo.png" alt="METAT8" className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-2xl font-serif font-bold text-text-100 mb-2">Luminate</h1>
-          <p className="text-text-60 text-sm">Illuminating your path</p>
+          <h1 className="text-2xl font-serif font-bold text-text-100 mb-2">METAT8</h1>
+          <p className="text-text-60 text-sm">Therapeutic Presence Technology</p>
         </div>
 
         {/* Loading animation */}
