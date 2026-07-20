@@ -24,7 +24,7 @@ async function sendAdminAlert(subject, body) {
   try {
     const transporter = createTransporter();
     await transporter.sendMail({
-      from: `"LMN8 Security" <${process.env.SMTP_USER || process.env.CRISIS_SMTP_USER || 'noreply@lmn8.com'}>`,
+      from: `"METAT8 Security" <${process.env.SMTP_USER || process.env.CRISIS_SMTP_USER || 'noreply@lmn8.com'}>`,
       to: ADMIN_EMAIL,
       subject,
       html: body,

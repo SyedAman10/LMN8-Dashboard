@@ -1,8 +1,8 @@
 import Navbar from '@/components/ui/Navbar';
 
 export const metadata = {
-  title: 'Privacy Policy — LMN8',
-  description: 'LMN8 Privacy Policy — How we collect, use, and protect your personal information.',
+  title: 'Privacy Policy — METAT8',
+  description: 'METAT8 Privacy Policy — How we collect, use, and protect your personal information.',
 };
 
 export default function PrivacyPage() {
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
 
           <div className="mt-8 space-y-8 text-white/80 text-sm leading-relaxed [&_h2]:text-white [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-8 [&_h2]:mb-4 [&_h3]:text-white [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-6 [&_h3]:mb-3 [&_h4]:text-white/90 [&_h4]:text-base [&_h4]:font-semibold [&_h4]:mt-4 [&_h4]:mb-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-1 [&_li]:text-white/70 [&_strong]:text-white/90 [&_em]:text-white/60 [&_a]:text-cyan-400 [&_a]:hover:text-cyan-300 [&_hr]:border-white/10 [&_hr]:my-6 [&_blockquote]:border-l-4 [&_blockquote]:border-cyan-500/50 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-white/60">
 
-<p><strong>LMN8 LLC</strong></p>
+<p><strong>METAT8 LLC</strong></p>
 
 <table className="w-full text-sm border-collapse">
   <tbody>
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
     </tr>
     <tr>
       <td className="py-1 pr-4 text-white/60 align-top whitespace-nowrap"><strong>Legal Entity</strong></td>
-      <td className="py-1 text-white/80">LMN8 LLC<br/>18601 FM 1431, STE 104-4<br/>Jonestown, TX 78645</td>
+      <td className="py-1 text-white/80">METAT8 LLC<br/>18601 FM 1431, STE 104-4<br/>Jonestown, TX 78645</td>
     </tr>
     <tr>
       <td className="py-1 pr-4 text-white/60 align-top whitespace-nowrap"><strong>Privacy Contact</strong></td>
@@ -38,21 +38,21 @@ export default function PrivacyPage() {
 
 <h2>IMPORTANT NOTICE REGARDING PROTECTED HEALTH INFORMATION</h2>
 
-<p>LMN8 LLC operates as a technology platform. Where LMN8 creates, receives, maintains, or transmits Protected Health Information ("PHI") on behalf of a Covered Entity (as defined under HIPAA, 45 C.F.R. § 160.103), LMN8 functions as a Business Associate and such processing is governed by a separate Business Associate Agreement ("BAA"). This Privacy Policy does not supersede, modify, or limit any BAA in effect between LMN8 and a Covered Entity partner. In the event of a conflict between this Privacy Policy and an executed BAA, the BAA controls with respect to PHI.</p>
+<p>METAT8 LLC operates as a technology platform. Where METAT8 creates, receives, maintains, or transmits Protected Health Information ("PHI") on behalf of a Covered Entity (as defined under HIPAA, 45 C.F.R. § 160.103), METAT8 functions as a Business Associate and such processing is governed by a separate Business Associate Agreement ("BAA"). This Privacy Policy does not supersede, modify, or limit any BAA in effect between METAT8 and a Covered Entity partner. In the event of a conflict between this Privacy Policy and an executed BAA, the BAA controls with respect to PHI.</p>
 
 <p>This Privacy Policy does not constitute legal advice and does not create an attorney-client relationship.</p>
 
 <h2>1. Scope and Applicability</h2>
 
-<p>This Privacy Policy (the "Policy") governs the collection, use, disclosure, retention, and protection of personal information and, where applicable, Protected Health Information by LMN8 LLC ("LMN8," "we," "us," or "our") in connection with the following products and services (collectively, the "Services"):</p>
+<p>This Privacy Policy (the "Policy") governs the collection, use, disclosure, retention, and protection of personal information and, where applicable, Protected Health Information by METAT8 LLC ("METAT8," "we," "us," or "our") in connection with the following products and services (collectively, the "Services"):</p>
 
 <ul>
-  <li>LMN8 mobile and web application ("App")</li>
-  <li>LMN8 clinical and administrative dashboard ("Dashboard")</li>
-  <li>LMN8 public-facing website ("Website")</li>
+  <li>METAT8 mobile and web application ("App")</li>
+  <li>METAT8 clinical and administrative dashboard ("Dashboard")</li>
+  <li>METAT8 public-facing website ("Website")</li>
 </ul>
 
-<p>LMN8 provides Services across two operational tracks:</p>
+<p>METAT8 provides Services across two operational tracks:</p>
 
 <table className="w-full text-sm border-collapse border border-white/10">
   <thead>
@@ -73,7 +73,7 @@ export default function PrivacyPage() {
 
 <h2>2. Foundational Privacy Principles</h2>
 
-<p>LMN8 is designed around the following privacy commitments, which inform every product decision, data architecture choice, and third-party relationship:</p>
+<p>METAT8 is designed around the following privacy commitments, which inform every product decision, data architecture choice, and third-party relationship:</p>
 
 <ul>
   <li><strong>Data Minimization:</strong> We collect only the information necessary to provide the Services and fulfill our legal obligations. We do not collect data speculatively.</li>
@@ -117,13 +117,13 @@ export default function PrivacyPage() {
 <p>We do not use device or usage data to build individual behavioral profiles for advertising purposes.</p>
 
 <h3>3D. Organization-Provided Data</h3>
-<p>If you access the Services through a clinic, treatment program, or community organization, that organization may transmit the following to LMN8 to facilitate your access:</p>
+<p>If you access the Services through a clinic, treatment program, or community organization, that organization may transmit the following to METAT8 to facilitate your access:</p>
 <ul>
   <li>Program enrollment or participant identifiers</li>
   <li>Scheduling references or session linkage data</li>
   <li>Role assignments and permission configurations</li>
 </ul>
-<p>LMN8's processing of such data is governed by the agreement between LMN8 and the organization, which may include a BAA and/or a Data Processing Agreement ("DPA").</p>
+<p>METAT8's processing of such data is governed by the agreement between METAT8 and the organization, which may include a BAA and/or a Data Processing Agreement ("DPA").</p>
 
 <h3>3E. Cookies and Similar Technologies</h3>
 <p>On the Website, we may use:</p>
@@ -167,7 +167,7 @@ export default function PrivacyPage() {
 
 <h2>5. Disclosure and Sharing of Information</h2>
 
-<p>LMN8 does not sell, rent, or trade personal information or Protected Health Information to any third party. We do not disclose personal information for third-party advertising purposes.</p>
+<p>METAT8 does not sell, rent, or trade personal information or Protected Health Information to any third party. We do not disclose personal information for third-party advertising purposes.</p>
 
 <p>We disclose information only in the following circumstances:</p>
 
@@ -176,7 +176,7 @@ export default function PrivacyPage() {
 <ul>
   <li>Process data only on our documented instructions</li>
   <li>Maintain confidentiality and implement appropriate security safeguards</li>
-  <li>Not further disclose data except as authorized in writing by LMN8</li>
+  <li>Not further disclose data except as authorized in writing by METAT8</li>
   <li>Execute a BAA where required under HIPAA</li>
 </ul>
 <p>Current infrastructure hosting: DigitalOcean (United States — region: [confirm specific region prior to publication]). All data is hosted within the United States.</p>
@@ -187,32 +187,32 @@ export default function PrivacyPage() {
   <li>Their role-based permissions as configured in the platform</li>
   <li>The organization's own privacy and confidentiality policies</li>
   <li>Applicable professional ethical obligations (e.g., therapist-patient confidentiality, Texas Health &amp; Safety Code § 611.001 et seq.)</li>
-  <li>Any BAA or DPA executed between LMN8 and that organization</li>
+  <li>Any BAA or DPA executed between METAT8 and that organization</li>
 </ul>
-<p>LMN8 does not grant organizational access beyond what is necessary for legitimate program operations.</p>
+<p>METAT8 does not grant organizational access beyond what is necessary for legitimate program operations.</p>
 
 <h3>5C. Legal Process and Safety Disclosures</h3>
 <p>We may disclose information when we have a good-faith belief that disclosure is necessary to:</p>
 <ul>
   <li>Comply with a valid subpoena, court order, government investigation, or other legal process</li>
-  <li>Enforce our Terms of Service or protect the legal rights of LMN8, our users, or third parties</li>
+  <li>Enforce our Terms of Service or protect the legal rights of METAT8, our users, or third parties</li>
   <li>Prevent or respond to fraud, security incidents, or imminent physical harm</li>
   <li>Fulfill mandatory reporting obligations under applicable law (e.g., mandatory abuse reporting under Texas Family Code § 261.101)</li>
 </ul>
 <p>Where legally permitted, we will attempt to notify affected users before disclosing their information in response to legal process.</p>
 
 <h3>5D. Corporate Transactions</h3>
-<p>In the event of a merger, acquisition, asset sale, financing transaction, or reorganization involving LMN8, personal information may be transferred as part of that transaction. Any successor entity will be required to honor the commitments made in this Policy or provide you with advance notice and an opportunity to object. PHI transfers in such events will comply with HIPAA requirements, including 45 C.F.R. § 164.502(b).</p>
+<p>In the event of a merger, acquisition, asset sale, financing transaction, or reorganization involving METAT8, personal information may be transferred as part of that transaction. Any successor entity will be required to honor the commitments made in this Policy or provide you with advance notice and an opportunity to object. PHI transfers in such events will comply with HIPAA requirements, including 45 C.F.R. § 164.502(b).</p>
 
 <h2>6. Data Access, Roles, and Permissions</h2>
 
-<p>Access to personal information within the LMN8 platform is governed by role-based access controls enforced at the application layer. Access levels reflect the minimum necessary standard required under HIPAA (45 C.F.R. § 164.514(d)) and are applied consistently across both tracks.</p>
+<p>Access to personal information within the METAT8 platform is governed by role-based access controls enforced at the application layer. Access levels reflect the minimum necessary standard required under HIPAA (45 C.F.R. § 164.514(d)) and are applied consistently across both tracks.</p>
 
 <p><strong>Clinical Track.</strong> Authorized Dashboard users — including licensed clinicians, clinical supervisors, and program administrators — may access participant-level data to the extent required for care coordination, session documentation, safety monitoring, and regulatory compliance. Access is logged and auditable.</p>
 
 <p><strong>Community Track.</strong> Facilitators and community administrators may access participant data necessary for program operations (e.g., enrollment status, participation records). They do not have access to Clinical Track health data.</p>
 
-<p>LMN8 maintains audit logs of data access events. Access by LMN8 internal personnel to production data containing personal information requires documented authorization and is subject to internal review.</p>
+<p>METAT8 maintains audit logs of data access events. Access by METAT8 internal personnel to production data containing personal information requires documented authorization and is subject to internal review.</p>
 
 <h2>7. Data Retention and Deletion</h2>
 
@@ -232,7 +232,7 @@ export default function PrivacyPage() {
 
 <h2>8. Security</h2>
 
-<p>LMN8 implements a layered security program designed to protect personal information against unauthorized access, disclosure, alteration, and destruction. Our safeguards include:</p>
+<p>METAT8 implements a layered security program designed to protect personal information against unauthorized access, disclosure, alteration, and destruction. Our safeguards include:</p>
 
 <ul>
   <li>Encryption in transit (TLS 1.2 or higher) for all data transmitted between users and our systems</li>
@@ -244,7 +244,7 @@ export default function PrivacyPage() {
   <li>Vendor security review for third-party subprocessors with access to personal data</li>
 </ul>
 
-<p>Important: No system or transmission of information over the internet is guaranteed to be completely secure. While we implement and maintain reasonable safeguards, LMN8 cannot warrant the absolute security of any information you transmit to us. You are responsible for maintaining the confidentiality of your account credentials and for ensuring secure device practices.</p>
+<p>Important: No system or transmission of information over the internet is guaranteed to be completely secure. While we implement and maintain reasonable safeguards, METAT8 cannot warrant the absolute security of any information you transmit to us. You are responsible for maintaining the confidentiality of your account credentials and for ensuring secure device practices.</p>
 
 <p>In the event of a security incident that triggers notification obligations under applicable law (including HIPAA Breach Notification Rule, 45 C.F.R. §§ 164.400–164.414, and the Texas Identity Theft Enforcement and Protection Act, Tex. Bus. &amp; Com. Code § 521.053), we will provide required notifications within applicable statutory deadlines.</p>
 
@@ -276,12 +276,12 @@ export default function PrivacyPage() {
 
 <h2>10. Mental Health and Sensitive Data Protections</h2>
 
-<p>LMN8 processes information that may include mental health records, psychotherapy notes, and integration experiences relating to mental health treatment. We apply the following heightened protections to this category of data:</p>
+<p>METAT8 processes information that may include mental health records, psychotherapy notes, and integration experiences relating to mental health treatment. We apply the following heightened protections to this category of data:</p>
 
 <ul>
   <li>Mental health records processed in the Clinical Track are treated as confidential under Texas Health &amp; Safety Code § 611.001 et seq. and are not disclosed without a specific, written authorization except as required by law or as permitted under an applicable BAA.</li>
   <li>Psychotherapy notes (as defined under 45 C.F.R. § 164.501) are maintained separately from the general medical record and are subject to more restrictive use and disclosure limitations under HIPAA.</li>
-  <li>Information relating to substance use disorder treatment, where applicable, may be subject to additional federal protections under 42 C.F.R. Part 2, which requires patient-specific authorization before disclosure in most circumstances. LMN8 will identify and apply Part 2 protections where its partner programs are Part 2 programs.</li>
+  <li>Information relating to substance use disorder treatment, where applicable, may be subject to additional federal protections under 42 C.F.R. Part 2, which requires patient-specific authorization before disclosure in most circumstances. METAT8 will identify and apply Part 2 protections where its partner programs are Part 2 programs.</li>
   <li>AI-generated outputs are never treated as clinical diagnoses or notes. They are not incorporated into official clinical records without clinician review and attestation.</li>
 </ul>
 
@@ -296,13 +296,13 @@ export default function PrivacyPage() {
   <li>Required clinical supervision is in place</li>
 </ul>
 
-<p>LMN8 does not knowingly collect personal information from individuals under 13 without verifiable parental consent. If we become aware that we have inadvertently collected such information without proper consent, we will promptly delete it. If you believe a minor's information has been collected without proper consent, contact us at privacy@lmn8.ai.</p>
+<p>METAT8 does not knowingly collect personal information from individuals under 13 without verifiable parental consent. If we become aware that we have inadvertently collected such information without proper consent, we will promptly delete it. If you believe a minor's information has been collected without proper consent, contact us at privacy@lmn8.ai.</p>
 
 <h2>12. Data Residency and International Availability</h2>
 
-<p>LMN8 currently hosts all data in the United States. Our primary infrastructure provider is DigitalOcean, operating within U.S.-based data centers (region: [confirm prior to publication]).</p>
+<p>METAT8 currently hosts all data in the United States. Our primary infrastructure provider is DigitalOcean, operating within U.S.-based data centers (region: [confirm prior to publication]).</p>
 
-<p>The Services are not currently offered outside the United States. If international availability is introduced in the future, LMN8 will:</p>
+<p>The Services are not currently offered outside the United States. If international availability is introduced in the future, METAT8 will:</p>
 <ul>
   <li>Evaluate and implement applicable cross-border data transfer mechanisms (e.g., Standard Contractual Clauses for EEA-to-U.S. transfers)</li>
   <li>Update this Policy to reflect applicable regional requirements (e.g., GDPR, PIPEDA)</li>
@@ -311,17 +311,17 @@ export default function PrivacyPage() {
 
 <h2>13. HIPAA Notice — Business Associate Relationships</h2>
 
-<p>Where LMN8 processes PHI on behalf of a Covered Entity (as defined under 45 C.F.R. § 160.103), LMN8 acts as a Business Associate. In this capacity:</p>
+<p>Where METAT8 processes PHI on behalf of a Covered Entity (as defined under 45 C.F.R. § 160.103), METAT8 acts as a Business Associate. In this capacity:</p>
 
 <ul>
   <li>A separate, executed Business Associate Agreement (BAA) governs all PHI processing. The BAA supersedes this Privacy Policy with respect to PHI.</li>
-  <li>LMN8 will use and disclose PHI only as permitted or required by the BAA and applicable law.</li>
-  <li>LMN8 will implement and maintain safeguards as required under the HIPAA Security Rule (45 C.F.R. Part 164, Subpart C).</li>
-  <li>LMN8 will report breaches of unsecured PHI to the applicable Covered Entity within the timeframe required under the HIPAA Breach Notification Rule (45 C.F.R. §§ 164.400–414).</li>
-  <li>Patients retain HIPAA rights as described in the Covered Entity's Notice of Privacy Practices (NPP), which is issued by the Covered Entity, not by LMN8.</li>
+  <li>METAT8 will use and disclose PHI only as permitted or required by the BAA and applicable law.</li>
+  <li>METAT8 will implement and maintain safeguards as required under the HIPAA Security Rule (45 C.F.R. Part 164, Subpart C).</li>
+  <li>METAT8 will report breaches of unsecured PHI to the applicable Covered Entity within the timeframe required under the HIPAA Breach Notification Rule (45 C.F.R. §§ 164.400–414).</li>
+  <li>Patients retain HIPAA rights as described in the Covered Entity's Notice of Privacy Practices (NPP), which is issued by the Covered Entity, not by METAT8.</li>
 </ul>
 
-<p>Organizations seeking to engage LMN8 as a Business Associate should contact privacy@lmn8.ai to initiate BAA execution prior to transmitting any PHI to our platform.</p>
+<p>Organizations seeking to engage METAT8 as a Business Associate should contact privacy@lmn8.ai to initiate BAA execution prior to transmitting any PHI to our platform.</p>
 
 <h2>14. Changes to This Policy</h2>
 
@@ -336,26 +336,26 @@ export default function PrivacyPage() {
 
 <h2>15. Governing Law and Dispute Resolution</h2>
 
-<p>This Policy and any disputes relating to LMN8's privacy practices are governed by the laws of the State of Texas, without regard to conflict of law principles. For privacy disputes that cannot be resolved informally, you may contact us at privacy@lmn8.ai and we will attempt to resolve the matter within 30 days.</p>
+<p>This Policy and any disputes relating to METAT8's privacy practices are governed by the laws of the State of Texas, without regard to conflict of law principles. For privacy disputes that cannot be resolved informally, you may contact us at privacy@lmn8.ai and we will attempt to resolve the matter within 30 days.</p>
 
 <p>Nothing in this Section limits rights available to you under applicable federal law, including HIPAA or the FTC Act.</p>
 
 <h2>16. Contact and Privacy Requests</h2>
 
-<p>For any questions, concerns, or requests relating to this Privacy Policy or LMN8's privacy practices, contact our Privacy team:</p>
+<p>For any questions, concerns, or requests relating to this Privacy Policy or METAT8's privacy practices, contact our Privacy team:</p>
 
 <table className="w-full text-sm border-collapse border border-white/10 max-w-md">
   <tbody>
     <tr><td className="p-2 border border-white/10 text-white/60 font-semibold">Privacy Email</td><td className="p-2 border border-white/10 text-cyan-400">privacy@lmn8.ai</td></tr>
     <tr><td className="p-2 border border-white/10 text-white/60 font-semibold">Support Email</td><td className="p-2 border border-white/10 text-cyan-400">support@lmn8.ai</td></tr>
-    <tr><td className="p-2 border border-white/10 text-white/60 font-semibold">Mailing Address</td><td className="p-2 border border-white/10 text-white/70">LMN8 LLC, Attn: Privacy<br/>18601 FM 1431, STE 104-4<br/>Jonestown, TX 78645</td></tr>
+    <tr><td className="p-2 border border-white/10 text-white/60 font-semibold">Mailing Address</td><td className="p-2 border border-white/10 text-white/70">METAT8 LLC, Attn: Privacy<br/>18601 FM 1431, STE 104-4<br/>Jonestown, TX 78645</td></tr>
   </tbody>
 </table>
 
 
 <hr/>
 
-<p>© 2026 LMN8 LLC | All Rights Reserved | LMN8 is a mental health integration platform.</p>
+<p>© 2026 METAT8 LLC | All Rights Reserved | METAT8 is a mental health integration platform.</p>
           </div>
         </div>
       </main>

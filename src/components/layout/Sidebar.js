@@ -82,7 +82,7 @@ export default function Sidebar({ activePage, setActivePage, sidebarOpen, setSid
             {user ? (
               <>
                 <span className="text-white font-bold text-sm">
-                  {user.role === 'lmn8_admin' ? 'LMN8' : user.clinicName || `${user.firstName} ${user.lastName}`}
+                  {user.role === 'lmn8_admin' ? 'METAT8' : user.clinicName || `${user.firstName} ${user.lastName}`}
                 </span>
                 <span className="text-slate-400 text-xs">
                   {user.role === 'lmn8_admin' ? `${user.firstName} ${user.lastName}` : user.role === 'clinician' ? 'Clinic' : user.firstName ? `${user.firstName} ${user.lastName}` : ''}
@@ -142,7 +142,7 @@ export default function Sidebar({ activePage, setActivePage, sidebarOpen, setSid
               </div>
               <div>
                 <div className="text-white font-semibold text-sm">
-                  {user?.role === 'lmn8_admin' ? 'LMN8' : user?.clinicName || `${user?.firstName || ''} ${user?.lastName || ''}`}
+                  {user?.role === 'lmn8_admin' ? 'METAT8' : user?.clinicName || `${user?.firstName || ''} ${user?.lastName || ''}`}
                 </div>
                 <div className="text-slate-400 text-xs">
                   {user?.role === 'lmn8_admin' ? `${user.firstName} ${user.lastName}` : user?.role === 'clinician' ? 'Clinic' : ''}
@@ -160,7 +160,7 @@ export default function Sidebar({ activePage, setActivePage, sidebarOpen, setSid
           <div className="flex justify-center">
             <div 
               className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg flex items-center justify-center hover:scale-105 transition-transform cursor-pointer" 
-              title={user ? (user.role === 'lmn8_admin' ? `LMN8 - ${user.firstName} ${user.lastName}` : user.clinicName || `${user.firstName} ${user.lastName}`) : 'User'}
+              title={user ? (user.role === 'lmn8_admin' ? `METAT8 - ${user.firstName} ${user.lastName}` : user.clinicName || `${user.firstName} ${user.lastName}`) : 'User'}
             >
               <span className="text-white text-sm font-bold">
                 {user ? `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}` : 'U'}

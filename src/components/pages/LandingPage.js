@@ -136,7 +136,7 @@ export default function LandingPage() {
         </svg>
       ),
       title: "Zero-Failure Commitment",
-      description: "Reliable support during every vulnerable moment. When internet fails, when servers crash, when patients need support at 3am—LMN8 remains present."
+      description: "Reliable support during every vulnerable moment. When internet fails, when servers crash, when patients need support at 3am—METAT8 remains present."
     },
     {
       icon: (
@@ -200,19 +200,19 @@ export default function LandingPage() {
   const faqs = [
     {
       question: "How does this integrate with our existing systems?",
-      answer: "LMN8 enhances your current workflows without disrupting established processes. It works behind the scenes to strengthen therapeutic relationships, not complicate them."
+      answer: "METAT8 enhances your current workflows without disrupting established processes. It works behind the scenes to strengthen therapeutic relationships, not complicate them."
     },
     {
       question: "What's the learning curve for our staff?",
-      answer: "Minimal. LMN8 is designed to feel natural and intuitive. Your clinical team focuses on what they do best—providing therapeutic care—while LMN8 handles presence and continuity."
+      answer: "Minimal. METAT8 is designed to feel natural and intuitive. Your clinical team focuses on what they do best—providing therapeutic care—while METAT8 handles presence and continuity."
     },
     {
       question: "How do we measure the impact?",
-      answer: "Beyond traditional metrics, LMN8 tracks therapeutic relationship quality, integration success, and patient-reported sense of being witnessed. These deeper measures correlate with better clinical outcomes and stronger business performance."
+      answer: "Beyond traditional metrics, METAT8 tracks therapeutic relationship quality, integration success, and patient-reported sense of being witnessed. These deeper measures correlate with better clinical outcomes and stronger business performance."
     },
     {
       question: "What makes this different from other clinic software?",
-      answer: "LMN8 isn't clinic management software. It's therapeutic presence technology. While others focus on operational efficiency, we focus on ensuring patients never feel abandoned during their healing journey."
+      answer: "METAT8 isn't clinic management software. It's therapeutic presence technology. While others focus on operational efficiency, we focus on ensuring patients never feel abandoned during their healing journey."
     }
   ];
 
@@ -230,7 +230,7 @@ export default function LandingPage() {
       {/* Editorial side label — appears after hero on xl screens */}
       <div className="side-label fixed left-5 top-1/2 -translate-y-1/2 z-20 hidden xl:flex flex-col items-center gap-4" aria-hidden="true">
         <div className="h-20 w-px bg-gradient-to-b from-transparent via-accent-primary/35 to-transparent" />
-        <span className="writing-vertical text-text-60 text-[10px] uppercase tracking-[0.35em] font-light select-none">LMN8 — ClinicOS</span>
+        <span className="writing-vertical text-text-60 text-[10px] uppercase tracking-[0.35em] font-light select-none">METAT8 — ClinicOS</span>
         <div className="h-20 w-px bg-gradient-to-b from-transparent via-accent-primary/35 to-transparent" />
       </div>
 
@@ -248,10 +248,10 @@ export default function LandingPage() {
       <nav className="nav-lmn8 fixed top-4 left-4 right-4 z-50 flex justify-between items-center px-5 py-3 rounded-2xl">
         <div className="flex items-center space-x-3">
           <div className="w-9 h-9 bg-accent-primary rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(91,192,190,0.35)]">
-            <span className="text-bg-dark font-bold text-sm tracking-tight">L8</span>
+            <span className="text-bg-dark font-bold text-sm tracking-tight">MT8</span>
           </div>
           <div>
-            <span className="text-text-100 font-semibold tracking-widest" style={{letterSpacing: '-0.02em'}}>LMN8</span>
+            <span className="text-text-100 font-semibold tracking-widest" style={{letterSpacing: '-0.02em'}}>METAT8</span>
             <span className="text-text-60 text-[9px] block -mt-0.5 uppercase tracking-[0.2em]">ClinicOS</span>
           </div>
         </div>
@@ -334,7 +334,7 @@ export default function LandingPage() {
 
             <div data-depth="0.45">
               <p className="animate-load-d2 text-xl lg:text-2xl text-text-85 mb-6 max-w-3xl mx-auto leading-relaxed font-light">
-                LMN8 ensures no ketamine therapy patient ever experiences abandonment during their most vulnerable moments.
+                METAT8 ensures no ketamine therapy patient ever experiences abandonment during their most vulnerable moments.
               </p>
 
               <p className="animate-load-d3 text-base lg:text-lg text-text-60 mb-6 lg:mb-10 max-w-3xl mx-auto" style={{letterSpacing: '-0.01em'}}>
@@ -418,13 +418,13 @@ export default function LandingPage() {
             {/* Header */}
             <div className="text-center mb-20">
               <h2 className="text-4xl lg:text-5xl font-bold text-text-100 mb-6">
-                The LMN8 Solution
+                The METAT8 Solution
               </h2>
               <p className="text-2xl text-accent-primary mb-6">
                 Therapeutic Presence Technology
               </p>
               <p className="text-lg text-text-85 max-w-3xl mx-auto leading-relaxed">
-                LMN8 is built to strengthen, not replace. It doesn't optimize—it preserves presence. It ensures your patients never walk the healing path alone.
+                METAT8 is built to strengthen, not replace. It doesn't optimize—it preserves presence. It ensures your patients never walk the healing path alone.
               </p>
           </div>
 
@@ -560,7 +560,7 @@ export default function LandingPage() {
                   {/* Content with enhanced spacing */}
                   <div className="space-y-6 mb-12">
                     <p className="text-xl text-text-85 leading-relaxed">
-                      We are inviting a <span className="text-accent-primary font-semibold">select few exceptional clinics</span> to shape LMN8 from inception. This isn't an offer—it's an alignment.
+                      We are inviting a <span className="text-accent-primary font-semibold">select few exceptional clinics</span> to shape METAT8 from inception. This isn't an offer—it's an alignment.
                     </p>
                     
                     <p className="text-lg text-text-85 leading-relaxed">
@@ -651,7 +651,7 @@ export default function LandingPage() {
                   </p>
                   
                   <p className="text-lg lg:text-xl text-text-85 leading-relaxed animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                    LMN8 was born to end that failure. To build therapeutic technology that <span className="text-accent-primary font-semibold">deepens trust</span> instead of replacing it. Anti-fragile, radically ethical, designed for healing above all else.
+                    METAT8 was born to end that failure. To build therapeutic technology that <span className="text-accent-primary font-semibold">deepens trust</span> instead of replacing it. Anti-fragile, radically ethical, designed for healing above all else.
                   </p>
                   
                   <p className="text-xl lg:text-2xl text-accent-primary font-semibold animate-fade-in" style={{ animationDelay: '0.6s' }}>
@@ -670,7 +670,7 @@ export default function LandingPage() {
                 {/* Attribution */}
                 <div className="text-center">
                   <p className="text-text-100 font-semibold mb-1">Founder</p>
-                  <p className="text-accent-primary text-sm uppercase tracking-widest">LMN8</p>
+                  <p className="text-accent-primary text-sm uppercase tracking-widest">METAT8</p>
                 </div>
 
                 {/* Decorative Corner Elements */}
@@ -760,7 +760,7 @@ export default function LandingPage() {
                 <div className="bg-accent-primary/5 border-2 border-accent-primary/50 rounded-xl p-8 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-accent-primary/10 rounded-full blur-2xl"></div>
                   <div className="relative z-10">
-                    <div className="text-accent-primary text-xs uppercase tracking-wider font-bold mb-4">With LMN8</div>
+                    <div className="text-accent-primary text-xs uppercase tracking-wider font-bold mb-4">With METAT8</div>
                     <div className="text-accent-primary mb-2" style={{fontFamily: 'var(--font-display)', fontSize: 'clamp(4rem, 8vw, 6rem)', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.04em'}}>96%</div>
                     <div className="text-text-85 text-sm mb-4">Integration Completion Rate</div>
                     <div className="h-px bg-accent-primary/30 mb-4"></div>
@@ -782,7 +782,7 @@ export default function LandingPage() {
                     Industry Gap
                   </div>
                   <div className="p-4 font-semibold text-accent-primary text-sm uppercase tracking-wider border-l border-ui-secondary text-center">
-                    LMN8 Solution
+                    METAT8 Solution
                   </div>
                 </div>
 
@@ -882,7 +882,7 @@ export default function LandingPage() {
             </h2>
             
               <p className="text-xl lg:text-2xl text-text-85 mb-8 leading-relaxed">
-                In five years, LMN8 will be the foundation for therapeutic presence technology worldwide. Not a product. Not a protocol. A new standard of care: reliable presence in every healing journey.
+                In five years, METAT8 will be the foundation for therapeutic presence technology worldwide. Not a product. Not a protocol. A new standard of care: reliable presence in every healing journey.
               </p>
               
               <p className="text-2xl lg:text-3xl text-accent-primary font-medium">
@@ -942,10 +942,10 @@ export default function LandingPage() {
               <div className="max-w-xl">
                 <div className="flex items-center space-x-3 mb-5">
                   <div className="w-10 h-10 bg-accent-primary rounded-xl flex items-center justify-center shadow-[0_0_24px_rgba(91,192,190,0.3)]">
-                    <span className="text-bg-dark font-bold text-sm">L8</span>
+                    <span className="text-bg-dark font-bold text-sm">MT8</span>
                   </div>
                   <div>
-                    <span className="text-text-100 font-semibold text-xl tracking-widest" style={{letterSpacing: '-0.02em'}}>LMN8</span>
+                    <span className="text-text-100 font-semibold text-xl tracking-widest" style={{letterSpacing: '-0.02em'}}>METAT8</span>
                     <span className="text-text-60 text-[9px] block -mt-0.5 uppercase tracking-[0.2em]">ClinicOS</span>
                   </div>
                 </div>
@@ -963,8 +963,8 @@ export default function LandingPage() {
                 </button>
                 <p className="text-text-60 text-xs">
                   or{' '}
-                  <a href="mailto:contact@lmn8.io" className="text-accent-primary hover:text-accent-highlight transition-colors">
-                    contact@lmn8.io
+                   <a href="mailto:contact@lmn8.io" className="text-accent-primary hover:text-accent-highlight transition-colors">
+                     contact@lmn8.io
                   </a>
                 </p>
               </div>
@@ -996,9 +996,9 @@ export default function LandingPage() {
 
             {/* Bottom — legal */}
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-ui-secondary/15">
-              <p className="text-text-60 text-xs font-light">&copy; 2024 LMN8. All rights reserved.</p>
+              <p className="text-text-60 text-xs font-light">&copy; 2024 METAT8. All rights reserved.</p>
               <p className="text-text-60 text-[10px] text-center md:text-right font-light max-w-xs">
-                LMN8 is therapeutic presence technology, not a replacement for professional clinical care.
+                METAT8 is therapeutic presence technology, not a replacement for professional clinical care.
               </p>
             </div>
 

@@ -98,7 +98,7 @@ export async function POST(request) {
       [clinicianId, clinicianName, email.split('@')[0], email, passwordHash, 'clinician', clinic.id]
     );
 
-    const adminName = admin.full_name || 'LMN8 Admin';
+    const adminName = admin.full_name || 'METAT8 Admin';
     const emailResult = await sendClinicianCredentialsEmail(
       { firstName: clinicianName, lastName: '', email },
       { password: clinicianPassword },

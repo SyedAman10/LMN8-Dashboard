@@ -43,7 +43,7 @@ export const sendDemoRequestAdminEmail = async (data) => {
 
     const transporter = createTransporter();
     const emailTemplate = {
-      from: `"LMN8 Website" <${process.env.EMAIL_USER}>`,
+      from: `"METAT8 Website" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER,
       subject: `🎯 New Demo Request from ${data.clinicName}`,
       html: `
@@ -68,7 +68,7 @@ export const sendDemoRequestAdminEmail = async (data) => {
           <div class="container">
             <div class="header">
               <h1 style="margin: 0;">🎯 New Demo Request</h1>
-              <p style="margin: 10px 0 0 0; opacity: 0.9;">Someone wants to see LMN8 in action!</p>
+              <p style="margin: 10px 0 0 0; opacity: 0.9;">Someone wants to see METAT8 in action!</p>
             </div>
             <div class="content">
               <div class="field">
@@ -114,9 +114,9 @@ export const sendDemoRequestConfirmationEmail = async (data) => {
 
     const transporter = createTransporter();
     const emailTemplate = {
-      from: `"LMN8" <${process.env.EMAIL_USER}>`,
+      from: `"METAT8" <${process.env.EMAIL_USER}>`,
       to: data.email,
-      subject: `Your LMN8 Demo Request - We'll Be In Touch Soon`,
+      subject: `Your METAT8 Demo Request - We'll Be In Touch Soon`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -138,23 +138,23 @@ export const sendDemoRequestConfirmationEmail = async (data) => {
         <body>
           <div class="container">
             <div class="header">
-              <div class="logo">LMN8</div>
+              <div class="logo">METAT8</div>
               <h1 style="margin: 0; color: white;">Demo Request Received</h1>
             </div>
             <div class="content">
               <p>Hi <span class="highlight">${data.name}</span>,</p>
-              <p>Thank you for your interest in LMN8! We've received your demo request for <strong>${data.clinicName}</strong>.</p>
-              <p>One of our team members will reach out to you within <strong>24 hours</strong> to schedule a personalized demonstration of how LMN8 can ensure no ketamine therapy patient experiences abandonment during their most vulnerable moments.</p>
+              <p>Thank you for your interest in METAT8! We've received your demo request for <strong>${data.clinicName}</strong>.</p>
+              <p>One of our team members will reach out to you within <strong>24 hours</strong> to schedule a personalized demonstration of how METAT8 can ensure no ketamine therapy patient experiences abandonment during their most vulnerable moments.</p>
               <div class="field">
                 <p style="margin: 0;"><strong>What to expect in your demo:</strong></p>
                 <ul style="margin-top: 10px; margin-bottom: 0; padding-left: 20px;">
-                  <li>See how LMN8 achieves 96% integration completion</li>
+                  <li>See how METAT8 achieves 96% integration completion</li>
                   <li>Understand our zero-failure commitment</li>
                   <li>Discover how we preserve therapeutic presence</li>
                 </ul>
               </div>
               <p>In the meantime, if you have any questions, feel free to reply to this email.</p>
-              <p style="margin-top: 30px;">Best regards,<br><strong>The LMN8 Team</strong></p>
+              <p style="margin-top: 30px;">Best regards,<br><strong>The METAT8 Team</strong></p>
               <p class="footer"><em>Technology built to heal, not replace.</em></p>
             </div>
           </div>
@@ -180,7 +180,7 @@ export const sendContactAdminEmail = async (data) => {
 
     const transporter = createTransporter();
     const emailTemplate = {
-      from: `"LMN8 Website" <${process.env.EMAIL_USER}>`,
+      from: `"METAT8 Website" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER,
       subject: `📬 New Contact Form Submission: ${data.subject}`,
       html: `
@@ -247,9 +247,9 @@ export const sendContactConfirmationEmail = async (data) => {
 
     const transporter = createTransporter();
     const emailTemplate = {
-      from: `"LMN8" <${process.env.EMAIL_USER}>`,
+      from: `"METAT8" <${process.env.EMAIL_USER}>`,
       to: data.email,
-      subject: `We Received Your Message - LMN8`,
+      subject: `We Received Your Message - METAT8`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -270,14 +270,14 @@ export const sendContactConfirmationEmail = async (data) => {
         <body>
           <div class="container">
             <div class="header">
-              <div class="logo">LMN8</div>
+              <div class="logo">METAT8</div>
               <h1 style="margin: 0; color: white;">Message Received</h1>
             </div>
             <div class="content">
               <p>Hi <span class="highlight">${data.name}</span>,</p>
               <p>Thank you for reaching out to us. We've received your message regarding "<strong>${data.subject}</strong>" and our team will review it shortly.</p>
               <p>We typically respond within <strong>24-48 hours</strong>. If your inquiry is urgent, feel free to reply to this email with additional details.</p>
-              <p style="margin-top: 30px;">Best regards,<br><strong>The LMN8 Team</strong></p>
+              <p style="margin-top: 30px;">Best regards,<br><strong>The METAT8 Team</strong></p>
               <p class="footer"><em>Technology built to heal, not replace.</em></p>
             </div>
           </div>
@@ -303,7 +303,7 @@ export const sendPartnerApplicationAdminEmail = async (data) => {
 
     const transporter = createTransporter();
     const emailTemplate = {
-      from: `"LMN8 Website" <${process.env.EMAIL_USER}>`,
+      from: `"METAT8 Website" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER,
       subject: `🌟 New Founding Partner Application from ${data.clinicName}`,
       html: `
@@ -418,7 +418,7 @@ export const sendPartnerApplicationConfirmationEmail = async (data) => {
 
     const transporter = createTransporter();
     const emailTemplate = {
-      from: `"LMN8" <${process.env.EMAIL_USER}>`,
+      from: `"METAT8" <${process.env.EMAIL_USER}>`,
       to: data.email,
       subject: `Your Founding Partnership Application - Under Review`,
       html: `
@@ -443,13 +443,13 @@ export const sendPartnerApplicationConfirmationEmail = async (data) => {
         <body>
           <div class="container">
             <div class="header">
-              <div class="logo">LMN8</div>
+              <div class="logo">METAT8</div>
               <h1 style="margin: 0; color: white;">Application Received</h1>
               <div class="badge">FOUNDING PARTNER</div>
             </div>
             <div class="content">
               <p>Dear <span class="highlight">${data.name}</span>,</p>
-              <p>Thank you for your interest in becoming a Founding Partner of LMN8. Your application for <strong>${data.clinicName}</strong> demonstrates a commitment to therapeutic excellence that aligns perfectly with our mission.</p>
+              <p>Thank you for your interest in becoming a Founding Partner of METAT8. Your application for <strong>${data.clinicName}</strong> demonstrates a commitment to therapeutic excellence that aligns perfectly with our mission.</p>
               <div class="field">
                 <p style="margin: 0;"><strong>What Happens Next:</strong></p>
                 <ul style="margin-top: 10px; margin-bottom: 0; padding-left: 20px;">
@@ -460,7 +460,7 @@ export const sendPartnerApplicationConfirmationEmail = async (data) => {
               </div>
               <p><em>We review each application thoughtfully and consider not just technical fit, but cultural and mission alignment as well. This partnership is intentionally limited to clinics that share our vision for therapeutic presence technology.</em></p>
               <p style="margin-top: 30px;">If you have any questions in the meantime, please don't hesitate to reach out.</p>
-              <p style="margin-top: 30px;">Best regards,<br><strong>The LMN8 Founding Team</strong></p>
+              <p style="margin-top: 30px;">Best regards,<br><strong>The METAT8 Founding Team</strong></p>
               <p class="footer"><em>Technology built to heal, not replace.</em></p>
             </div>
           </div>

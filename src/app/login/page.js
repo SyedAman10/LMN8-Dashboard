@@ -144,7 +144,7 @@ function LoginForm() {
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                   </svg>
                 </div>
-                <span className="text-3xl font-bold text-white">{clinicName || 'LMN8'}</span>
+                <span className="text-3xl font-bold text-white">{clinicName || 'METAT8'}</span>
                 <div className="text-white/60 text-sm">|</div>
                 <span className="text-white/80">{clinicName ? 'Clinic Portal' : 'Psychedelic Therapy Platform'}</span>
               </div>
@@ -178,7 +178,7 @@ function LoginForm() {
                      <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent mb-3">
                        let's continue your journey.
                      </h2>
-                    <p className="text-white/70 text-lg">Sign in to your {clinicName || 'LMN8'} account</p>
+                    <p className="text-white/70 text-lg">Sign in to your {clinicName || 'METAT8'} account</p>
                   </div>
 
                   {/* Form */}

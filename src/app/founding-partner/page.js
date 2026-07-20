@@ -135,10 +135,10 @@ export default function FoundingPartnerPage() {
       <nav className="relative z-10 flex justify-between items-center p-6 lg:px-12 border-b border-ui-secondary/30">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-accent-primary rounded-lg flex items-center justify-center">
-            <span className="text-bg-dark font-bold text-lg">L8</span>
+            <span className="text-bg-dark font-bold text-lg">MT8</span>
           </div>
           <div>
-            <span className="text-text-100 font-serif text-2xl font-bold tracking-wider">LMN8</span>
+            <span className="text-text-100 font-serif text-2xl font-bold tracking-wider">METAT8</span>
             <span className="text-text-60 text-xs block -mt-1">ClinicOS</span>
           </div>
         </div>
@@ -178,7 +178,7 @@ export default function FoundingPartnerPage() {
                 Founding Partners are not customers—they are co-creators. We're seeking clinics that understand the profound cost of patient abandonment and share our vision for therapeutic technology that witnesses rather than manages.
               </p>
               <p className="leading-relaxed">
-                This partnership is intentionally limited. We're building with a small group of aligned clinics who will shape LMN8's evolution from inception.
+                This partnership is intentionally limited. We're building with a small group of aligned clinics who will shape METAT8's evolution from inception.
               </p>
             </div>
 
@@ -401,7 +401,7 @@ export default function FoundingPartnerPage() {
 
                   <div>
                     <label className="block text-text-85 mb-2 font-semibold">
-                      Why does the LMN8 vision resonate with you? *
+                      Why does the METAT8 vision resonate with you? *
                     </label>
                     <textarea
                       required

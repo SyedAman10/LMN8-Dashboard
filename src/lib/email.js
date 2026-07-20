@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.local' });
 
-const FROM_NAME = process.env.FROM_NAME || 'LMN8';
+const FROM_NAME = process.env.FROM_NAME || 'METAT8';
 const FROM_EMAIL = process.env.FROM_EMAIL || process.env.SMTP_USER || process.env.EMAIL_USER;
 
 // Email configuration
@@ -30,14 +30,14 @@ export const createPasswordResetEmailTemplate = (email, resetToken, username) =>
   return {
     from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
     to: email,
-    subject: `Password Reset Request - LMN8`,
+    subject: `Password Reset Request - METAT8`,
     html: `
       <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Password Reset - LMN8</title>
+        <title>Password Reset - METAT8</title>
         <style>
           body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -144,7 +144,7 @@ export const createPasswordResetEmailTemplate = (email, resetToken, username) =>
       <body>
         <div class="container">
           <div class="header">
-            <div class="logo">LMN8</div>
+            <div class="logo">METAT8</div>
             <h1 class="title">Password Reset Request</h1>
           </div>
           
@@ -152,7 +152,7 @@ export const createPasswordResetEmailTemplate = (email, resetToken, username) =>
             <p class="greeting">Hello <span class="highlight">${username}</span>,</p>
             
             <p style="color: #e2e8f0; margin-bottom: 20px;">
-              We received a request to reset your password for your LMN8 account. 
+              We received a request to reset your password for your METAT8 account. 
               If you didn't make this request, you can safely ignore this email.
             </p>
             
@@ -167,7 +167,7 @@ export const createPasswordResetEmailTemplate = (email, resetToken, username) =>
             </p>
             
             <ol style="color: #e2e8f0; margin-left: 20px;">
-              <li>Open the LMN8 mobile app</li>
+              <li>Open the METAT8 mobile app</li>
               <li>Tap on "Forgot Password"</li>
               <li>Enter your reset token when prompted</li>
               <li>Create your new password</li>
@@ -189,7 +189,7 @@ export const createPasswordResetEmailTemplate = (email, resetToken, username) =>
           </div>
           
           <div class="footer">
-            <p>© 2024 LMN8. All rights reserved.</p>
+            <p>© 2024 METAT8. All rights reserved.</p>
             <p style="color: #64748b; font-size: 12px; margin-top: 10px;">
               This is an automated message. Please do not reply to this email.
             </p>
@@ -199,17 +199,17 @@ export const createPasswordResetEmailTemplate = (email, resetToken, username) =>
       </html>
     `,
     text: `
-      Password Reset Request - LMN8
+      Password Reset Request - METAT8
       
       Hello ${username},
       
-      We received a request to reset your password for your LMN8 account. 
+      We received a request to reset your password for your METAT8 account. 
       If you didn't make this request, you can safely ignore this email.
       
       ⏰ IMPORTANT: This reset link will expire in 1 hour for security reasons.
       
       To reset your password:
-      1. Open the LMN8 mobile app
+      1. Open the METAT8 mobile app
       2. Tap on "Forgot Password"
       3. Enter your reset token when prompted
       4. Create your new password
@@ -222,7 +222,7 @@ export const createPasswordResetEmailTemplate = (email, resetToken, username) =>
       - Choose a strong, unique password
       - If you didn't request this, contact support immediately
       
-      © 2024 LMN8. All rights reserved.
+      © 2024 METAT8. All rights reserved.
       This is an automated message. Please do not reply to this email.
     `
   };
@@ -766,12 +766,12 @@ export const createStaffCredentialsEmailTemplate = (staff, credentials, clinicia
   return {
     from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
     to: staff.email,
-    subject: `Your LMN8 Dashboard Staff Account`,
+    subject: `Your METAT8 Dashboard Staff Account`,
     html: `
       <!DOCTYPE html>
       <html lang="en">
       <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Your LMN8 Staff Account</title>
+      <title>Your METAT8 Staff Account</title>
       <style>
         body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;background-color:#f8fafc}
         .container{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:20px;padding:40px;box-shadow:0 20px 40px rgba(0,0,0,0.1)}
@@ -792,7 +792,7 @@ export const createStaffCredentialsEmailTemplate = (staff, credentials, clinicia
       </head>
       <body>
         <div class="container">
-          <div class="header"><div class="logo">LMN8</div><h1 class="title">Your Staff Account</h1></div>
+          <div class="header"><div class="logo">METAT8</div><h1 class="title">Your Staff Account</h1></div>
           <div class="content">
             <p class="greeting">Dear <span class="highlight">${staff.firstName} ${staff.lastName}</span>,</p>
             <p style="color:#e2e8f0;margin-bottom:20px;">Your dashboard account has been created by <span class="highlight">${clinicianName}</span>.</p>
@@ -806,13 +806,13 @@ export const createStaffCredentialsEmailTemplate = (staff, credentials, clinicia
             </div>
             <p style="color:#94a3b8;font-size:14px;">For security, please change your password after first login.</p>
           </div>
-          <div class="footer"><p>© 2024 LMN8. All rights reserved.</p></div>
+          <div class="footer"><p>© 2024 METAT8. All rights reserved.</p></div>
         </div>
       </body>
       </html>
     `,
     text: `
-Your LMN8 Dashboard Staff Account
+Your METAT8 Dashboard Staff Account
 
 Dear ${staff.firstName} ${staff.lastName},
 
@@ -825,7 +825,7 @@ Login URL: ${loginUrl}
 
 For security, please change your password after first login.
 
-© 2024 LMN8. All rights reserved.
+© 2024 METAT8. All rights reserved.
     `
   };
 };
@@ -848,7 +848,7 @@ export const sendStaffCredentialsEmail = async (staff, credentials, clinicianNam
   }
 };
 
-// Clinician credentials email template (sent by LMN8 admin when creating a clinic)
+// Clinician credentials email template (sent by METAT8 admin when creating a clinic)
 export const createClinicianCredentialsEmailTemplate = (clinician, credentials, adminName, clinicName) => {
   const baseUrl = process.env.PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
   const clinicParam = clinicName ? `&clinic=${encodeURIComponent(clinicName)}` : '';
@@ -856,12 +856,12 @@ export const createClinicianCredentialsEmailTemplate = (clinician, credentials, 
   return {
     from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
     to: clinician.email,
-    subject: `Your LMN8 Clinician Dashboard Account - ${clinicName}`,
+    subject: `Your METAT8 Clinician Dashboard Account - ${clinicName}`,
     html: `
       <!DOCTYPE html>
       <html lang="en">
       <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Your LMN8 Clinician Account</title>
+      <title>Your METAT8 Clinician Account</title>
       <style>
         body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;background-color:#f8fafc}
         .container{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:20px;padding:40px;box-shadow:0 20px 40px rgba(0,0,0,0.1)}
@@ -884,7 +884,7 @@ export const createClinicianCredentialsEmailTemplate = (clinician, credentials, 
       </head>
       <body>
         <div class="container">
-          <div class="header"><div class="logo">LMN8</div><h1 class="title">Your Clinician Dashboard</h1></div>
+          <div class="header"><div class="logo">METAT8</div><h1 class="title">Your Clinician Dashboard</h1></div>
           <div class="content">
             <p class="greeting">Dear <span class="highlight">${clinician.firstName} ${clinician.lastName}</span>,</p>
             <p style="color:#e2e8f0;margin-bottom:20px;">Your clinician dashboard account for <span class="highlight">${clinicName}</span> has been created by <span class="highlight">${adminName}</span>.</p>
@@ -901,13 +901,13 @@ export const createClinicianCredentialsEmailTemplate = (clinician, credentials, 
             </div>
             <p style="color:#94a3b8;font-size:14px;">For security, please change your password after first login.</p>
           </div>
-          <div class="footer"><p>© 2024 LMN8. All rights reserved.</p></div>
+          <div class="footer"><p>© 2024 METAT8. All rights reserved.</p></div>
         </div>
       </body>
       </html>
     `,
     text: `
-Your LMN8 Clinician Dashboard Account
+Your METAT8 Clinician Dashboard Account
 
 Dear ${clinician.firstName} ${clinician.lastName},
 
@@ -922,7 +922,7 @@ Login URL: ${loginUrl}
 
 For security, please change your password after first login.
 
-© 2024 LMN8. All rights reserved.
+© 2024 METAT8. All rights reserved.
     `
   };
 };

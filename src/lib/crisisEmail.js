@@ -30,9 +30,9 @@ export async function sendCrisisAlertToClinician(clinicianEmail, clinicianName, 
         </p>`
       : '';
     const info = await transporter.sendMail({
-      from: `"LMN8 Crisis Alert" <${process.env.SMTP_USER}>`,
+      from: `"METAT8 Crisis Alert" <${process.env.SMTP_USER}>`,
       to: clinicianEmail,
-      subject: 'LMN8 - CRISIS ALERT: Patient Needs Immediate Support',
+      subject: 'METAT8 - CRISIS ALERT: Patient Needs Immediate Support',
       html: `<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px;">
         <h2 style="color:#dc2626;">Patient Crisis Alert</h2>
         <p>Hi ${clinicianName},</p>
@@ -44,7 +44,7 @@ export async function sendCrisisAlertToClinician(clinicianEmail, clinicianName, 
         </p>
         <p style="font-weight:bold;color:#dc2626;">Please reach out to your patient as soon possible.</p>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">
-        <p style="color:#9ca3af;font-size:12px;">This is an automated alert from LMN8. Please take appropriate action.</p>
+        <p style="color:#9ca3af;font-size:12px;">This is an automated alert from METAT8. Please take appropriate action.</p>
       </div>`,
     });
     console.log(`[CRISIS EMAIL] Alert sent to clinician ${clinicianEmail} via ${process.env.SMTP_HOST} id=${info.messageId}`);
