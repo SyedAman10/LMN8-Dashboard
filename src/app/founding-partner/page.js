@@ -134,8 +134,8 @@ export default function FoundingPartnerPage() {
       {/* Header */}
       <nav className="relative z-10 flex justify-between items-center p-6 lg:px-12 border-b border-ui-secondary/30">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-accent-primary rounded-lg flex items-center justify-center overflow-hidden">
-            <img src="/metat8-logo.png" alt="METAT8" className="w-8 h-8 object-contain" />
+          <div className="w-10 h-10 rounded-[10px] flex items-center justify-center overflow-hidden">
+            <img src="/metat8-logo.png" alt="METAT8" className="w-full h-full object-contain" />
           </div>
           <div>
             <span className="text-text-100 font-serif text-2xl font-bold tracking-wider">METAT8</span>
