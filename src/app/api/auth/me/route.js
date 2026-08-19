@@ -33,6 +33,14 @@ export async function GET(request) {
       }
     }
 
+    let collegeName = null;
+    if (user.college_id) {
+      const collegeResult = await query(`SELECT name FROM colleges WHERE id = $1`, [user.college_id]);
+      if (collegeResult.rows.length > 0) {
+        collegeName = collegeResult.rows[0].name;
+      }
+    }
+
     return NextResponse.json({
       user: {
         id: user.id,
@@ -44,6 +52,8 @@ export async function GET(request) {
         role: user.role,
         clinicId: user.clinic_id,
         clinicName: clinicName,
+        collegeId: user.college_id,
+        collegeName: collegeName,
         createdAt: user.created_at
       }
     });

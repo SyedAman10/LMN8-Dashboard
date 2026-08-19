@@ -304,7 +304,8 @@ export async function initDatabase() {
     try {
       await query(`ALTER TYPE userrole ADD VALUE IF NOT EXISTS 'lmn8_admin'`);
       await query(`ALTER TYPE userrole ADD VALUE IF NOT EXISTS 'clinician'`);
-      console.log('   ✅ lmn8_admin and clinician roles added to userrole enum');
+      await query(`ALTER TYPE userrole ADD VALUE IF NOT EXISTS 'college'`);
+      console.log('   ✅ lmn8_admin, clinician, and college roles added to userrole enum');
     } catch (enumError) {
       console.log('   ⚠️  Enum alter error (may not apply if role is VARCHAR):', enumError.message);
     }
@@ -377,6 +378,85 @@ export async function initDatabase() {
     try { await query(`ALTER TABLE community_posts ALTER COLUMN updated_at TYPE TIMESTAMPTZ USING updated_at AT TIME ZONE 'UTC'`); } catch {}
     try { await query(`ALTER TABLE community_likes ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`); } catch {}
     try { await query(`ALTER TABLE community_comments ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`); } catch {}
+
+    // Create colleges table for LMN8 admin to manage colleges
+    console.log('   Creating colleges table...');
+    await query(`
+      CREATE TABLE IF NOT EXISTS colleges (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        address VARCHAR(255),
+        city VARCHAR(100),
+        state VARCHAR(50),
+        zip_code VARCHAR(20),
+        phone VARCHAR(20),
+        email VARCHAR(255),
+        website VARCHAR(255),
+        student_greeting_name VARCHAR(100) DEFAULT 'Student',
+        status VARCHAR(20) DEFAULT 'active',
+        created_by UUID REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('   ✅ colleges table created');
+
+    // Add college_id to users table (if not exist)
+    console.log('   Adding college_id column to users...');
+    try {
+      await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS college_id INTEGER REFERENCES colleges(id)`);
+      console.log('   ✅ college_id column added to users');
+    } catch (colError) {
+      console.log('   ⚠️  users college_id alter error:', colError.message);
+    }
+
+    // Create students table
+    console.log('   Creating students table...');
+    await query(`
+      CREATE TABLE IF NOT EXISTS students (
+        id SERIAL PRIMARY KEY,
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255),
+        phone VARCHAR(20),
+        date_of_birth DATE,
+        program VARCHAR(255),
+        enrollment_year INTEGER,
+        emergency_contact VARCHAR(255),
+        emergency_phone VARCHAR(20),
+        status VARCHAR(50) DEFAULT 'active',
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('   ✅ students table created');
+
+    // Create student_users table for student authentication
+    console.log('   Creating student_users table...');
+    await query(`
+      CREATE TABLE IF NOT EXISTS student_users (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        is_active BOOLEAN DEFAULT true,
+        last_login TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('   ✅ student_users table created');
+
+    // Add indexes for students
+    try {
+      await query(`CREATE INDEX IF NOT EXISTS idx_students_user_id ON students(user_id)`);
+      await query(`CREATE INDEX IF NOT EXISTS idx_student_users_username ON student_users(username)`);
+      await query(`CREATE INDEX IF NOT EXISTS idx_student_users_student_id ON student_users(student_id)`);
+      console.log('   ✅ student indexes created');
+    } catch (idxError) {
+      console.log('   ⚠️  Student indexes error:', idxError.message);
+    }
 
     // Seed LMN8 admin user if not exists
     console.log('   Checking LMN8 admin account...');

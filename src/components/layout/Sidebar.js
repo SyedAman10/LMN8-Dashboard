@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, Users, UserPlus, Calendar, HeartHandshake, BookOpen, BarChart3, Building2, Settings, Stethoscope } from 'lucide-react';
+import { LayoutDashboard, Users, UserPlus, Calendar, HeartHandshake, BookOpen, BarChart3, Building2, Settings, Stethoscope, GraduationCap, UserCheck } from 'lucide-react';
 
 const iconMap = {
   dashboard: LayoutDashboard,
@@ -14,7 +14,9 @@ const iconMap = {
   reports: BarChart3,
   locations: Building2,
   settings: Settings,
-  clinics: Stethoscope
+  clinics: Stethoscope,
+  colleges: GraduationCap,
+  students: UserCheck
 };
 
 const sidebarItems = [
@@ -26,7 +28,8 @@ const sidebarItems = [
   {
     id: 'patients',
     title: 'Patients',
-    description: 'Patient Management'
+    description: 'Patient Management',
+    clinicOnly: true
   },
   {
     id: 'clinics',
@@ -35,34 +38,52 @@ const sidebarItems = [
     adminOnly: true
   },
   {
+    id: 'colleges',
+    title: 'Colleges',
+    description: 'Manage Colleges',
+    adminOnly: true
+  },
+  {
+    id: 'students',
+    title: 'Students',
+    description: 'Student Management',
+    collegeOnly: true
+  },
+  {
     id: 'onboarding',
     title: 'Onboarding',
-    description: 'New Patient Setup'
+    description: 'New Patient Setup',
+    clinicOnly: true
   },
   {
     id: 'sessions',
     title: 'Sessions',
-    description: 'Therapeutic Sessions'
+    description: 'Therapeutic Sessions',
+    clinicOnly: true
   },
   {
     id: 'integration',
     title: 'Integration',
-    description: 'Post-Session Processing'
+    description: 'Post-Session Processing',
+    clinicOnly: true
   },
   {
     id: 'resources',
     title: 'Resources',
-    description: 'Tools & Materials'
+    description: 'Tools & Materials',
+    clinicOnly: true
   },
   {
     id: 'reports',
     title: 'Reports',
-    description: 'Analytics & Insights'
+    description: 'Analytics & Insights',
+    clinicOnly: true
   },
   {
     id: 'locations',
     title: 'Locations',
-    description: 'Multi-Location Management'
+    description: 'Multi-Location Management',
+    clinicOnly: true
   },
   {
     id: 'settings',
@@ -82,10 +103,10 @@ export default function Sidebar({ activePage, setActivePage, sidebarOpen, setSid
             {user ? (
               <>
                 <span className="text-white font-bold text-sm">
-                  {user.role === 'lmn8_admin' ? 'METAT8' : user.clinicName || `${user.firstName} ${user.lastName}`}
+                  {user.role === 'lmn8_admin' ? 'METAT8' : user.role === 'college' ? (user.collegeName || user.fullName || `${user.firstName} ${user.lastName}`) : user.clinicName || `${user.firstName} ${user.lastName}`}
                 </span>
                 <span className="text-slate-400 text-xs">
-                  {user.role === 'lmn8_admin' ? `${user.firstName} ${user.lastName}` : user.role === 'clinician' ? 'Clinic' : user.firstName ? `${user.firstName} ${user.lastName}` : ''}
+                  {user.role === 'lmn8_admin' ? `${user.firstName} ${user.lastName}` : user.role === 'clinician' ? 'Clinic' : user.role === 'college' ? 'College' : user.firstName ? `${user.firstName} ${user.lastName}` : ''}
                 </span>
               </>
             ) : (
@@ -104,7 +125,12 @@ export default function Sidebar({ activePage, setActivePage, sidebarOpen, setSid
       {/* Sidebar Navigation */}
       <div className="p-3 space-y-2">
         {sidebarItems
-          .filter(item => !item.adminOnly || user?.role === 'lmn8_admin')
+          .filter(item => {
+            if (item.adminOnly) return user?.role === 'lmn8_admin';
+            if (item.collegeOnly) return user?.role === 'college';
+            if (item.clinicOnly) return user?.role !== 'college';
+            return true;
+          })
           .map((item) => {
           const Icon = iconMap[item.id];
           return (
@@ -142,10 +168,10 @@ export default function Sidebar({ activePage, setActivePage, sidebarOpen, setSid
               </div>
               <div>
                 <div className="text-white font-semibold text-sm">
-                  {user?.role === 'lmn8_admin' ? 'METAT8' : user?.clinicName || `${user?.firstName || ''} ${user?.lastName || ''}`}
+                  {user?.role === 'lmn8_admin' ? 'METAT8' : user?.role === 'college' ? (user?.collegeName || user?.fullName || `${user?.firstName || ''} ${user?.lastName || ''}`) : user?.clinicName || `${user?.firstName || ''} ${user?.lastName || ''}`}
                 </div>
                 <div className="text-slate-400 text-xs">
-                  {user?.role === 'lmn8_admin' ? `${user.firstName} ${user.lastName}` : user?.role === 'clinician' ? 'Clinic' : ''}
+                  {user?.role === 'lmn8_admin' ? `${user.firstName} ${user.lastName}` : user?.role === 'clinician' ? 'Clinic' : user?.role === 'college' ? 'College' : ''}
                 </div>
               </div>
             </div>

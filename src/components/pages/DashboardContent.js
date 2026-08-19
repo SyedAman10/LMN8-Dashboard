@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export default function DashboardContent({ onAddPatient, refreshTrigger, userName }) {
+export default function DashboardContent({ onAddPatient, refreshTrigger, userName, userRole }) {
   const [currentPhase, setCurrentPhase] = useState('preparation');
   const [dashboardStats, setDashboardStats] = useState({
     activePatients: 0,
@@ -117,8 +117,8 @@ export default function DashboardContent({ onAddPatient, refreshTrigger, userNam
       <div className="bg-gradient-to-r from-cyan-600/20 via-teal-600/20 to-cyan-600/20 rounded-2xl p-6 border border-cyan-500/30">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-white mb-2">Welcome back, {userName || 'Clinician'}!</h2>
-            <p className="text-slate-300">Here's your clinical overview for today</p>
+            <h2 className="text-3xl font-bold text-white mb-2">Welcome back, {userName || (userRole === 'lmn8_admin' ? 'METAT8' : userRole === 'college' ? 'College' : 'Clinician')}!</h2>
+            <p className="text-slate-300">{userRole === 'lmn8_admin' ? "Here's your admin overview for today" : userRole === 'college' ? "Here's your college overview for today" : "Here's your clinical overview for today"}</p>
           </div>
           <div className="text-right">
             <p className="text-slate-400 text-sm">Today</p>
@@ -127,7 +127,8 @@ export default function DashboardContent({ onAddPatient, refreshTrigger, userNam
         </div>
       </div>
 
-      {/* Clinical Metrics Section */}
+      {/* Clinical Metrics Section - hidden for college users */}
+      {userRole !== 'college' && (
       <div className="mb-8">
         <h3 className="text-xl font-semibold text-white mb-6">Clinical Overview</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -147,10 +148,10 @@ export default function DashboardContent({ onAddPatient, refreshTrigger, userNam
                 <h4 className="text-lg font-semibold text-white mb-2">{metric.title}</h4>
                 <p className="text-slate-300 text-sm mb-2">{metric.description}</p>
                 <div className="text-2xl font-bold text-cyan-400 mb-3">{metric.count}</div>
-                
+
                 {/* Progress Bar */}
                 <div className="w-full bg-slate-700 rounded-full h-2 mb-3">
-                  <div 
+                  <div
                     className={`h-2 rounded-full bg-gradient-to-r ${metric.color} transition-all duration-500`}
                     style={{ width: `${metric.progress}%` }}
                   ></div>
@@ -161,8 +162,10 @@ export default function DashboardContent({ onAddPatient, refreshTrigger, userNam
           ))}
         </div>
       </div>
+      )}
 
-      {/* Clinical Tools Section */}
+      {/* Clinical Tools Section - hidden for college users */}
+      {userRole !== 'college' && (
       <div className="mb-8">
         <h3 className="text-xl font-semibold text-white mb-6">Clinical Tools</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
@@ -184,8 +187,10 @@ export default function DashboardContent({ onAddPatient, refreshTrigger, userNam
           ))}
         </div>
       </div>
+      )}
 
-      {/* Recent Sessions & Quick Actions */}
+      {/* Recent Sessions & Quick Actions - hidden for college users */}
+      {userRole !== 'college' && (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Recent Sessions */}
         <div className="bg-slate-700/30 rounded-2xl p-6 border border-slate-600/30">
@@ -213,7 +218,7 @@ export default function DashboardContent({ onAddPatient, refreshTrigger, userNam
                           <span>{session.progress}%</span>
                         </div>
                         <div className="w-full bg-slate-700 rounded-full h-1">
-                          <div 
+                          <div
                             className="bg-gradient-to-r from-cyan-500 to-teal-500 h-1 rounded-full transition-all duration-500"
                             style={{ width: `${session.progress}%` }}
                           ></div>
@@ -223,8 +228,8 @@ export default function DashboardContent({ onAddPatient, refreshTrigger, userNam
                   </div>
                   <div className="text-right ml-4">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      session.status === 'completed' 
-                        ? 'bg-green-500/20 text-green-400' 
+                      session.status === 'completed'
+                        ? 'bg-green-500/20 text-green-400'
                         : 'bg-yellow-500/20 text-yellow-400'
                     }`}>
                       {session.status}
@@ -248,7 +253,7 @@ export default function DashboardContent({ onAddPatient, refreshTrigger, userNam
             <span className="text-2xl">⚡</span>
           </div>
           <div className="space-y-3">
-            <button 
+            <button
               onClick={onAddPatient}
               className="w-full bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 hover:scale-105"
             >
@@ -266,6 +271,7 @@ export default function DashboardContent({ onAddPatient, refreshTrigger, userNam
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

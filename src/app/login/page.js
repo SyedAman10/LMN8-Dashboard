@@ -10,6 +10,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [clinicName, setClinicName] = useState('');
+  const [portalType, setPortalType] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -25,9 +26,14 @@ function LoginForm() {
     if (userParam) {
       setFormData(prev => ({ ...prev, email: userParam }));
     }
+    const collegeParam = searchParams.get('college');
     const clinicParam = searchParams.get('clinic');
-    if (clinicParam) {
+    if (collegeParam) {
+      setClinicName(collegeParam);
+      setPortalType('college');
+    } else if (clinicParam) {
       setClinicName(clinicParam);
+      setPortalType('clinic');
     } else {
       const nameParam = searchParams.get('name');
       if (nameParam && !nameParam.includes('@')) {
@@ -146,7 +152,7 @@ function LoginForm() {
                 </div>
                 <span className="text-3xl font-bold text-white">{clinicName || 'METAT8'}</span>
                 <div className="text-white/60 text-sm">|</div>
-                <span className="text-white/80">{clinicName ? 'Clinic Portal' : 'Psychedelic Therapy Platform'}</span>
+                <span className="text-white/80">{clinicName ? (portalType === 'college' ? 'College Portal' : 'Clinic Portal') : 'Psychedelic Therapy Platform'}</span>
               </div>
             </div>
           </div>

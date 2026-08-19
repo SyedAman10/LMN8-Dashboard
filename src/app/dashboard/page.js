@@ -17,6 +17,8 @@ import ResourcesContent from '@/components/pages/ResourcesContent';
 import ReportsContent from '@/components/pages/ReportsContent';
 import LocationsContent from '@/components/pages/LocationsContent';
 import ClinicsContent from '@/components/pages/ClinicsContent';
+import CollegesContent from '@/components/pages/CollegesContent';
+import StudentsContent from '@/components/pages/StudentsContent';
 import AddPatientModal from '@/components/modals/AddPatientModal';
 import ImportPatientModal from '@/components/modals/ImportPatientModal';
 import CreateTreatmentPlanModal from '@/components/modals/CreateTreatmentPlanModal';
@@ -107,6 +109,16 @@ export default function Dashboard() {
       id: 'clinics',
       title: 'Clinics',
       description: 'Manage Clinics & Clinicians'
+    },
+    {
+      id: 'colleges',
+      title: 'Colleges',
+      description: 'Manage Colleges'
+    },
+    {
+      id: 'students',
+      title: 'Students',
+      description: 'Student Management'
     }
   ];
 
@@ -169,7 +181,7 @@ export default function Dashboard() {
   const renderPageContent = () => {
     switch (activePage) {
       case 'dashboard':
-        return <DashboardContent onAddPatient={() => setShowAddPatient(true)} refreshTrigger={refreshTrigger} />;
+        return <DashboardContent onAddPatient={() => setShowAddPatient(true)} refreshTrigger={refreshTrigger} userName={user?.fullName || user?.firstName || null} userRole={user?.role || null} />;
       case 'onboarding':
         return (
           <OnboardingContent 
@@ -194,6 +206,10 @@ export default function Dashboard() {
         return <PatientsContent />;
       case 'clinics':
         return <ClinicsContent />;
+      case 'colleges':
+        return <CollegesContent />;
+      case 'students':
+        return <StudentsContent />;
       default:
         return (
           <div className="text-center py-12">
