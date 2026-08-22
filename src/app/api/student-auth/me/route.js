@@ -35,7 +35,9 @@ export async function GET(request) {
         s.id, s.name, s.email, s.phone, s.date_of_birth, s.program,
         s.enrollment_year, s.emergency_contact, s.emergency_phone,
         s.status, s.notes, s.created_at, s.updated_at,
-        su.username, su.last_login
+        su.username, su.last_login,
+        su.idol, su.personality, su.goals, su.challenges,
+        su.communication_style, su.interests, su.values, su.support_needs
        FROM students s
        JOIN student_users su ON s.id = su.student_id
        WHERE s.id = $1 AND su.is_active = true`,
@@ -68,7 +70,15 @@ export async function GET(request) {
         createdAt: student.created_at,
         updatedAt: student.updated_at,
         username: student.username,
-        lastLogin: student.last_login
+        lastLogin: student.last_login,
+        idol: student.idol,
+        personality: student.personality,
+        goals: student.goals,
+        challenges: student.challenges,
+        communicationStyle: student.communication_style,
+        interests: student.interests,
+        values: student.values,
+        supportNeeds: student.support_needs
       }
     });
 

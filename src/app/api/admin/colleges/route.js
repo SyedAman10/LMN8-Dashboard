@@ -39,6 +39,8 @@ export async function GET(request) {
       phone: row.phone,
       email: row.email,
       website: row.website,
+      countryType: row.country_type,
+      showCommunity: row.show_community,
       status: row.status,
       studentGreetingName: row.student_greeting_name,
       collegeUserName: row.college_user_name || null,
@@ -65,11 +67,13 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { name, address, city, state, zipCode, phone, email, website, studentGreetingName } = body;
+    const { name, countryType, address, city, state, zipCode, phone, email, website, studentGreetingName, showCommunity } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: 'College name and email are required' }, { status: 400 });
     }
+
+    const validCountry = ['US', 'Pakistan'].includes(countryType) ? countryType : 'US';
 
     const existingUser = await query(`SELECT id FROM users WHERE email = $1`, [email]);
     if (existingUser.rows.length > 0) {
@@ -77,10 +81,10 @@ export async function POST(request) {
     }
 
     const collegeResult = await query(
-      `INSERT INTO colleges (name, address, city, state, zip_code, phone, email, website, student_greeting_name, created_by)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      `INSERT INTO colleges (name, address, city, state, zip_code, phone, email, website, country_type, show_community, student_greeting_name, created_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING *`,
-      [name, address || null, city || null, state || null, zipCode || null, phone || null, email || null, website || null, studentGreetingName || 'Student', admin.id]
+      [name, address || null, city || null, state || null, zipCode || null, phone || null, email || null, website || null, validCountry, showCommunity !== false, studentGreetingName || 'Student', admin.id]
     );
 
     const college = collegeResult.rows[0];
@@ -117,6 +121,8 @@ export async function POST(request) {
         phone: college.phone,
         email: college.email,
         website: college.website,
+        countryType: college.country_type,
+        showCommunity: college.show_community,
         status: college.status,
         studentGreetingName: college.student_greeting_name,
         collegeUserName: collegeName,

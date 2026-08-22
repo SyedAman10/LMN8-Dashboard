@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 export default function AddCollegeModal({ isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState({
     name: '',
+    countryType: 'US',
     address: '',
     city: '',
     state: '',
@@ -12,7 +13,8 @@ export default function AddCollegeModal({ isOpen, onClose, onSave }) {
     phone: '',
     email: '',
     website: '',
-    studentGreetingName: ''
+    studentGreetingName: '',
+    showCommunity: true
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -21,8 +23,8 @@ export default function AddCollegeModal({ isOpen, onClose, onSave }) {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       setFormData({
-        name: '', address: '', city: '', state: '', zipCode: '',
-        phone: '', email: '', website: '', studentGreetingName: ''
+        name: '', countryType: 'US', address: '', city: '', state: '', zipCode: '',
+        phone: '', email: '', website: '', studentGreetingName: '', showCommunity: true
       });
       setErrors({});
     } else {
@@ -99,11 +101,37 @@ export default function AddCollegeModal({ isOpen, onClose, onSave }) {
                 {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
               </div>
               <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">Country *</label>
+                <div className="flex space-x-4">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" name="countryType" value="US" checked={formData.countryType === 'US'}
+                      onChange={handleInputChange}
+                      className="w-4 h-4 text-cyan-500 bg-slate-800 border-slate-600 focus:ring-cyan-500" />
+                    <span className="text-slate-300">US</span>
+                  </label>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" name="countryType" value="Pakistan" checked={formData.countryType === 'Pakistan'}
+                      onChange={handleInputChange}
+                      className="w-4 h-4 text-cyan-500 bg-slate-800 border-slate-600 focus:ring-cyan-500" />
+                    <span className="text-slate-300">Pakistan</span>
+                  </label>
+                </div>
+                <p className="text-slate-400 text-xs mt-1">Students under this college will inherit this country type.</p>
+              </div>
+              <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-slate-300 mb-2">Student Greeting Name</label>
                 <input type="text" name="studentGreetingName" value={formData.studentGreetingName} onChange={handleInputChange}
                   className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400"
                   placeholder="e.g., Scholars, Learners, Members" />
                 <p className="text-slate-400 text-xs mt-1">How will this college refer to its students?</p>
+              </div>
+              <div className="md:col-span-2">
+                <label className="flex items-center space-x-3 cursor-pointer">
+                  <input type="checkbox" name="showCommunity" checked={formData.showCommunity} onChange={(e) => setFormData(prev => ({ ...prev, showCommunity: e.target.checked }))}
+                    className="w-5 h-5 rounded border-slate-600 bg-slate-800 text-cyan-500 focus:ring-cyan-500" />
+                  <span className="text-sm font-medium text-slate-300">Show Community</span>
+                </label>
+                <p className="text-slate-400 text-xs mt-1 ml-8">Students under this college will see the community feature in the app.</p>
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-slate-300 mb-2">Address</label>

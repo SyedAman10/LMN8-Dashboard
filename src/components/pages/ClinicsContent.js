@@ -106,9 +106,14 @@ export default function ClinicsContent() {
             </p>
           )}
         </div>
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${clinic.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-          {clinic.status}
-        </span>
+        <div className="flex flex-col items-end space-y-1">
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${clinic.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+            {clinic.status}
+          </span>
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${clinic.countryType === 'Pakistan' ? 'bg-orange-500/20 text-orange-400' : 'bg-blue-500/20 text-blue-400'}`}>
+            {clinic.countryType === 'Pakistan' ? 'PK' : 'US'}
+          </span>
+        </div>
       </div>
       {clinic.city && <p className="text-slate-400 text-sm">{clinic.city}{clinic.state ? `, ${clinic.state}` : ''}</p>}
       {clinic.clinicianEmail && <p className="text-slate-500 text-xs mt-1">{clinic.clinicianEmail}</p>}

@@ -95,7 +95,7 @@ export const authenticateStudent = async (username, password) => {
       `SELECT
         su.id, su.student_id, su.username, su.password_hash, su.is_active,
         s.name, s.email, s.program, s.enrollment_year,
-        c.student_greeting_name
+        c.student_greeting_name, c.show_community, c.country_type
        FROM student_users su
        JOIN students s ON su.student_id = s.id
        LEFT JOIN users u ON s.user_id = u.id
@@ -129,7 +129,9 @@ export const authenticateStudent = async (username, password) => {
         email: studentUser.email,
         program: studentUser.program,
         enrollmentYear: studentUser.enrollment_year,
-        studentGreetingName: studentUser.student_greeting_name || 'Student'
+        studentGreetingName: studentUser.student_greeting_name || 'Student',
+        showCommunity: studentUser.show_community !== false,
+        countryType: studentUser.country_type || 'US'
       },
       user: {
         id: studentUser.id,

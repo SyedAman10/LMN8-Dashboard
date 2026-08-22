@@ -39,6 +39,7 @@ export async function GET(request) {
       phone: row.phone,
       email: row.email,
       website: row.website,
+      countryType: row.country_type,
       status: row.status,
       patientGreetingName: row.patient_greeting_name,
       showCommunity: row.show_community,
@@ -66,11 +67,13 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { name, address, city, state, zipCode, phone, email, website, patientGreetingName, showCommunity } = body;
+    const { name, countryType, address, city, state, zipCode, phone, email, website, patientGreetingName, showCommunity } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: 'Clinic name and email are required' }, { status: 400 });
     }
+
+    const validCountry = ['US', 'Pakistan'].includes(countryType) ? countryType : 'US';
 
     const existingUser = await query(`SELECT id FROM users WHERE email = $1`, [email]);
     if (existingUser.rows.length > 0) {
@@ -78,10 +81,10 @@ export async function POST(request) {
     }
 
     const clinicResult = await query(
-      `INSERT INTO clinics (name, address, city, state, zip_code, phone, email, website, patient_greeting_name, show_community, created_by)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      `INSERT INTO clinics (name, address, city, state, zip_code, phone, email, website, country_type, patient_greeting_name, show_community, created_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING *`,
-      [name, address || null, city || null, state || null, zipCode || null, phone || null, email || null, website || null, patientGreetingName || 'Patient', showCommunity !== false, admin.id]
+      [name, address || null, city || null, state || null, zipCode || null, phone || null, email || null, website || null, validCountry, patientGreetingName || 'Patient', showCommunity !== false, admin.id]
     );
 
     const clinic = clinicResult.rows[0];
@@ -118,6 +121,7 @@ export async function POST(request) {
         phone: clinic.phone,
         email: clinic.email,
         website: clinic.website,
+        countryType: clinic.country_type,
         status: clinic.status,
         patientGreetingName: clinic.patient_greeting_name,
         showCommunity: clinic.show_community,

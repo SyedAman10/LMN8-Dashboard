@@ -250,6 +250,7 @@ export async function initDatabase() {
         phone VARCHAR(20),
         email VARCHAR(255),
         website VARCHAR(255),
+        country_type VARCHAR(20) DEFAULT 'US',
         status VARCHAR(20) DEFAULT 'active',
         created_by UUID REFERENCES users(id),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -339,12 +340,14 @@ export async function initDatabase() {
       CREATE TABLE IF NOT EXISTS community_posts (
         id SERIAL PRIMARY KEY,
         patient_user_id INTEGER REFERENCES patient_users(id) ON DELETE CASCADE,
+        student_user_id INTEGER REFERENCES student_users(id) ON DELETE CASCADE,
         content TEXT NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
     await query(`CREATE INDEX IF NOT EXISTS idx_community_posts_patient ON community_posts(patient_user_id)`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_community_posts_student ON community_posts(student_user_id)`);
     console.log('   ✅ community_posts table created');
 
     console.log('   Creating community_likes table...');
@@ -353,8 +356,10 @@ export async function initDatabase() {
         id SERIAL PRIMARY KEY,
         post_id INTEGER REFERENCES community_posts(id) ON DELETE CASCADE,
         patient_user_id INTEGER REFERENCES patient_users(id) ON DELETE CASCADE,
+        student_user_id INTEGER REFERENCES student_users(id) ON DELETE CASCADE,
         created_at TIMESTAMPTZ DEFAULT NOW(),
-        UNIQUE(post_id, patient_user_id)
+        UNIQUE(post_id, patient_user_id),
+        UNIQUE(post_id, student_user_id)
       )
     `);
     await query(`CREATE INDEX IF NOT EXISTS idx_community_likes_post ON community_likes(post_id)`);
@@ -366,6 +371,7 @@ export async function initDatabase() {
         id SERIAL PRIMARY KEY,
         post_id INTEGER REFERENCES community_posts(id) ON DELETE CASCADE,
         patient_user_id INTEGER REFERENCES patient_users(id) ON DELETE CASCADE,
+        student_user_id INTEGER REFERENCES student_users(id) ON DELETE CASCADE,
         content TEXT NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
@@ -392,6 +398,8 @@ export async function initDatabase() {
         phone VARCHAR(20),
         email VARCHAR(255),
         website VARCHAR(255),
+        country_type VARCHAR(20) DEFAULT 'US',
+        show_community BOOLEAN DEFAULT true,
         student_greeting_name VARCHAR(100) DEFAULT 'Student',
         status VARCHAR(20) DEFAULT 'active',
         created_by UUID REFERENCES users(id),
@@ -400,6 +408,25 @@ export async function initDatabase() {
       )
     `);
     console.log('   ✅ colleges table created');
+
+    // Add country_type to clinics and colleges tables (if not exist)
+    console.log('   Adding country_type columns to clinics and colleges...');
+    try {
+      await query(`ALTER TABLE clinics ADD COLUMN IF NOT EXISTS country_type VARCHAR(20) DEFAULT 'US'`);
+      await query(`ALTER TABLE colleges ADD COLUMN IF NOT EXISTS country_type VARCHAR(20) DEFAULT 'US'`);
+      console.log('   ✅ country_type columns added to clinics and colleges');
+    } catch (colError) {
+      console.log('   ⚠️  country_type alter error:', colError.message);
+    }
+
+    // Add show_community to colleges table (if not exist)
+    console.log('   Adding show_community column to colleges...');
+    try {
+      await query(`ALTER TABLE colleges ADD COLUMN IF NOT EXISTS show_community BOOLEAN DEFAULT true`);
+      console.log('   ✅ show_community column added to colleges');
+    } catch (colError) {
+      console.log('   ⚠️  colleges show_community alter error:', colError.message);
+    }
 
     // Add college_id to users table (if not exist)
     console.log('   Adding college_id column to users...');
@@ -443,10 +470,34 @@ export async function initDatabase() {
         is_active BOOLEAN DEFAULT true,
         last_login TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        idol TEXT,
+        personality TEXT,
+        goals TEXT,
+        challenges TEXT,
+        communication_style TEXT,
+        interests TEXT,
+        values TEXT,
+        support_needs TEXT
       )
     `);
     console.log('   ✅ student_users table created');
+
+    // Add profile columns to student_users (for existing tables)
+    console.log('   Adding profile columns to student_users...');
+    try {
+      await query(`ALTER TABLE student_users ADD COLUMN IF NOT EXISTS idol TEXT`);
+      await query(`ALTER TABLE student_users ADD COLUMN IF NOT EXISTS personality TEXT`);
+      await query(`ALTER TABLE student_users ADD COLUMN IF NOT EXISTS goals TEXT`);
+      await query(`ALTER TABLE student_users ADD COLUMN IF NOT EXISTS challenges TEXT`);
+      await query(`ALTER TABLE student_users ADD COLUMN IF NOT EXISTS communication_style TEXT`);
+      await query(`ALTER TABLE student_users ADD COLUMN IF NOT EXISTS interests TEXT`);
+      await query(`ALTER TABLE student_users ADD COLUMN IF NOT EXISTS "values" TEXT`);
+      await query(`ALTER TABLE student_users ADD COLUMN IF NOT EXISTS support_needs TEXT`);
+      console.log('   ✅ student_users profile columns added');
+    } catch (colError) {
+      console.log('   ⚠️  student_users profile columns error:', colError.message);
+    }
 
     // Add indexes for students
     try {

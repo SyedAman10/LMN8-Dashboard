@@ -123,7 +123,7 @@ export const authenticatePatient = async (username, password) => {
         pu.idol, pu.personality, pu.goals, pu.challenges, 
         pu.communication_style, pu.interests, pu.values, pu.support_needs,
         p.name, p.email, p.diagnosis, p.therapist, p.total_sessions, p.sessions_completed,
-        c.patient_greeting_name, c.show_community
+        c.patient_greeting_name, c.show_community, c.country_type
        FROM patient_users pu
        JOIN patients p ON pu.patient_id = p.id
        LEFT JOIN users u ON p.user_id = u.id
@@ -162,7 +162,8 @@ export const authenticatePatient = async (username, password) => {
         totalSessions: patientUser.total_sessions,
         sessionsCompleted: patientUser.sessions_completed,
         patientGreetingName: patientUser.patient_greeting_name || 'Patient',
-        showCommunity: patientUser.show_community !== false
+        showCommunity: patientUser.show_community !== false,
+        countryType: patientUser.country_type || 'US'
       },
       user: {
         id: patientUser.id,

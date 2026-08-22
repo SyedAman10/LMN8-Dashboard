@@ -27,23 +27,38 @@ export async function POST(request, { params }) {
     const decoded = verifyToken(token);
     if (!decoded) return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 });
 
-    const patientUserId = decoded?.userId || decoded?.id;
-    if (!patientUserId) return NextResponse.json({ error: 'Invalid token payload' }, { status: 401 });
+    const userType = decoded.type;
+    const patientUserId = userType === 'patient' ? (decoded.userId || decoded.id) : null;
+    const studentUserId = userType === 'student' ? (decoded.userId || decoded.id) : null;
 
     const { id } = await params;
     if (!id) return NextResponse.json({ success: false, error: 'Post ID is required' }, { status: 400 });
 
-    const existing = await query(
-      `SELECT id FROM community_likes WHERE post_id = $1 AND patient_user_id = $2`,
-      [id, patientUserId]
-    );
+    let existing;
+    if (userType === 'patient' && patientUserId) {
+      existing = await query(
+        `SELECT id FROM community_likes WHERE post_id = $1 AND patient_user_id = $2`,
+        [id, patientUserId]
+      );
+    } else if (userType === 'student' && studentUserId) {
+      existing = await query(
+        `SELECT id FROM community_likes WHERE post_id = $1 AND student_user_id = $2`,
+        [id, studentUserId]
+      );
+    } else {
+      return NextResponse.json({ error: 'Invalid user type' }, { status: 400 });
+    }
 
     let liked;
     if (existing.rows.length > 0) {
       await query(`DELETE FROM community_likes WHERE id = $1`, [existing.rows[0].id]);
       liked = false;
     } else {
-      await query(`INSERT INTO community_likes (post_id, patient_user_id) VALUES ($1, $2)`, [id, patientUserId]);
+      if (userType === 'patient' && patientUserId) {
+        await query(`INSERT INTO community_likes (post_id, patient_user_id) VALUES ($1, $2)`, [id, patientUserId]);
+      } else if (userType === 'student' && studentUserId) {
+        await query(`INSERT INTO community_likes (post_id, student_user_id) VALUES ($1, $2)`, [id, studentUserId]);
+      }
       liked = true;
     }
 

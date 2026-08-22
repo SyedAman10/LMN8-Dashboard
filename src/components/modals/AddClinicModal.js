@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 export default function AddClinicModal({ isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState({
     name: '',
+    countryType: 'US',
     address: '',
     city: '',
     state: '',
@@ -22,7 +23,7 @@ export default function AddClinicModal({ isOpen, onClose, onSave }) {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       setFormData({
-        name: '', address: '', city: '', state: '', zipCode: '',
+        name: '', countryType: 'US', address: '', city: '', state: '', zipCode: '',
         phone: '', email: '', website: '', patientGreetingName: '',
         showCommunity: true
       });
@@ -99,6 +100,24 @@ export default function AddClinicModal({ isOpen, onClose, onSave }) {
                   className={`w-full bg-slate-800/50 border rounded-lg px-3 py-2 text-white placeholder-slate-400 ${errors.name ? 'border-red-500' : 'border-slate-600/50 focus:border-cyan-500'}`}
                   placeholder="Enter clinic name" />
                 {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-300 mb-2">Country *</label>
+                <div className="flex space-x-4">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" name="countryType" value="US" checked={formData.countryType === 'US'}
+                      onChange={handleInputChange}
+                      className="w-4 h-4 text-cyan-500 bg-slate-800 border-slate-600 focus:ring-cyan-500" />
+                    <span className="text-slate-300">US</span>
+                  </label>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" name="countryType" value="Pakistan" checked={formData.countryType === 'Pakistan'}
+                      onChange={handleInputChange}
+                      className="w-4 h-4 text-cyan-500 bg-slate-800 border-slate-600 focus:ring-cyan-500" />
+                    <span className="text-slate-300">Pakistan</span>
+                  </label>
+                </div>
+                <p className="text-slate-400 text-xs mt-1">Patients under this clinic will inherit this country type.</p>
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-slate-300 mb-2">Patient Greeting Name</label>

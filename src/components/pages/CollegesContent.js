@@ -106,9 +106,14 @@ export default function CollegesContent() {
             </p>
           )}
         </div>
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${college.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-          {college.status}
-        </span>
+        <div className="flex flex-col items-end space-y-1">
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${college.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+            {college.status}
+          </span>
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${college.countryType === 'Pakistan' ? 'bg-orange-500/20 text-orange-400' : 'bg-blue-500/20 text-blue-400'}`}>
+            {college.countryType === 'Pakistan' ? 'PK' : 'US'}
+          </span>
+        </div>
       </div>
       {college.city && <p className="text-slate-400 text-sm">{college.city}{college.state ? `, ${college.state}` : ''}</p>}
       {college.collegeUserEmail && <p className="text-slate-500 text-xs mt-1">{college.collegeUserEmail}</p>}
