@@ -1,30 +1,25 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import jwt from 'jsonwebtoken';
-import { sendPasswordResetEmail } from '@/lib/email';
+import bcrypt from 'bcryptjs';
+import { sendPatientOtpEmail } from '@/lib/email';
 
-// POST - Request password reset
+// POST - Request password reset (mobile app OTP flow)
 export async function POST(request) {
   try {
-    console.log('🔐 Forgot Password API called');
+    console.log('🔐 Patient Forgot Password (OTP) API called');
     const body = await request.json();
     const { username, email } = body;
 
     console.log('📝 Password reset request for:', { username, email });
 
-    // Validate input - require either username or email
     if (!username && !email) {
       console.log('❌ No username or email provided');
-      return NextResponse.json(
-        { error: 'Username or email is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Username or email is required' }, { status: 400 });
     }
 
     // Find the patient user by username or email
     let patientUser;
     if (username) {
-      console.log('🔍 Looking up patient by username:', username);
       const result = await query(
         `SELECT pu.id as user_id, pu.patient_id, pu.username, p.email, p.name
          FROM patient_users pu
@@ -34,7 +29,6 @@ export async function POST(request) {
       );
       patientUser = result.rows[0];
     } else {
-      console.log('🔍 Looking up patient by email:', email);
       const result = await query(
         `SELECT pu.id as user_id, pu.patient_id, pu.username, p.email, p.name
          FROM patient_users pu
@@ -46,62 +40,49 @@ export async function POST(request) {
     }
 
     // For security, always return success even if user not found
-    // This prevents username/email enumeration attacks
     if (!patientUser) {
-      console.log('⚠️ User not found, but returning success for security');
-      return NextResponse.json({
-        success: true,
-        message: 'If an account exists with that information, a password reset link has been sent.'
-      });
+      console.log('⚠️ Patient not found, returning generic success');
+      return NextResponse.json({ success: true, message: 'If an account exists with that information, a password reset email has been sent.' });
     }
 
-    console.log('✅ Patient found:', { userId: patientUser.user_id, patientId: patientUser.patient_id });
+    // Ensure password_reset_otps table exists
+    await query(`
+      CREATE TABLE IF NOT EXISTS password_reset_otps (
+        id SERIAL PRIMARY KEY,
+        user_type TEXT,
+        user_id INTEGER,
+        email TEXT,
+        otp_hash TEXT,
+        expires_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
-    // Generate password reset token (valid for 1 hour)
-    const resetToken = jwt.sign(
-      {
-        userId: patientUser.user_id,
-        patientId: patientUser.patient_id,
-        username: patientUser.username,
-        type: 'password_reset'
-      },
-      process.env.JWT_SECRET || 'your_super_secret_jwt_key_here_change_this_in_production',
-      { expiresIn: '1h' }
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpHash = await bcrypt.hash(otp, 10);
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    // Remove existing OTPs for this user/email
+    await query(`DELETE FROM password_reset_otps WHERE user_id = $1 OR email = $2`, [patientUser.user_id, patientUser.email]);
+
+    // Insert the hashed OTP
+    await query(
+      `INSERT INTO password_reset_otps (user_type, user_id, email, otp_hash, expires_at) VALUES ($1, $2, $3, $4, $5)`,
+      ['patient', patientUser.user_id, patientUser.email, otpHash, expiresAt]
     );
 
-    console.log('🎫 Reset token generated:', resetToken.substring(0, 30) + '...');
+    // Send OTP email
+    const emailResult = await sendPatientOtpEmail(patientUser.email, otp, patientUser.username);
+    if (emailResult.success) console.log('✅ OTP email sent');
+    else console.warn('⚠️ Failed to send OTP email:', emailResult.error);
 
-    // Send password reset email
-    console.log('📧 Sending password reset email...');
-    const emailResult = await sendPasswordResetEmail(
-      patientUser.email,
-      resetToken,
-      patientUser.username
-    );
-
-    if (emailResult.success) {
-      console.log('✅ Password reset email sent successfully');
-    } else {
-      console.warn('⚠️ Failed to send email, but continuing:', emailResult.error);
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: 'If an account exists with that information, a password reset link has been sent.',
-      // For mobile app - include the token directly
-      // In production, this would be sent via email only
-      resetToken: resetToken,
-      username: patientUser.username,
-      email: patientUser.email
-    });
+    return NextResponse.json({ success: true, message: 'If an account exists with that information, a password reset email has been sent.' });
 
   } catch (error) {
-    console.error('❌ Forgot password error:', error);
-    console.error('Error stack:', error.stack);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('❌ Patient forgot-password error:', error);
+    console.error(error.stack);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 

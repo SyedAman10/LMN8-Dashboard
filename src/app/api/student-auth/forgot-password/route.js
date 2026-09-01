@@ -1,20 +1,16 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import jwt from 'jsonwebtoken';
-import { sendPasswordResetEmail } from '@/lib/email';
+import bcrypt from 'bcryptjs';
+import { sendPatientOtpEmail } from '@/lib/email';
 
-// POST - Request password reset
+// POST - Request password reset (OTP flow for students)
 export async function POST(request) {
   try {
     const body = await request.json();
     const { username, email } = body;
 
-    // Validate input - require either username or email
     if (!username && !email) {
-      return NextResponse.json(
-        { error: 'Username or email is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Username or email is required' }, { status: 400 });
     }
 
     // Find the student user by username or email
@@ -39,52 +35,46 @@ export async function POST(request) {
       studentUser = result.rows[0];
     }
 
-    // For security, always return success even if user not found
+    // Always return generic success for security
     if (!studentUser) {
-      return NextResponse.json({
-        success: true,
-        message: 'If an account exists with that information, a password reset link has been sent.'
-      });
+      return NextResponse.json({ success: true, message: 'If an account exists with that information, a password reset email has been sent.' });
     }
 
-    // Generate password reset token (valid for 1 hour)
-    const resetToken = jwt.sign(
-      {
-        userId: studentUser.user_id,
-        studentId: studentUser.student_id,
-        username: studentUser.username,
-        type: 'student_password_reset'
-      },
-      process.env.JWT_SECRET || 'your_super_secret_jwt_key_here_change_this_in_production',
-      { expiresIn: '1h' }
+    // Ensure password_reset_otps table exists
+    await query(`
+      CREATE TABLE IF NOT EXISTS password_reset_otps (
+        id SERIAL PRIMARY KEY,
+        user_type TEXT,
+        user_id INTEGER,
+        email TEXT,
+        otp_hash TEXT,
+        expires_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpHash = await bcrypt.hash(otp, 10);
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+    // Remove existing OTPs for this user/email
+    await query(`DELETE FROM password_reset_otps WHERE user_id = $1 OR email = $2`, [studentUser.user_id, studentUser.email]);
+
+    // Insert the hashed OTP
+    await query(
+      `INSERT INTO password_reset_otps (user_type, user_id, email, otp_hash, expires_at) VALUES ($1, $2, $3, $4, $5)`,
+      ['student', studentUser.user_id, studentUser.email, otpHash, expiresAt]
     );
 
-    // Send password reset email
-    if (studentUser.email) {
-      const emailResult = await sendPasswordResetEmail(
-        studentUser.email,
-        resetToken,
-        studentUser.username
-      );
+    // Send OTP email (reuse patient OTP email helper)
+    const emailResult = await sendPatientOtpEmail(studentUser.email, otp, studentUser.username);
+    if (!emailResult.success) console.warn('Failed to send student OTP email:', emailResult.error);
 
-      if (!emailResult.success) {
-        console.warn('Failed to send student password reset email:', emailResult.error);
-      }
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: 'If an account exists with that information, a password reset link has been sent.',
-      resetToken: resetToken,
-      username: studentUser.username,
-      email: studentUser.email
-    });
+    return NextResponse.json({ success: true, message: 'If an account exists with that information, a password reset email has been sent.' });
 
   } catch (error) {
     console.error('Student forgot password error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

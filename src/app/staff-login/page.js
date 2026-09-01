@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import Link from 'next/link';
 
 function StaffLoginForm() {
   const router = useRouter();
@@ -160,6 +161,10 @@ function StaffLoginForm() {
                       className="w-full bg-gradient-to-r from-cyan-500 via-teal-600 to-blue-600 text-white font-semibold py-4 px-6 rounded-xl hover:shadow-2xl hover:shadow-cyan-500/25 transform hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group">
                       <span className="relative z-10">{isLoading ? 'Signing In...' : 'Sign In'}</span>
                     </button>
+
+                    <div className="text-center mt-3">
+                      <Link href="/forgot-password" className="text-cyan-400 hover:text-cyan-300 text-sm">Forgot password?</Link>
+                    </div>
 
 
                   </div>

@@ -23,8 +23,6 @@ const createTransporter = () => {
 
 // Password reset email template
 export const createPasswordResetEmailTemplate = (email, resetToken, username) => {
-  // In production, this would be a deep link to the mobile app
-  // For now, we'll include the token
   const resetLink = `lumen8://reset-password?token=${resetToken}`;
   
   return {
@@ -226,6 +224,41 @@ export const createPasswordResetEmailTemplate = (email, resetToken, username) =>
       This is an automated message. Please do not reply to this email.
     `
   };
+};
+
+// New: create OTP email template for patients
+export const createPatientOtpEmailTemplate = (email, otp, username) => {
+  return {
+    from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+    to: email,
+    subject: `Your METAT8 Password Reset Code`,
+    html: `
+      <div style="font-family: Arial, sans-serif;">
+        <h2>Password Reset Code</h2>
+        <p>Hello ${username || 'User'},</p>
+        <p>Your password reset code is:</p>
+        <div style="font-size: 24px; font-weight: bold; margin: 10px 0;">${otp}</div>
+        <p>This code will expire in 15 minutes. Do not share this code with anyone.</p>
+      </div>
+    `,
+    text: `Your password reset code is: ${otp}. It expires in 15 minutes.`
+  };
+};
+
+export const sendPatientOtpEmail = async (email, otp, username) => {
+  try {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) {
+      console.warn('Email configuration missing. Skipping OTP email.');
+      return { success: false, error: 'Email configuration missing' };
+    }
+    const transporter = createTransporter();
+    const emailTemplate = createPatientOtpEmailTemplate(email, otp, username);
+    const result = await transporter.sendMail(emailTemplate);
+    return { success: true, messageId: result.messageId };
+  } catch (error) {
+    console.error('Error sending patient OTP email:', error);
+    return { success: false, error: error.message };
+  }
 };
 
 // Send password reset email
@@ -1148,6 +1181,251 @@ export const sendStudentCredentialsEmail = async (student, credentials) => {
   }
 };
 
+// Dashboard user password reset email template (for clinicians, colleges, admin)
+export const createDashboardPasswordResetEmailTemplate = (email, resetToken, userName, userRole) => {
+  // Prefer an explicit PUBLIC_APP_URL. If not set, use NEXTAUTH_URL
+  // only when it's not a private IP address (avoid exposing local IPs in emails).
+  const isPrivateIpHost = (u) => {
+    try {
+      const host = new URL(u).hostname;
+      // plain IPv4
+      if (/^(?:\d{1,3}\.){3}\d{1,3}$/.test(host)) {
+        const parts = host.split('.').map(Number);
+        if (parts[0] === 10) return true;
+        if (parts[0] === 127) return true;
+        if (parts[0] === 192 && parts[1] === 168) return true;
+        if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
+        return true; // generic IP - treat as non-public
+      }
+      // localhost
+      if (host === 'localhost') return true;
+      return false;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const getBaseUrl = () => {
+    if (process.env.PUBLIC_APP_URL) return process.env.PUBLIC_APP_URL.replace(/\/$/, '');
+    if (process.env.NEXTAUTH_URL && !isPrivateIpHost(process.env.NEXTAUTH_URL)) return process.env.NEXTAUTH_URL.replace(/\/$/, '');
+    return 'http://localhost:3000';
+  };
+
+  const baseUrl = getBaseUrl();
+  const resetLink = `${baseUrl}/reset-password?token=${resetToken}`;
+
+  // Determine role display name
+  let roleDisplay = 'User';
+  if (userRole === 'lmn8_admin') roleDisplay = 'Admin';
+  else if (userRole === 'clinician') roleDisplay = 'Clinician';
+  else if (userRole === 'college') roleDisplay = 'College Admin';
+
+  return {
+    from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+    to: email,
+    subject: `Password Reset Request - METAT8 Dashboard`,
+    html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Password Reset - METAT8</title>
+        <style>
+          body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8fafc;
+          }
+          .container {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #5bc0be;
+            margin-bottom: 10px;
+          }
+          .title {
+            color: #ffffff;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+          }
+          .content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+          }
+          .greeting {
+            color: #ffffff;
+            font-size: 18px;
+            margin-bottom: 20px;
+          }
+          .warning-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+          }
+          .warning-text {
+            color: #fca5a5;
+            font-size: 14px;
+          }
+          .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #06b6d4, #10b981);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            text-align: center;
+            margin: 20px 0;
+          }
+          .footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+          }
+          .highlight {
+            color: #06b6d4;
+            font-weight: 600;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">METAT8</div>
+            <h1 class="title">Password Reset Request</h1>
+          </div>
+
+          <div class="content">
+            <p class="greeting">Hello <span class="highlight">${userName}</span>,</p>
+
+            <p style="color: #e2e8f0; margin-bottom: 20px;">
+              We received a request to reset your password for your METAT8 Dashboard account (${roleDisplay}).
+              If you didn't make this request, you can safely ignore this email.
+            </p>
+
+            <div class="warning-box">
+              <div class="warning-text">
+                <strong>⏰ Important:</strong> This reset link will expire in <strong>1 hour</strong> for security reasons.
+              </div>
+            </div>
+
+            <p style="color: #e2e8f0; margin: 20px 0;">
+              <strong>To reset your password, click the button below:</strong>
+            </p>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetLink}" class="cta-button">Reset Your Password</a>
+            </div>
+
+            <p style="color: #94a3b8; font-size: 14px; margin-top: 20px;">
+              If the button doesn't work, copy and paste this link into your browser:<br>
+              <span style="color: #06b6d4; word-break: break-all;">${resetLink}</span>
+            </p>
+
+            <p style="color: #e2e8f0; font-size: 14px; margin-top: 20px;">
+              <strong>Security Tips:</strong>
+            </p>
+            <ul style="color: #94a3b8; font-size: 14px;">
+              <li>Never share your reset link with anyone</li>
+              <li>Choose a strong, unique password</li>
+              <li>If you didn't request this, contact support immediately</li>
+            </ul>
+          </div>
+
+          <div class="footer">
+            <p>© 2024 METAT8. All rights reserved.</p>
+            <p style="color: #64748b; font-size: 12px; margin-top: 10px;">
+              This is an automated message. Please do not reply to this email.
+            </p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+    text: `
+      Password Reset Request - METAT8
+
+      Hello ${userName},
+
+      We received a request to reset your password for your METAT8 Dashboard account (${roleDisplay}).
+      If you didn't make this request, you can safely ignore this email.
+
+      ⏰ IMPORTANT: This reset link will expire in 1 hour for security reasons.
+
+      To reset your password, visit this link:
+      ${resetLink}
+
+      Security Tips:
+      - Never share your reset link with anyone
+      - Choose a strong, unique password
+      - If you didn't request this, contact support immediately
+
+      © 2024 METAT8. All rights reserved.
+      This is an automated message. Please do not reply to this email.
+    `
+  };
+};
+
+// Send dashboard password reset email
+export const sendDashboardPasswordResetEmail = async (email, resetToken, userName, userRole) => {
+  try {
+    const smtpUser = process.env.SMTP_USER || process.env.CRISIS_SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS || process.env.CRISIS_SMTP_PASS;
+    if (!smtpUser || !smtpPass) {
+      console.warn('Email configuration missing. Skipping password reset email.');
+      return { success: false, error: 'Email configuration missing' };
+    }
+
+    console.log('📧 Sending dashboard password reset email to:', email);
+    const transporter = createTransporter();
+    const emailTemplate = createDashboardPasswordResetEmailTemplate(email, resetToken, userName, userRole);
+
+    const result = await transporter.sendMail(emailTemplate);
+    console.log('✅ Dashboard password reset email sent successfully:', result.messageId);
+
+    return {
+      success: true,
+      messageId: result.messageId,
+      message: 'Password reset email sent successfully'
+    };
+  } catch (error) {
+    console.error('❌ Error sending dashboard password reset email:', error);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      response: error.response
+    });
+    return {
+      success: false,
+      error: error.message,
+      message: 'Failed to send password reset email'
+    };
+  }
+};
+
 // Test email configuration
 export const testEmailConfiguration = async () => {
   try {
@@ -1157,7 +1435,7 @@ export const testEmailConfiguration = async () => {
 
     const transporter = createTransporter();
     await transporter.verify();
-    
+
     return { success: true, message: 'Email configuration is valid' };
   } catch (error) {
     console.error('Email configuration test failed:', error);

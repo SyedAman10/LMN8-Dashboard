@@ -1,4 +1,10 @@
+"use client";
+
+import { useAuth } from '@/contexts/AuthContext';
+
 export default function SettingsContent() {
+  const { user } = useAuth();
+
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -7,15 +13,15 @@ export default function SettingsContent() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
-              <input type="text" className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white" defaultValue="Dr. Jane Doe" />
+              <input type="text" className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white" value={user?.fullName || ''} readOnly />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">Email</label>
-              <input type="email" className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white" defaultValue="jane.doe@lmn8.com" />
+              <input type="email" className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white" value={user?.email || ''} readOnly />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">License Number</label>
-              <input type="text" className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white" defaultValue="LCSW-12345" />
+              <input type="text" className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white" defaultValue="LCSW-12345" readOnly />
             </div>
           </div>
         </div>

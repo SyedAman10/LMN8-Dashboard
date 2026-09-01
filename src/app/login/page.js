@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import Link from 'next/link';
 
 function LoginForm() {
   const { login, isAuthenticated, loading: authLoading } = useAuth();
@@ -255,7 +256,7 @@ function LoginForm() {
                         />
                         <label className="text-sm text-white/70">Remember me</label>
                       </div>
-                      <a href="#" className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors">Forgot password?</a>
+                      <Link href="/forgot-password" className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors">Forgot password?</Link>
                     </div>
 
                      {/* Submit Button */}
