@@ -10,7 +10,7 @@ The frontend now sends a **JWT token** in the `Authorization` header. The JWT to
 
 ### 1. Extract Token from Authorization Header
 
-Your backend should check for the JWT token in the `Authorization` header:
+Your backend should check for the JWT t oken in the `Authorization` header:
 
 ```javascript
 // Middleware or route handler
