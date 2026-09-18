@@ -483,6 +483,55 @@ export async function initDatabase() {
     `);
     console.log('   ✅ student_users table created');
 
+    // Create assigned_homework table for clinicians/colleges to assign homework
+    console.log('   Creating assigned_homework table...');
+    try {
+      await query(`
+        CREATE TABLE IF NOT EXISTS assigned_homework (
+          id SERIAL PRIMARY KEY,
+          assigned_by UUID REFERENCES users(id) ON DELETE SET NULL,
+          patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
+          student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+          title VARCHAR(255),
+          type VARCHAR(20) DEFAULT 'text', -- text | voice
+          content TEXT,
+          audio_url TEXT,
+          transcript TEXT,
+          status VARCHAR(30) DEFAULT 'assigned', -- assigned | completed | not_understood
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      await query(`CREATE INDEX IF NOT EXISTS idx_assigned_homework_patient ON assigned_homework(patient_id)`);
+      await query(`CREATE INDEX IF NOT EXISTS idx_assigned_homework_student ON assigned_homework(student_id)`);
+      console.log('   ✅ assigned_homework table created');
+    } catch (hwErr) {
+      console.log('   ⚠️  assigned_homework table error:', hwErr.message);
+    }
+
+    // Create homework_summaries table to store summaries when homework status changes
+    console.log('   Creating homework_summaries table...');
+    try {
+      await query(`
+        CREATE TABLE IF NOT EXISTS homework_summaries (
+          id SERIAL PRIMARY KEY,
+          homework_id INTEGER REFERENCES assigned_homework(id) ON DELETE CASCADE,
+          assigner_id UUID,
+          patient_id INTEGER,
+          student_id INTEGER,
+          status VARCHAR(30),
+          summary TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      await query(`CREATE INDEX IF NOT EXISTS idx_homework_summaries_assigner ON homework_summaries(assigner_id)`);
+      await query(`CREATE INDEX IF NOT EXISTS idx_homework_summaries_patient ON homework_summaries(patient_id)`);
+      await query(`CREATE INDEX IF NOT EXISTS idx_homework_summaries_student ON homework_summaries(student_id)`);
+      console.log('   ✅ homework_summaries table created');
+    } catch (sumErr) {
+      console.log('   ⚠️  homework_summaries table error:', sumErr.message);
+    }
+
     // Add profile columns to student_users (for existing tables)
     console.log('   Adding profile columns to student_users...');
     try {

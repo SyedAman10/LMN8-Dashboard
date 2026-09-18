@@ -56,10 +56,42 @@ export async function transcribeAudioLocally(audioBuffer) {
     const result = await tr(audio, { return_timestamps: false });
     return (result && result.text) ? result.text.trim() : null;
   } catch (err) {
-    console.error('🎙️ Transcription error:', err.message);
-    return null;
+    console.error('🎙️ Transcription error:', err);
+    // Rethrow so the caller (API) can return a helpful error message
+    throw err;
   } finally {
     try { unlinkSync(tmpInput); } catch {}
     try { unlinkSync(tmpWav); } catch {}
+  }
+}
+
+export async function transcribeWithOpenAI(audioBuffer) {
+  const OPENAI_KEY = process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_SECRET || process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+  if (!OPENAI_KEY) throw new Error('OpenAI API key not configured on server');
+
+  try {
+    // Use global FormData / Blob available in modern Node runtimes (Next.js 13+)
+    const formData = new FormData();
+    const blob = new Blob([audioBuffer], { type: 'audio/m4a' });
+    formData.append('file', blob, 'audio.m4a');
+    formData.append('model', 'whisper-1');
+
+    const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${OPENAI_KEY}`,
+      },
+      body: formData,
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data?.error?.message || `OpenAI transcription failed: ${res.status}`);
+    }
+    // OpenAI returns plain text in `text` when response_format is default
+    return data.text || null;
+  } catch (err) {
+    console.error('OpenAI transcription error:', err);
+    throw err;
   }
 }

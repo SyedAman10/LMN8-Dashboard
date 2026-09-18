@@ -301,7 +301,7 @@ export const createWelcomeEmailTemplate = (patient) => {
   const { name, email, therapist, totalSessions } = patient;
   
   return {
-    from: `"Luminate Clinician" <${FROM_EMAIL}>`,
+    from: `"METAT8" <${FROM_EMAIL}>`,
     to: email,
     subject: `Welcome - Your Treatment Journey Begins!`,
     html: `
@@ -412,7 +412,7 @@ export const createWelcomeEmailTemplate = (patient) => {
       <body>
         <div class="container">
           <div class="header">
-            <div class="logo">Luminate Clinician</div>
+            <div class="logo">METAT8</div>
             <h1 class="welcome-title">Welcome to Your Treatment Journey!</h1>
             <p class="welcome-subtitle">Your personalized healthcare experience starts now</p>
           </div>
@@ -444,7 +444,7 @@ export const createWelcomeEmailTemplate = (patient) => {
           </div>
           
           <div class="footer">
-            <p>© 2024 Luminate Clinician. All rights reserved.</p>
+            <p>© 2024 METAT8. All rights reserved.</p>
             <p>This email was sent to ${email}. If you believe this is an error, please contact us.</p>
           </div>
         </div>
@@ -471,9 +471,9 @@ export const createWelcomeEmailTemplate = (patient) => {
       We're here to help you every step of the way.
       
       Best regards,
-      The Luminate Clinician Team
+      The METAT8 Team
       
-      © 2024 Luminate Clinician. All rights reserved.
+      © 2024 METAT8. All rights reserved.
     `
   };
 };
@@ -516,22 +516,55 @@ export const sendWelcomeEmail = async (patient) => {
   }
 };
 
+// Notify clinician/assigner when homework status changes
+export const sendHomeworkStatusNotification = async (toEmail, toName, patientOrStudentName, homeworkTitle, status) => {
+  try {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.warn('Email configuration missing. Skipping homework notification.');
+      return { success: false, error: 'Email configuration missing' };
+    }
+
+    const transporter = createTransporter();
+    const subject = `Homework Update: ${homeworkTitle || 'Homework'} - ${status}`;
+    const html = `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+        <h3>Homework Status Update</h3>
+        <p>Hi ${toName || 'Clinician'},</p>
+        <p>The homework <strong>${homeworkTitle || ''}</strong> assigned to <strong>${patientOrStudentName}</strong> has been updated with status: <strong>${status}</strong>.</p>
+        <p>Please review it in your dashboard.</p>
+      </div>
+    `;
+
+    const info = await transporter.sendMail({
+      from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+      to: toEmail,
+      subject,
+      html
+    });
+
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('sendHomeworkStatusNotification failed:', error.message);
+    return { success: false, error: error.message };
+  }
+};
+
 // Patient login credentials email template
 export const createPatientCredentialsEmailTemplate = (patient, credentials) => {
   const { name, email, therapist } = patient;
   const { username, password } = credentials;
   
   return {
-    from: `"Luminate Clinician" <${FROM_EMAIL}>`,
+    from: `"METAT8" <${FROM_EMAIL}>`,
     to: email,
-    subject: `Your Patient Portal Access - Luminate Clinician`,
+    subject: `Your Patient Portal Access - METAT8`,
     html: `
       <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Patient Portal Access - Luminate Clinician</title>
+        <title>Patient Portal Access - METAT8</title>
         <style>
           body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -665,7 +698,7 @@ export const createPatientCredentialsEmailTemplate = (patient, credentials) => {
       <body>
         <div class="container">
           <div class="header">
-            <div class="logo">Luminate Clinician</div>
+            <div class="logo">METAT8</div>
             <h1 class="title">Your Patient Portal Access</h1>
             <p class="subtitle">Secure login credentials for your treatment journey</p>
           </div>
@@ -714,7 +747,7 @@ export const createPatientCredentialsEmailTemplate = (patient, credentials) => {
           </div>
           
           <div class="footer">
-            <p>© 2024 Luminate Clinician. All rights reserved.</p>
+            <p>© 2024 METAT8. All rights reserved.</p>
             <p>This email contains sensitive information. Please keep it secure.</p>
           </div>
         </div>
@@ -722,7 +755,7 @@ export const createPatientCredentialsEmailTemplate = (patient, credentials) => {
       </html>
     `,
     text: `
-      Patient Portal Access - Luminate Clinician
+      Patient Portal Access - METAT8
       
       Dear ${name},
       
@@ -749,9 +782,9 @@ export const createPatientCredentialsEmailTemplate = (patient, credentials) => {
       please don't hesitate to contact our support team.
       
       Best regards,
-      The Luminate Clinician Team
+      The METAT8 Team
       
-      © 2024 Luminate Clinician. All rights reserved.
+      © 2024 METAT8. All rights reserved.
     `
   };
 };

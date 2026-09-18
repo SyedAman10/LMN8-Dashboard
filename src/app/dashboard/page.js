@@ -14,6 +14,7 @@ import PatientsContent from '@/components/pages/PatientsContent';
 import SessionsContent from '@/components/pages/SessionsContent';
 import IntegrationContent from '@/components/pages/IntegrationContent';
 import ResourcesContent from '@/components/pages/ResourcesContent';
+import HomeworkSummariesContent from '@/components/pages/HomeworkSummariesContent';
 import ReportsContent from '@/components/pages/ReportsContent';
 import LocationsContent from '@/components/pages/LocationsContent';
 import ClinicsContent from '@/components/pages/ClinicsContent';
@@ -79,6 +80,11 @@ export default function Dashboard() {
       id: 'sessions',
       title: 'Sessions',
       description: 'Therapeutic Sessions'
+    },
+    {
+      id: 'homework-summaries',
+      title: 'Homework Summaries',
+      description: 'Completed homework summaries'
     },
     {
       id: 'integration',
@@ -192,6 +198,8 @@ export default function Dashboard() {
         );
       case 'sessions':
         return <SessionsContent />;
+      case 'homework-summaries':
+        return <HomeworkSummariesContent />;
       case 'integration':
         return <IntegrationContent />;
       case 'resources':

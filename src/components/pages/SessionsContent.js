@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-const CLINICIAN_BASE_URL = 'https://lumenatehealth.com';
+const CLINICIAN_BASE_URL = process.env.NEXTAUTH_URL ?? '';
 const SUMMARY_LIMIT = 100;
 
 export default function SessionsContent() {

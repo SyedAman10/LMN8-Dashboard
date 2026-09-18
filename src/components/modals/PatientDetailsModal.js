@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '@/lib/apiClient';
 
-const CLINICIAN_BASE_URL = 'https://lumenatehealth.com';
+const CLINICIAN_BASE_URL = process.env.NEXTAUTH_URL ?? '';
 const SUMMARY_PAGE_SIZE = 20;
 
 export default function PatientDetailsModal({ patient, isOpen, onClose }) {

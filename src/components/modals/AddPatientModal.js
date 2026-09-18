@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-const CLINICIAN_BASE_URL = 'https://lumenatehealth.com';
+const CLINICIAN_BASE_URL = process.env.NEXTAUTH_URL ?? '';
 
 export default function AddPatientModal({ isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState({

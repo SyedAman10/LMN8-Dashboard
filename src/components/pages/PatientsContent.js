@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import PatientDetailsModal from '@/components/modals/PatientDetailsModal';
 import EditPatientModal from '@/components/modals/EditPatientModal';
 import AddPatientModal from '@/components/modals/AddPatientModal';
+import AssignHomeworkModal from '@/components/modals/AssignHomeworkModal';
 import SuccessAlert from '@/components/ui/SuccessAlert';
 
 export default function PatientsContent() {
@@ -13,6 +14,8 @@ export default function PatientsContent() {
   const [showAddPatient, setShowAddPatient] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [editingPatient, setEditingPatient] = useState(null);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [assignPatient, setAssignPatient] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showSuccessAlert, setShowSuccessAlert] = useState({ isOpen: false, title: '', message: '' });
@@ -106,6 +109,15 @@ export default function PatientsContent() {
 
   const handleEditPatient = (patient) => {
     setEditingPatient(patient);
+  };
+
+  const handleOpenAssign = (patient) => {
+    setAssignPatient(patient);
+    setShowAssignModal(true);
+  };
+
+  const handleAssigned = (homework) => {
+    setShowSuccessAlert({ isOpen: true, title: 'Homework Assigned', message: `Homework assigned successfully.` });
   };
 
   const handleSavePatient = (updatedPatient) => {
@@ -212,7 +224,7 @@ export default function PatientsContent() {
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               <button 
                 onClick={() => handleViewPatient(patient)}
                 className="bg-slate-600/50 hover:bg-slate-600/70 text-white text-sm py-2 px-3 rounded transition-colors"
@@ -224,6 +236,12 @@ export default function PatientsContent() {
                 className="bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-400 text-sm py-2 px-3 rounded transition-colors"
               >
                 Start Session
+              </button>
+              <button
+                onClick={() => handleOpenAssign(patient)}
+                className="bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 text-sm py-2 px-3 rounded transition-colors"
+              >
+                Assign Homework
               </button>
             </div>
 
@@ -277,6 +295,14 @@ export default function PatientsContent() {
         isOpen={showAddPatient}
         onClose={() => setShowAddPatient(false)}
         onSave={handlePatientAdded}
+      />
+
+      {/* Assign Homework Modal */}
+      <AssignHomeworkModal
+        patient={assignPatient}
+        isOpen={showAssignModal}
+        onClose={() => { setShowAssignModal(false); setAssignPatient(null); }}
+        onAssigned={handleAssigned}
       />
 
       {/* Success Alert */}

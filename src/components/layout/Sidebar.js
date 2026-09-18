@@ -13,6 +13,7 @@ const iconMap = {
   resources: BookOpen,
   reports: BarChart3,
   locations: Building2,
+  'homework-summaries': BookOpen,
   settings: Settings,
   clinics: Stethoscope,
   colleges: GraduationCap,
@@ -60,6 +61,11 @@ const sidebarItems = [
     title: 'Sessions',
     description: 'Therapeutic Sessions',
     clinicOnly: true
+  },
+  {
+    id: 'homework-summaries',
+    title: 'Homework Summaries',
+    description: 'Completed homework summaries'
   },
   {
     id: 'integration',
