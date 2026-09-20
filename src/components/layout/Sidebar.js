@@ -65,7 +65,11 @@ const sidebarItems = [
   {
     id: 'homework-summaries',
     title: 'Homework Summaries',
-    description: 'Completed homework summaries'
+    description: 'Completed homework summaries',
+    adminOnly: false
+    // collegeOnly:true,
+    // clinicOnly:true
+
   },
   {
     id: 'integration',
@@ -205,3 +209,4 @@ export default function Sidebar({ activePage, setActivePage, sidebarOpen, setSid
      </div>
    );
  }
+

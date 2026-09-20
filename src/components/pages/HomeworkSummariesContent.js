@@ -5,41 +5,71 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function HomeworkSummariesContent() {
   const { user } = useAuth();
-  const [patients, setPatients] = useState([]);
-  const [patientsLoading, setPatientsLoading] = useState(true);
-  const [selectedPatient, setSelectedPatient] = useState(null);
+  const isCollege = user?.role === 'college';
+  const personLabel = isCollege ? 'student' : 'patient';
+  const personLabelTitle = isCollege ? 'Student' : 'Patient';
+  const [people, setPeople] = useState([]);
+  const [peopleLoading, setPeopleLoading] = useState(true);
+  const [selectedPerson, setSelectedPerson] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('assigned');
   const [summaries, setSummaries] = useState([]);
   const [loadingSummaries, setLoadingSummaries] = useState(false);
   const [homeworks, setHomeworks] = useState([]);
   const [loadingHomeworks, setLoadingHomeworks] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => { fetchPatients(); }, []);
-  useEffect(() => { if (selectedPatient?.id) fetchSummaries(selectedPatient.id); }, [selectedPatient?.id]);
+  useEffect(() => { fetchPeople(); }, [isCollege]);
+  useEffect(() => { if (selectedPerson?.id) fetchData(selectedPerson.id); }, [selectedPerson?.id, statusFilter, isCollege]);
 
-  const fetchPatients = async () => {
+  const fetchPeople = async () => {
     try {
-      setPatientsLoading(true);
-      const resp = await fetch('/api/patients', { credentials: 'include' });
-      if (!resp.ok) { setPatients([]); return; }
+      setPeopleLoading(true);
+      setError('');
+      setSummaries([]);
+      setHomeworks([]);
+      const resp = await fetch(isCollege ? '/api/students' : '/api/patients', { credentials: 'include' });
+      if (!resp.ok) {
+        setPeople([]);
+        setSelectedPerson(null);
+        return;
+      }
       const data = await resp.json();
-      const list = Array.isArray(data?.patients) ? data.patients : [];
-      setPatients(list);
-      if (list.length > 0) setSelectedPatient(prev => prev || list[0]);
+      const list = Array.isArray(data?.students) ? data.students : Array.isArray(data?.patients) ? data.patients : [];
+      setPeople(list);
+      setSelectedPerson(prev => {
+        if (prev && list.some(person => person.id === prev.id)) return prev;
+        return list[0] || null;
+      });
     } catch (err) {
-      console.error('Fetch patients error', err);
-      setPatients([]);
-    } finally { setPatientsLoading(false); }
+      console.error(`Fetch ${personLabel}s error`, err);
+      setPeople([]);
+      setSelectedPerson(null);
+    } finally {
+      setPeopleLoading(false);
+    }
   };
 
-  const fetchSummaries = async (patientId) => {
+  const fetchData = async (personId) => {
+    if (statusFilter === 'assigned') {
+      setSummaries([]);
+      await fetchHomeworks(personId);
+      return;
+    }
+    await fetchSummaries(personId);
+  };
+
+  const fetchSummaries = async (personId) => {
     try {
       setLoadingSummaries(true);
       setError('');
-      const assignerId = user?.id;
+      setHomeworks([]);
       const q = new URLSearchParams();
-      if (assignerId) q.set('assignerId', assignerId);
-      if (patientId) q.set('patientId', String(patientId));
+      q.set('status', statusFilter);
+      if (isCollege) {
+        q.set('studentId', String(personId));
+      } else {
+        q.set('patientId', String(personId));
+      }
       const resp = await fetch(`/api/homework/summaries?${q.toString()}`, { credentials: 'include' });
       if (!resp.ok) {
         const text = await resp.text();
@@ -51,21 +81,21 @@ export default function HomeworkSummariesContent() {
       const data = await resp.json();
       const rows = Array.isArray(data?.summaries) ? data.summaries : [];
       setSummaries(rows);
-      // If no summaries exist, fetch assigned homework as a fallback
-      if (rows.length === 0 && patientId) {
-        fetchHomeworks(patientId);
-      }
     } catch (err) {
       console.error('Fetch summaries error', err);
       setSummaries([]);
       setError(err?.message || 'Error loading summaries');
-    } finally { setLoadingSummaries(false); }
+    } finally {
+      setLoadingSummaries(false);
+    }
   };
 
-  const fetchHomeworks = async (patientId) => {
+  const fetchHomeworks = async (personId) => {
     try {
       setLoadingHomeworks(true);
-      const resp = await fetch(`/api/homework?patientId=${patientId}`, { credentials: 'include' });
+      setError('');
+      const idParam = isCollege ? 'studentId' : 'patientId';
+      const resp = await fetch(`/api/homework?${idParam}=${personId}`, { credentials: 'include' });
       if (!resp.ok) {
         const text = await resp.text();
         console.error('Homeworks API error', resp.status, text);
@@ -73,7 +103,8 @@ export default function HomeworkSummariesContent() {
         return;
       }
       const data = await resp.json();
-      setHomeworks(Array.isArray(data?.homeworks) ? data.homeworks : []);
+      const rows = Array.isArray(data?.homeworks) ? data.homeworks : [];
+      setHomeworks(rows.filter(h => !h.status || h.status === 'assigned'));
     } catch (err) {
       console.error('Fetch homeworks error', err);
       setHomeworks([]);
@@ -83,12 +114,13 @@ export default function HomeworkSummariesContent() {
   };
 
   const visibleSummaries = useMemo(() => summaries, [summaries]);
+  const isLoading = loadingSummaries || loadingHomeworks;
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-playfair font-bold text-white">Homework Summaries</h2>
-        <p className="text-slate-400">Completed and updated homework summaries for your patients.</p>
+        <p className="text-slate-400">Pending, completed, and not understood homework for your {personLabel}s.</p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -97,30 +129,30 @@ export default function HomeworkSummariesContent() {
             <input
               type="text"
               onChange={() => {}}
-              placeholder="Search patient..."
+              placeholder={`Search ${personLabel}...`}
               className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400 text-sm"
               disabled
             />
           </div>
 
           <div className="max-h-[62vh] overflow-auto space-y-2">
-            {patientsLoading ? (
-              <p className="text-slate-400 text-sm">Loading patients...</p>
-            ) : patients.length === 0 ? (
-              <p className="text-slate-400 text-sm">No patients found.</p>
+            {peopleLoading ? (
+              <p className="text-slate-400 text-sm">Loading {personLabel}s...</p>
+            ) : people.length === 0 ? (
+              <p className="text-slate-400 text-sm">No {personLabel}s found.</p>
             ) : (
-              patients.map((patient) => (
+              people.map((person) => (
                 <button
-                  key={patient.id}
-                  onClick={() => setSelectedPatient(patient)}
+                  key={person.id}
+                  onClick={() => setSelectedPerson(person)}
                   className={`w-full text-left p-3 rounded-lg border transition-colors ${
-                    selectedPatient?.id === patient.id
+                    selectedPerson?.id === person.id
                       ? 'bg-cyan-600/20 border-cyan-500/40 text-white'
                       : 'bg-slate-800/40 border-slate-600/40 text-slate-200 hover:bg-slate-700/50'
                   }`}
                 >
-                  <p className="font-semibold">{patient.name}</p>
-                  <p className="text-xs text-slate-400 mt-1">Patient ID: #{patient.id}</p>
+                  <p className="font-semibold">{person.name}</p>
+                  <p className="text-xs text-slate-400 mt-1">{personLabelTitle} ID: #{person.id}</p>
                 </button>
               ))
             )}
@@ -128,19 +160,39 @@ export default function HomeworkSummariesContent() {
         </div>
 
         <div className="xl:col-span-2 bg-slate-700/30 rounded-xl border border-slate-600/30 p-4">
-          {!selectedPatient ? (
-            <div className="text-slate-400 text-sm">Select a patient to view homework summaries.</div>
+          {!selectedPerson ? (
+            <div className="text-slate-400 text-sm">Select a {personLabel} to view homework summaries.</div>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div>
-                  <h3 className="text-lg font-semibold text-white">{selectedPatient.name}</h3>
-                  <p className="text-xs text-slate-400">Patient ID: #{selectedPatient.id}</p>
+                  <h3 className="text-lg font-semibold text-white">{selectedPerson.name}</h3>
+                  <p className="text-xs text-slate-400">{personLabelTitle} ID: #{selectedPerson.id}</p>
                 </div>
-                <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex rounded-lg overflow-hidden border border-slate-600/50">
+                    <button
+                      onClick={() => setStatusFilter('assigned')}
+                      className={`text-sm py-2 px-3 transition-colors ${statusFilter === 'assigned' ? 'bg-cyan-600/30 text-white' : 'bg-slate-800/40 text-slate-300 hover:bg-slate-700/50'}`}
+                    >
+                      Pending
+                    </button>
+                    <button
+                      onClick={() => setStatusFilter('completed')}
+                      className={`text-sm py-2 px-3 transition-colors ${statusFilter === 'completed' ? 'bg-cyan-600/30 text-white' : 'bg-slate-800/40 text-slate-300 hover:bg-slate-700/50'}`}
+                    >
+                      Completed
+                    </button>
+                    <button
+                      onClick={() => setStatusFilter('not_understood')}
+                      className={`text-sm py-2 px-3 transition-colors ${statusFilter === 'not_understood' ? 'bg-cyan-600/30 text-white' : 'bg-slate-800/40 text-slate-300 hover:bg-slate-700/50'}`}
+                    >
+                      Not Understood
+                    </button>
+                  </div>
                   <button
-                    onClick={() => fetchSummaries(selectedPatient.id)}
-                    disabled={loadingSummaries}
+                    onClick={() => fetchData(selectedPerson.id)}
+                    disabled={isLoading}
                     className="bg-slate-700/60 hover:bg-slate-700/80 text-white text-sm py-2 px-4 rounded-lg transition-colors disabled:opacity-50"
                   >
                     Refresh
@@ -150,33 +202,24 @@ export default function HomeworkSummariesContent() {
 
               {error && <div className="text-red-300">{error}</div>}
 
-              {loadingSummaries ? (
-                <p className="text-slate-400 text-sm">Loading summaries...</p>
+              {isLoading ? (
+                <p className="text-slate-400 text-sm">Loading homework...</p>
+              ) : statusFilter === 'assigned' ? (
+                homeworks.length === 0 ? (
+                  <p className="text-slate-400 text-sm">No pending homework found for this {personLabel}.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {homeworks.map(h => (
+                      <div key={h.id} className="p-3 bg-slate-800/30 rounded-lg border border-slate-700/50">
+                        <div className="font-semibold text-white">{h.title || 'Untitled'}</div>
+                        <div className="text-xs text-slate-400">Status: pending - Created: {new Date(h.created_at || h.createdAt).toLocaleString()}</div>
+                        <div className="text-slate-200 mt-2 text-sm whitespace-pre-wrap">{h.type === 'text' ? h.content : (h.transcript || 'Voice homework')}</div>
+                      </div>
+                    ))}
+                  </div>
+                )
               ) : visibleSummaries.length === 0 ? (
-                <div className="space-y-3">
-                  <p className="text-slate-400 text-sm">No homework summaries found for this patient.</p>
-                  <p className="text-slate-400 text-sm">Showing assigned homework for this patient instead (if any):</p>
-
-                  {loadingHomeworks ? (
-                    <p className="text-slate-400 text-sm">Loading assigned homework...</p>
-                  ) : homeworks.length === 0 ? (
-                    <p className="text-slate-400 text-sm">No assigned homework found for this patient.</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {homeworks.map(h => (
-                        <div key={h.id} className="p-3 bg-slate-800/30 rounded-lg border border-slate-700/50">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <div className="font-semibold text-white">{h.title || 'Untitled'}</div>
-                              <div className="text-xs text-slate-400">Status: {h.status} • Created: {new Date(h.created_at || h.createdAt).toLocaleString()}</div>
-                            </div>
-                          </div>
-                          {h.transcript && <div className="text-slate-200 mt-2 text-sm">{h.transcript.slice(0, 300)}</div>}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <p className="text-slate-400 text-sm">No {statusFilter === 'completed' ? 'completed' : 'not understood'} homework summaries found for this {personLabel}.</p>
               ) : (
                 <div className="rounded-xl border border-slate-600/30 bg-slate-800/30 overflow-hidden">
                   <div className="max-h-[62vh] overflow-auto">
