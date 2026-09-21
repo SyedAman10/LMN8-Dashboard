@@ -65,11 +65,8 @@ const sidebarItems = [
   {
     id: 'homework-summaries',
     title: 'Homework Summaries',
-    description: 'Completed homework summaries',
-    adminOnly: false
-    // collegeOnly:true,
-    // clinicOnly:true
-
+    description: 'Homework Summaries',
+    homeworkAccessOnly: true
   },
   {
     id: 'integration',
@@ -137,6 +134,7 @@ export default function Sidebar({ activePage, setActivePage, sidebarOpen, setSid
         {sidebarItems
           .filter(item => {
             if (item.adminOnly) return user?.role === 'lmn8_admin';
+            if (item.homeworkAccessOnly) return user?.role === 'college' || user?.role === 'clinician';
             if (item.collegeOnly) return user?.role === 'college';
             if (item.clinicOnly) return user?.role !== 'college';
             return true;

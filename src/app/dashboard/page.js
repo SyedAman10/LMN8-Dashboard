@@ -49,6 +49,12 @@ export default function Dashboard() {
   }, [isAuthenticated, authLoading, router]);
 
   useEffect(() => {
+    if (user?.role === 'lmn8_admin' && activePage === 'homework-summaries') {
+      setActivePage('dashboard');
+    }
+  }, [user?.role, activePage]);
+
+  useEffect(() => {
     const handleMouseMove = (e) => {
       setMousePosition({
         x: (e.clientX / window.innerWidth) * 100,
@@ -84,7 +90,7 @@ export default function Dashboard() {
     {
       id: 'homework-summaries',
       title: 'Homework Summaries',
-      description: 'Completed homework summaries'
+      description: 'Homework summaries'
     },
     {
       id: 'integration',
@@ -199,6 +205,7 @@ export default function Dashboard() {
       case 'sessions':
         return <SessionsContent />;
       case 'homework-summaries':
+        if (user?.role === 'lmn8_admin') return <DashboardContent onAddPatient={() => setShowAddPatient(true)} refreshTrigger={refreshTrigger} userName={user?.fullName || user?.firstName || null} userRole={user?.role || null} />;
         return <HomeworkSummariesContent />;
       case 'integration':
         return <IntegrationContent />;

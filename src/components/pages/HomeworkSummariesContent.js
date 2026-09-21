@@ -11,6 +11,7 @@ export default function HomeworkSummariesContent() {
   const [people, setPeople] = useState([]);
   const [peopleLoading, setPeopleLoading] = useState(true);
   const [selectedPerson, setSelectedPerson] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('assigned');
   const [summaries, setSummaries] = useState([]);
   const [loadingSummaries, setLoadingSummaries] = useState(false);
@@ -113,6 +114,25 @@ export default function HomeworkSummariesContent() {
     }
   };
 
+  const filteredPeople = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+    if (!query) return people;
+
+    return people.filter((person) => {
+      const searchableText = [person.name, person.email, person.id]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return searchableText.includes(query);
+    });
+  }, [people, searchTerm]);
+
+  useEffect(() => {
+    if (!searchTerm.trim()) return;
+    if (selectedPerson && filteredPeople.some((person) => person.id === selectedPerson.id)) return;
+    setSelectedPerson(filteredPeople[0] || null);
+  }, [filteredPeople, searchTerm, selectedPerson]);
+
   const visibleSummaries = useMemo(() => summaries, [summaries]);
   const isLoading = loadingSummaries || loadingHomeworks;
 
@@ -128,20 +148,21 @@ export default function HomeworkSummariesContent() {
           <div className="mb-3">
             <input
               type="text"
-              onChange={() => {}}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={`Search ${personLabel}...`}
               className="w-full bg-slate-800/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400 text-sm"
-              disabled
+
             />
           </div>
 
           <div className="max-h-[62vh] overflow-auto space-y-2">
             {peopleLoading ? (
               <p className="text-slate-400 text-sm">Loading {personLabel}s...</p>
-            ) : people.length === 0 ? (
+            ) : filteredPeople.length === 0 ? (
               <p className="text-slate-400 text-sm">No {personLabel}s found.</p>
             ) : (
-              people.map((person) => (
+              filteredPeople.map((person) => (
                 <button
                   key={person.id}
                   onClick={() => setSelectedPerson(person)}
