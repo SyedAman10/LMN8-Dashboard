@@ -128,7 +128,7 @@ export const authenticatePatient = async (username, password) => {
        JOIN patients p ON pu.patient_id = p.id
        LEFT JOIN users u ON p.user_id = u.id
        LEFT JOIN clinics c ON u.clinic_id = c.id
-       WHERE pu.username = $1 AND pu.is_active = true`,
+       WHERE (LOWER(pu.username) = LOWER($1) OR LOWER(p.email) = LOWER($1)) AND pu.is_active = true`,
       [username]
     );
     

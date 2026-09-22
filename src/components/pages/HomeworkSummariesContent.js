@@ -3,6 +3,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
+function formatHomeworkSummary(summary) {
+  const text = summary || '';
+  const legacyTitle = text.match(/^Homework "(.+?)" updated to /m)?.[1];
+  const legacyDetails = text.match(/^Homework:\s*(.+)$/m)?.[1];
+  if (legacyTitle) return `Homework: ${legacyTitle}${legacyDetails ? `\n${legacyDetails}` : ''}`;
+  return text;
+}
 export default function HomeworkSummariesContent() {
   const { user } = useAuth();
   const isCollege = user?.role === 'college';
@@ -173,6 +180,7 @@ export default function HomeworkSummariesContent() {
                   }`}
                 >
                   <p className="font-semibold">{person.name}</p>
+                  {person.email && <p className="text-xs text-slate-400 mt-1">{person.email}</p>}
                   <p className="text-xs text-slate-400 mt-1">{personLabelTitle} ID: #{person.id}</p>
                 </button>
               ))
@@ -257,7 +265,7 @@ export default function HomeworkSummariesContent() {
                           <tr key={s.id} className="border-b border-slate-700/50 align-top">
                             <td className="px-4 py-3 text-slate-200 whitespace-nowrap">{new Date(s.created_at || s.createdAt).toLocaleString()}</td>
                             <td className="px-4 py-3 text-slate-200 whitespace-nowrap">{s.status}</td>
-                            <td className="px-4 py-3 text-slate-100 max-w-[520px]"><div className="whitespace-pre-wrap break-words">{s.summary}</div></td>
+                            <td className="px-4 py-3 text-slate-100 max-w-[520px]"><div className="whitespace-pre-wrap break-words">{formatHomeworkSummary(s.summary)}</div></td>
                           </tr>
                         ))}
                       </tbody>

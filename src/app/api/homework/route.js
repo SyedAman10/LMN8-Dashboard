@@ -136,10 +136,11 @@ export async function PATCH(request) {
       if (owner.rows.length === 0) return NextResponse.json({ error: 'Homework not found' }, { status: 404 });
     }
 
-    // Update only allowed fields
+    // Not understood records a summary but remains pending until it is completed.
+    const homeworkStatus = status === 'not_understood' ? 'assigned' : status;
     const result = await query(
       `UPDATE assigned_homework SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
-      [status, id]
+      [homeworkStatus, id]
     );
 
     const updated = result.rows[0];
@@ -147,12 +148,12 @@ export async function PATCH(request) {
 
     // Save a concise summary of the status change for the assigner to view in the UI
     try {
-      const summaryLines = [];
-      summaryLines.push(`Homework "${updated.title || ''}" updated to ${status}`);
-      if (updated.content) summaryLines.push(`Homework: ${updated.content.slice(0, 400)}`);
-      if (updated.transcript) summaryLines.push(`Transcript: ${updated.transcript.slice(0, 400)}`);
-      summaryLines.push(`Updated at: ${new Date().toISOString()}`);
-      const summaryText = summaryLines.join('\n');
+      const homeworkDetails = updated.content || updated.transcript || '';
+
+
+
+
+      const summaryText = `Homework: ${updated.title || 'Untitled homework'}${homeworkDetails ? `\n${homeworkDetails.slice(0, 400)}` : ''}`;
 
       await query(
         `INSERT INTO homework_summaries (homework_id, assigner_id, patient_id, student_id, status, summary) VALUES ($1, $2, $3, $4, $5, $6)`,

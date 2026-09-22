@@ -100,7 +100,7 @@ export const authenticateStudent = async (username, password) => {
        JOIN students s ON su.student_id = s.id
        LEFT JOIN users u ON s.user_id = u.id
        LEFT JOIN colleges c ON u.college_id = c.id
-       WHERE su.username = $1 AND su.is_active = true`,
+       WHERE (LOWER(su.username) = LOWER($1) OR LOWER(s.email) = LOWER($1)) AND su.is_active = true`,
       [username]
     );
 
